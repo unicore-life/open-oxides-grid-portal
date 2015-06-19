@@ -67,9 +67,7 @@ public class OxidesController {
     @ResponseBody
     public List<UnicoreSiteEntity> listSites(HttpSession session, HttpServletResponse response) {
         logSessionData("SITES", session, authenticationSession);
-        List<UnicoreSiteEntity> userSites = unicoreGridHandler.listUserSites(authenticationSession, response);
-        logSessionData("SITES", session, authenticationSession);
-        return userSites;
+        return unicoreGridHandler.listUserSites(authenticationSession, response);
     }
 
     @RequestMapping(value = "/unicore-storages")
