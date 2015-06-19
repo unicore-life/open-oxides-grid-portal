@@ -59,7 +59,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-mainClassName = 'pl.edu.icm.oxides.OxidesWebServer'
+mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'

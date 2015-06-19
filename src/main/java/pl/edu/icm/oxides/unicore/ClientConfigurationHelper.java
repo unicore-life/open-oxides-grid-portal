@@ -8,22 +8,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.edu.icm.oxides.authn.OxidesAuthenticationSession;
-import pl.edu.icm.oxides.config.GridIdProvider;
+import pl.edu.icm.oxides.authn.AuthenticationSession;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class SecurityProvider {
-    private final GridIdProvider idProvider;
+public class ClientConfigurationHelper {
+    private final GridIdentityProvider idProvider;
 
     @Autowired
-    public SecurityProvider(GridIdProvider idProvider) {
+    public ClientConfigurationHelper(GridIdentityProvider idProvider) {
         this.idProvider = idProvider;
     }
 
-    public IClientConfiguration createUserConfiguration(OxidesAuthenticationSession authenticationSession) {
+    public IClientConfiguration createUserConfiguration(AuthenticationSession authenticationSession) {
         List<TrustDelegation> trustDelegations = authenticationSession.getTrustDelegations();
         TrustDelegation trustDelegation = trustDelegations.get(0);
         if (trustDelegations.size() > 1) {
@@ -42,5 +41,5 @@ public class SecurityProvider {
         return clientConfiguration;
     }
 
-    private Log log = LogFactory.getLog(SecurityProvider.class);
+    private Log log = LogFactory.getLog(ClientConfigurationHelper.class);
 }

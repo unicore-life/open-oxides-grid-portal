@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SamlResponseAttributes {
+public class UserAttributes {
     private Map<String, List<String>> attributes = new ConcurrentHashMap<>();
 
     public void put(String name, String value) {
@@ -27,7 +27,7 @@ public class SamlResponseAttributes {
         return attributes;
     }
 
-    public void merge(SamlResponseAttributes other) {
+    public void merge(UserAttributes other) {
         for (Map.Entry<String, List<String>> entry : other.getAttributes().entrySet()) {
             put(entry.getKey(), entry.getValue());
         }

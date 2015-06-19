@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import pl.edu.icm.oxides.authn.OxidesAuthenticationSession;
+import pl.edu.icm.oxides.authn.AuthenticationSession;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,10 +17,10 @@ import java.io.IOException;
 @Controller
 @SessionAttributes("authenticationSession")
 public class TestsController {
-    private OxidesAuthenticationSession authenticationSession;
+    private AuthenticationSession authenticationSession;
 
     @Autowired
-    public TestsController(OxidesAuthenticationSession authenticationSession) {
+    public TestsController(AuthenticationSession authenticationSession) {
         this.authenticationSession = authenticationSession;
     }
 

@@ -10,9 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.oxides.authn.OxidesAuthenticationSession;
+import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.unicore.SecurityProvider;
+import pl.edu.icm.oxides.unicore.ClientConfigurationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
 @Component
 public class UnicoreStorageHandler {
     private final GridConfig gridConfig;
-    private final SecurityProvider securityProvider;
+    private final ClientConfigurationHelper clientHelper;
 
     @Autowired
-    public UnicoreStorageHandler(GridConfig gridConfig, SecurityProvider securityProvider) {
+    public UnicoreStorageHandler(GridConfig gridConfig, ClientConfigurationHelper clientHelper) {
         this.gridConfig = gridConfig;
-        this.securityProvider = securityProvider;
+        this.clientHelper = clientHelper;
     }
 
-    public List<UnicoreStorageEntity> retrieveUserStorageList(OxidesAuthenticationSession authenticationSession) {
-        IClientConfiguration userConfiguration = securityProvider.createUserConfiguration(authenticationSession);
+    public List<UnicoreStorageEntity> retrieveUserStorageList(AuthenticationSession authenticationSession) {
+        IClientConfiguration userConfiguration = clientHelper.createUserConfiguration(authenticationSession);
         return collectUserStorageList(userConfiguration);
     }
 

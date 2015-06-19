@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 @Lazy
-public class OxidesAuthenticationSession {
+public class AuthenticationSession {
     private String idpUrl;
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;

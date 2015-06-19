@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import pl.edu.icm.oxides.authn.OxidesAuthenticationSession;
-import pl.edu.icm.oxides.authn.OxidesSamlRequestHandler;
-import pl.edu.icm.oxides.authn.OxidesSamlResponseHandler;
+import pl.edu.icm.oxides.authn.AuthenticationSession;
+import pl.edu.icm.oxides.authn.SamlRequestHandler;
+import pl.edu.icm.oxides.authn.SamlResponseHandler;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
 import pl.edu.icm.oxides.unicore.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.site.UnicoreSiteEntity;
@@ -26,14 +26,14 @@ import java.util.List;
 @SessionAttributes("authenticationSession")
 @RequestMapping(value = "/oxides")
 public class OxidesController {
-    private final OxidesSamlRequestHandler samlRequestHandler;
-    private final OxidesSamlResponseHandler samlResponseHandler;
+    private final SamlRequestHandler samlRequestHandler;
+    private final SamlResponseHandler samlResponseHandler;
     private final UnicoreGridHandler unicoreGridHandler;
-    private OxidesAuthenticationSession authenticationSession;
+    private AuthenticationSession authenticationSession;
 
     @Autowired
-    public OxidesController(OxidesSamlRequestHandler samlRequestHandler, OxidesSamlResponseHandler samlResponseHandler,
-                            UnicoreGridHandler unicoreGridHandler, OxidesAuthenticationSession authenticationSession) {
+    public OxidesController(SamlRequestHandler samlRequestHandler, SamlResponseHandler samlResponseHandler,
+                            UnicoreGridHandler unicoreGridHandler, AuthenticationSession authenticationSession) {
         this.samlRequestHandler = samlRequestHandler;
         this.samlResponseHandler = samlResponseHandler;
         this.unicoreGridHandler = unicoreGridHandler;
@@ -96,7 +96,7 @@ public class OxidesController {
         samlResponseHandler.processAuthenticationResponse(request, response, authenticationSession);
     }
 
-    private void logSessionData(String logPrefix, HttpSession session, OxidesAuthenticationSession authnSession) {
+    private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
         log.info(String.format("%s: %s", logPrefix, session.getId()));
         log.info(String.format("%s: %s", logPrefix, authnSession));
     }

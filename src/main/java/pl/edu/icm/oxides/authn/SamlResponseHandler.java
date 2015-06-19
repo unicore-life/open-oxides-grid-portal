@@ -15,7 +15,7 @@ import org.apache.xmlbeans.impl.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.config.GridIdProvider;
+import pl.edu.icm.oxides.unicore.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
 import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 
@@ -28,17 +28,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 @Component
-public class OxidesSamlResponseHandler {
+public class SamlResponseHandler {
     private final GridConfig gridConfig;
-    private final GridIdProvider idProvider;
+    private final GridIdentityProvider idProvider;
 
     @Autowired
-    public OxidesSamlResponseHandler(GridConfig gridConfig, GridIdProvider idProvider) {
+    public SamlResponseHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
         this.gridConfig = gridConfig;
         this.idProvider = idProvider;
     }
 
-    public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response, OxidesAuthenticationSession authenticationSession) {
+    public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response, AuthenticationSession authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
         HttpSession session = request.getSession();
 
@@ -47,11 +47,11 @@ public class OxidesSamlResponseHandler {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
             validateSamlResponse(responseDocument, authenticationSession.getUuid());
 
-            SamlResponseWrapper samlResponseWrapper = new SamlResponseWrapper(responseDocument);
+            UserAssertionsWrapper userAssertionsWrapper = new UserAssertionsWrapper(responseDocument);
 
             if (authenticationSession != null) {
                 authenticationSession.setTrustDelegations(
-                        samlResponseWrapper.getEtdAssertions().stream()
+                        userAssertionsWrapper.getEtdAssertions().stream()
                                 .map(assertionDocument -> toTrustDelegation(assertionDocument))
                                 .filter(trustDelegation -> trustDelegation != null)
                                 .collect(Collectors.toList())
@@ -104,5 +104,5 @@ public class OxidesSamlResponseHandler {
         }
     }
 
-    private Log log = LogFactory.getLog(OxidesSamlResponseHandler.class);
+    private Log log = LogFactory.getLog(SamlResponseHandler.class);
 }

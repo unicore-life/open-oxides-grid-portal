@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.edu.icm.oxides.authn.OxidesAuthenticationSession;
+import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.unicore.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.job.UnicoreJobHandler;
 import pl.edu.icm.oxides.unicore.site.UnicoreSiteEntity;
@@ -31,7 +31,7 @@ public class UnicoreGridHandler {
         this.jobHandler = jobHandler;
     }
 
-    public List<UnicoreSiteEntity> listUserSites(OxidesAuthenticationSession authenticationSession,
+    public List<UnicoreSiteEntity> listUserSites(AuthenticationSession authenticationSession,
                                                  HttpServletResponse response) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return siteHandler.retrieveUserSiteList(authenticationSession);
@@ -40,7 +40,7 @@ public class UnicoreGridHandler {
         return redirectToAuthentication(response);
     }
 
-    public List<UnicoreStorageEntity> listUserStorages(OxidesAuthenticationSession authenticationSession,
+    public List<UnicoreStorageEntity> listUserStorages(AuthenticationSession authenticationSession,
                                                        HttpServletResponse response) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return storageHandler.retrieveUserStorageList(authenticationSession);
@@ -49,7 +49,7 @@ public class UnicoreGridHandler {
         return redirectToAuthentication(response);
     }
 
-    public List<UnicoreJobEntity> listUserJobs(OxidesAuthenticationSession authenticationSession,
+    public List<UnicoreJobEntity> listUserJobs(AuthenticationSession authenticationSession,
                                                HttpServletResponse response) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return jobHandler.retrieveUserJobsList(authenticationSession);
@@ -58,7 +58,7 @@ public class UnicoreGridHandler {
         return redirectToAuthentication(response);
     }
 
-    private boolean isValidAuthenticationSession(OxidesAuthenticationSession authenticationSession) {
+    private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
         return authenticationSession != null
                 && authenticationSession.getTrustDelegations() != null
                 && authenticationSession.getTrustDelegations().size() > 0;

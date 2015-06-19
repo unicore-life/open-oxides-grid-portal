@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.config.GridIdProvider;
+import pl.edu.icm.oxides.unicore.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.protocol.AuthnRequestDocument;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,17 +21,17 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class OxidesSamlRequestHandler {
+public class SamlRequestHandler {
     private final GridConfig gridConfig;
-    private final GridIdProvider idProvider;
+    private final GridIdentityProvider idProvider;
 
     @Autowired
-    public OxidesSamlRequestHandler(GridConfig gridConfig, GridIdProvider idProvider) {
+    public SamlRequestHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
         this.gridConfig = gridConfig;
         this.idProvider = idProvider;
     }
 
-    public void performAuthenticationRequest(HttpServletResponse response, OxidesAuthenticationSession authnSession) {
+    public void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authnSession) {
         String idpUrl = gridConfig.getIdpUrl();
         String targetUrl = gridConfig.getTargetUrl();
         try {
@@ -76,5 +76,5 @@ public class OxidesSamlRequestHandler {
         return request;
     }
 
-    private Log log = LogFactory.getLog(OxidesSamlRequestHandler.class);
+    private Log log = LogFactory.getLog(SamlRequestHandler.class);
 }

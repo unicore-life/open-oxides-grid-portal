@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.config;
+package pl.edu.icm.oxides.unicore;
 
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Component
-public class GridIdProvider {
+public class GridIdentityProvider {
     private final X509Credential gridCredential;
     private final X509CertChainValidatorExt gridValidator;
     private final X509CertChainValidatorExt idpValidator;
 
-    public GridIdProvider() throws IOException {
+    public GridIdentityProvider() throws IOException {
         String applicationPropertiesPath = "src/main/resources/grid.properties";
 
         ClientProperties clientProperties = new ClientProperties(applicationPropertiesPath);

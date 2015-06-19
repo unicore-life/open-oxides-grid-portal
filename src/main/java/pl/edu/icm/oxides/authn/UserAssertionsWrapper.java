@@ -17,14 +17,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SamlResponseWrapper {
+public class UserAssertionsWrapper {
     private List<AssertionDocument> authnAssertions = new ArrayList<>();
     private List<AssertionDocument> attributesAssertions = new ArrayList<>();
     private List<AssertionDocument> etdAssertions = new ArrayList<>();
 
-    private SamlResponseAttributes attributes = new SamlResponseAttributes();
+    private UserAttributes attributes = new UserAttributes();
 
-    public SamlResponseWrapper(ResponseDocument responseDocument) throws IOException, XmlException {
+    public UserAssertionsWrapper(ResponseDocument responseDocument) throws IOException, XmlException {
         AssertionDocument[] assertionDocuments = SAMLUtils.getAssertions(responseDocument.getResponse());
         for (AssertionDocument document : assertionDocuments) {
             AssertionType assertion = document.getAssertion();
@@ -33,7 +33,7 @@ public class SamlResponseWrapper {
                 authnAssertions.add(document);
             }
             if (assertion.sizeOfAttributeStatementArray() > 0) {
-                SamlResponseAttributes newAttributes = new SamlResponseAttributes();
+                UserAttributes newAttributes = new UserAttributes();
                 for (AttributeStatementType statement : assertion.getAttributeStatementArray()) {
                     for (AttributeType attribute : statement.getAttributeArray()) {
                         String attributeName = attribute.getName();
@@ -66,7 +66,7 @@ public class SamlResponseWrapper {
         return etdAssertions;
     }
 
-    public SamlResponseAttributes getAttributes() {
+    public UserAttributes getAttributes() {
         return attributes;
     }
 
