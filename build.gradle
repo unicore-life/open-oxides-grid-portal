@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE',
+                'io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencies {
+
+    compile 'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-undertow',
+            'org.springframework.boot:spring-boot-starter-web',
+//            'org.springframework.boot:spring-boot-starter-security',
+
+            'org.springframework:spring-context:4.1.6.RELEASE',
+            'org.springframework:spring-context-support:4.1.6.RELEASE',
+            'net.sf.ehcache:ehcache:2.9.1',
+
+//            'de.infinit:spring-boot-autoconfigure-wro4j:0.0.6',
+//            'org.springframework.session:spring-session:1.0.1.RELEASE',
+//            'org.springframework.security:spring-security-web:4.0.1.RELEASE',
+
+//            'org.springframework.boot:spring-boot-starter-thymeleaf',
+
+//            'com.fasterxml.jackson.core:jackson-databind',
+//            'org.hibernate:hibernate-validator',
+//            'org.apache.commons:commons-lang3:3.3.2',
+//
+//            'eu.unicore.security:SAMLtypes:1.2.1',
+//            'pl.edu.icm.saml:samly2:2.1.2'
+//
+//            'eu.unicore.services:use-wsrftypes:3.1.1',
+//            'eu.unicore.services:use-wsrfclient:3.1.1',
+            'eu.unicore:uas-client:1.9.1'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test',
+            'org.spockframework:spock-spring:1.0-groovy-2.4',
+            'org.apache.httpcomponents:httpclient'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'http://unicore-dev.zam.kfa-juelich.de/maven' }
+}
+
+group = 'pl.plgrid.unicore.portal'
+version = '1.1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+mainClassName = 'pl.edu.icm.oxides.OxidesWebServer'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}

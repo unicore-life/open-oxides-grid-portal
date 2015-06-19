@@ -1,0 +1,14 @@
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystores/sample.jks
+    key-store-password: secret
+    key-password: password
+#    client-auth: NEED
+
+grid:
+  registry: https://hyx.grid.icm.edu.pl:8080/ICM-HYDRA/services/Registry?res=default_registry
+#  registry: https://unicore.grid.icm.edu.pl:8080/PLGRID/services/Registry?res=default_registry
+  idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
+  targetUrl: https://localhost:8443/oxides/authn
+#  targetUrl: https://alfred.mat.umk.pl:8443/authn/saml
