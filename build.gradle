@@ -8,13 +8,15 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'groovy'
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'checkstyle'
+}
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 
 dependencies {
-
     compile 'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-undertow',
             'org.springframework.boot:spring-boot-starter-web',
@@ -30,10 +32,6 @@ dependencies {
 
 //            'org.springframework.boot:spring-boot-starter-thymeleaf',
 
-//            'com.fasterxml.jackson.core:jackson-databind',
-//            'org.hibernate:hibernate-validator',
-//            'org.apache.commons:commons-lang3:3.3.2',
-//
 //            'eu.unicore.security:SAMLtypes:1.2.1',
 //            'pl.edu.icm.saml:samly2:2.1.2'
 //

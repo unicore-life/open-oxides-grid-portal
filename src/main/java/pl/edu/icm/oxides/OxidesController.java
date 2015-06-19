@@ -42,9 +42,9 @@ public class OxidesController {
 
     @RequestMapping(value = "/")
     public void mainView(HttpSession session, HttpServletResponse response) throws IOException {
-        if (authenticationSession.getReturnUrl() == null)
+        if (authenticationSession.getReturnUrl() == null) {
             authenticationSession.setReturnUrl("/oxides/final");
-
+        }
         logSessionData("TEST-0", session, authenticationSession);
         response.sendRedirect("/oxides/authn");
     }

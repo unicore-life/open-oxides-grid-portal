@@ -38,7 +38,9 @@ public class SamlResponseHandler {
         this.idProvider = idProvider;
     }
 
-    public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response, AuthenticationSession authenticationSession) {
+    public void processAuthenticationResponse(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              AuthenticationSession authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
         HttpSession session = request.getSession();
 
@@ -58,7 +60,6 @@ public class SamlResponseHandler {
                 );
                 returnUrl = authenticationSession.getReturnUrl();
             }
-
             response.sendRedirect(returnUrl);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -67,8 +68,9 @@ public class SamlResponseHandler {
 
     private ResponseDocument decodeResponse(String response) throws SAMLValidationException {
         byte[] decoded = Base64.decode(response.getBytes());
-        if (decoded == null)
+        if (decoded == null) {
             throw new SAMLValidationException("The SAML response is not properly Base64 encoded");
+        }
         String respString = new String(decoded, StandardCharsets.UTF_8);
         try {
             return ResponseDocument.Factory.parse(respString);
@@ -77,7 +79,8 @@ public class SamlResponseHandler {
         }
     }
 
-    private SSOAuthnResponseValidator validateSamlResponse(ResponseDocument response, String requestId) throws URISyntaxException, SAMLValidationException {
+    private SSOAuthnResponseValidator validateSamlResponse(ResponseDocument response, String requestId)
+            throws URISyntaxException, SAMLValidationException {
         SamlTrustChecker trustChecker = new TruststoreBasedSamlTrustChecker(
                 idProvider.getIdpValidator(),
                 false

@@ -72,16 +72,22 @@ public class UserAssertionsWrapper {
 
 
     // FIXME: do it a bit more like this
-    private List<AssertionDocument> processAssertions(ResponseDocument responseDocument) throws IOException, XmlException, SAMLValidationException {
+    private List<AssertionDocument> processAssertions(ResponseDocument responseDocument)
+            throws IOException, XmlException, SAMLValidationException {
         List<AssertionDocument> assertionDocumentList = new ArrayList();
 
         ResponseType response = responseDocument.getResponse();
         NameIDType issuer = response.getIssuer();
-        if (issuer != null && issuer.getFormat() != null && !issuer.getFormat().equals("urn:oasis:names:tc:SAML:2.0:nameid-format:entity")) {
-            throw new SAMLValidationException("Issuer of SAML response must be of Entity type in SSO AuthN. It is: " + issuer.getFormat());
+        if (issuer != null && issuer.getFormat() != null &&
+                !issuer.getFormat().equals("urn:oasis:names:tc:SAML:2.0:nameid-format:entity")) {
+            throw new SAMLValidationException("Issuer of SAML response must be of Entity type in SSO AuthN. It is: " +
+                    issuer.getFormat());
         } else {
-//            SSOAuthnAssertionValidator authnAsValidator = new SSOAuthnAssertionValidator(this.consumerSamlName, this.consumerEndpointUri, this.requestId, this.samlValidityGraceTime, this.trustChecker, this.replayChecker, this.binding);
-//            AssertionValidator asValidator = new AssertionValidator(this.consumerSamlName, this.consumerEndpointUri, (String)null, this.samlValidityGraceTime, this.trustChecker);
+//            SSOAuthnAssertionValidator authnAsValidator = new SSOAuthnAssertionValidator(this.consumerSamlName,
+//                  this.consumerEndpointUri, this.requestId, this.samlValidityGraceTime, this.trustChecker,
+//                      this.replayChecker, this.binding);
+//            AssertionValidator asValidator = new AssertionValidator(this.consumerSamlName, this.consumerEndpointUri,
+//                  (String)null, this.samlValidityGraceTime, this.trustChecker);
 
             AssertionDocument[] assertions = SAMLUtils.getAssertions(response);
             for (AssertionDocument assertionDocument : assertions) {
@@ -93,7 +99,8 @@ public class UserAssertionsWrapper {
                     assertionDocumentList.add(assertionDocument);
                 }
 
-                if (assertion.sizeOfStatementArray() > 0 || assertion.sizeOfAttributeStatementArray() > 0 || assertion.sizeOfAuthzDecisionStatementArray() > 0) {
+                if (assertion.sizeOfStatementArray() > 0 || assertion.sizeOfAttributeStatementArray() > 0 ||
+                        assertion.sizeOfAuthzDecisionStatementArray() > 0) {
 //                    this.tryValidateAsGenericAssertion(asValidator, assertionDoc);
                     assertionDocumentList.add(assertionDocument);
                 }
@@ -101,13 +108,15 @@ public class UserAssertionsWrapper {
                 if (issuer == null) {
                     issuer = assertion.getIssuer();
                 } else if (!issuer.getStringValue().equals(assertion.getIssuer().getStringValue())) {
-                    throw new SAMLValidationException("Inconsistent issuer in assertion: " + assertion.getIssuer() + ", previously had: " + issuer);
+                    throw new SAMLValidationException("Inconsistent issuer in assertion: " + assertion.getIssuer() +
+                            ", previously had: " + issuer);
                 }
             }
 
 //            if(this.authNAssertions.size() == 0) {
 //                if(this.reasons.getSize() > 0) {
-//                    throw new SAMLValidationException("Authentication assertion(s) was found, but it was not correct wrt SSO profile: " + this.reasons);
+//                    throw new SAMLValidationException("Authentication assertion(s) was found, " +
+//                          "but it was not correct wrt SSO profile: " + this.reasons);
 //                } else {
 //                    throw new SAMLValidationException("There was no authentication assertion found in the SAML response");
 //                }
@@ -116,7 +125,8 @@ public class UserAssertionsWrapper {
         return assertionDocumentList;
     }
 
-//    protected void tryValidateAsGenericAssertion(AssertionValidator asValidator, AssertionDocument assertionDoc) throws SAMLValidationException {
+//    protected void tryValidateAsGenericAssertion(AssertionValidator asValidator, AssertionDocument assertionDoc)
+//          throws SAMLValidationException {
 //        asValidator.validate(assertionDoc);
 //        AssertionType assertion = assertionDoc.getAssertion();
 //        NameIDType asIssuer = assertion.getIssuer();
