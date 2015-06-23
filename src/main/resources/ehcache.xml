@@ -7,14 +7,85 @@
 
     <diskStore path="java.io.tmpdir"/>
 
-    <cache name="retrieveUnicoreUserSites"
+
+    <cache name="unicoreSessionSiteStorageList"
            maxEntriesLocalHeap="10000"
            maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
-           timeToIdleSeconds="30" timeToLiveSeconds="60"
+           timeToIdleSeconds="60" timeToLiveSeconds="60"
            memoryStoreEvictionPolicy="LFU"
            transactionalMode="off">
         <persistence strategy="localTempSwap"/>
     </cache>
+
+    <cache name="unicoreSessionJobList"
+           maxEntriesLocalHeap="10000"
+           maxEntriesLocalDisk="1000"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="60" timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
+    <cache name="unicoreSessionResourceList"
+           maxEntriesLocalHeap="10000"
+           maxEntriesLocalDisk="1000"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="60" timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
+
+    <!-- UNICORE central services cache configuration -->
+
+    <cache name="unicoreSessionSiteList"
+           maxEntriesLocalHeap="1000"
+           maxEntriesLocalDisk="100"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="300" timeToLiveSeconds="300"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
+    <cache name="unicoreSessionBrokerList"
+           maxEntriesLocalHeap="1000"
+           maxEntriesLocalDisk="100"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
+    <cache name="unicoreSessionFactoryStorageList"
+           maxEntriesLocalHeap="1000"
+           maxEntriesLocalDisk="100"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
+    <cache name="unicoreSessionGlobalStorageList"
+           maxEntriesLocalHeap="1000"
+           maxEntriesLocalDisk="100"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+
 </ehcache>

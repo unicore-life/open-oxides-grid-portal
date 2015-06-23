@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.unicore;
+package pl.edu.icm.oxides.config;
 
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;

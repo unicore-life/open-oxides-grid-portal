@@ -15,7 +15,7 @@ import org.apache.xmlbeans.impl.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.unicore.GridIdentityProvider;
+import pl.edu.icm.oxides.config.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
 import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 

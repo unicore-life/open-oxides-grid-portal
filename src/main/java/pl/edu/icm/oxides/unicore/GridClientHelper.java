@@ -9,20 +9,21 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.authn.AuthenticationSession;
+import pl.edu.icm.oxides.config.GridIdentityProvider;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class ClientConfigurationHelper {
-    private final GridIdentityProvider idProvider;
+public class GridClientHelper {
+    private final GridIdentityProvider identityProvider;
 
     @Autowired
-    public ClientConfigurationHelper(GridIdentityProvider idProvider) {
-        this.idProvider = idProvider;
+    public GridClientHelper(GridIdentityProvider identityProvider) {
+        this.identityProvider = identityProvider;
     }
 
-    public IClientConfiguration createUserConfiguration(AuthenticationSession authenticationSession) {
+    public IClientConfiguration createClientConfiguration(AuthenticationSession authenticationSession) {
         List<TrustDelegation> trustDelegations = authenticationSession.getTrustDelegations();
         TrustDelegation trustDelegation = trustDelegations.get(0);
         if (trustDelegations.size() > 1) {
@@ -31,8 +32,8 @@ public class ClientConfigurationHelper {
                     trustDelegation.getSubjectName(), trustDelegation.getIssuerName()));
         }
         DefaultClientConfiguration clientConfiguration = new DefaultClientConfiguration(
-                idProvider.getGridValidator(),
-                idProvider.getGridCredential()
+                identityProvider.getGridValidator(),
+                identityProvider.getGridCredential()
         );
         ETDClientSettings etdSettings = clientConfiguration.getETDSettings();
         etdSettings.setTrustDelegationTokens(Arrays.asList(trustDelegation));
@@ -41,5 +42,5 @@ public class ClientConfigurationHelper {
         return clientConfiguration;
     }
 
-    private Log log = LogFactory.getLog(ClientConfigurationHelper.class);
+    private Log log = LogFactory.getLog(GridClientHelper.class);
 }

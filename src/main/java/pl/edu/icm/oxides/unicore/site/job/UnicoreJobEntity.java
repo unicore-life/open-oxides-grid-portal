@@ -1,15 +1,15 @@
-package pl.edu.icm.oxides.unicore.site;
+package pl.edu.icm.oxides.unicore.site.job;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 
 import java.io.Serializable;
 
-public class UnicoreSiteEntity implements Serializable {
+public class UnicoreJobEntity implements Serializable {
     private final String uri;
 
-    public UnicoreSiteEntity(String uri) {
-        this.uri = uri;
+    public UnicoreJobEntity(EndpointReferenceType uri) {
+        this.uri = uri.getAddress().getStringValue();
     }
 
     public String getUri() {

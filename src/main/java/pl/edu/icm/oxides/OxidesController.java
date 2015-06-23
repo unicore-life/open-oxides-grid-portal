@@ -12,9 +12,10 @@ import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.authn.SamlRequestHandler;
 import pl.edu.icm.oxides.authn.SamlResponseHandler;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
-import pl.edu.icm.oxides.unicore.job.UnicoreJobEntity;
-import pl.edu.icm.oxides.unicore.site.UnicoreSiteEntity;
-import pl.edu.icm.oxides.unicore.storage.UnicoreStorageEntity;
+import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
+import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
+import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
+import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,7 +73,7 @@ public class OxidesController {
 
     @RequestMapping(value = "/unicore-storages")
     @ResponseBody
-    public List<UnicoreStorageEntity> listStorages(HttpSession session, HttpServletResponse response) {
+    public List<UnicoreSiteStorageEntity> listStorages(HttpSession session, HttpServletResponse response) {
         logSessionData("STORAGES", session, authenticationSession);
         return unicoreGridHandler.listUserStorages(authenticationSession, response);
     }
@@ -82,6 +83,13 @@ public class OxidesController {
     public List<UnicoreJobEntity> listJobs(HttpSession session, HttpServletResponse response) {
         logSessionData("JOBS", session, authenticationSession);
         return unicoreGridHandler.listUserJobs(authenticationSession, response);
+    }
+
+    @RequestMapping(value = "/unicore-resources")
+    @ResponseBody
+    public List<UnicoreResourceEntity> listResources(HttpSession session, HttpServletResponse response) {
+        logSessionData("RESOURCES", session, authenticationSession);
+        return unicoreGridHandler.listUserResources(authenticationSession, response);
     }
 
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
@@ -97,8 +105,8 @@ public class OxidesController {
     }
 
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
-        log.info(String.format("%s: %s", logPrefix, session.getId()));
-        log.info(String.format("%s: %s", logPrefix, authnSession));
+        log.info(String.format("%10s: %s", logPrefix, session.getId()));
+        log.info(String.format("%10s: %s", logPrefix, authnSession));
     }
 
     private Log log = LogFactory.getLog(OxidesController.class);

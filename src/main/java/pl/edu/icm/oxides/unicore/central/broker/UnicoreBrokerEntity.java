@@ -1,13 +1,15 @@
-package pl.edu.icm.oxides.unicore.storage;
+package pl.edu.icm.oxides.unicore.central.broker;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 
-public class UnicoreStorageEntity {
+import java.io.Serializable;
+
+public class UnicoreBrokerEntity implements Serializable {
     private final String uri;
 
-    public UnicoreStorageEntity(String uri) {
-        this.uri = uri;
+    public UnicoreBrokerEntity(EndpointReferenceType uri) {
+        this.uri = uri.getAddress().getStringValue();
     }
 
     public String getUri() {
