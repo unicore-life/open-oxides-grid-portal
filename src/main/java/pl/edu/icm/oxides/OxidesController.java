@@ -42,6 +42,11 @@ public class OxidesController {
         this.authenticationSession = authenticationSession;
     }
 
+    @RequestMapping(value = "welcome", method = RequestMethod.GET)
+    public String welcomePage() {
+        return "welcome";
+    }
+
     @RequestMapping(value = "/")
     public void mainView(HttpSession session, HttpServletResponse response) throws IOException {
         if (authenticationSession.getReturnUrl() == null) {
