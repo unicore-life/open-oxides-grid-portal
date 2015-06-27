@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import pl.edu.icm.oxides.authn.AuthenticationSession;
@@ -93,7 +94,11 @@ public class OxidesController {
     }
 
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
-    public void performAuthenticationRequest(HttpSession session, HttpServletResponse response) {
+    public void performAuthenticationRequest(HttpSession session, HttpServletResponse response,
+                                             @RequestParam(value = "returnUrl") String returnUrl) {
+        if (authenticationSession.getReturnUrl() == null && returnUrl != null) {
+            authenticationSession.setReturnUrl(returnUrl);
+        }
         logSessionData("SAML-G", session, authenticationSession);
         samlRequestHandler.performAuthenticationRequest(response, authenticationSession);
     }
