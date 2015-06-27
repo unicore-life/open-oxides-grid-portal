@@ -9,7 +9,7 @@
 
 
     <cache name="unicoreSessionSiteStorageList"
-           maxEntriesLocalHeap="10000"
+           maxEntriesLocalHeap="100"
            maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
@@ -20,7 +20,7 @@
     </cache>
 
     <cache name="unicoreSessionJobList"
-           maxEntriesLocalHeap="10000"
+           maxEntriesLocalHeap="100"
            maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
@@ -31,7 +31,7 @@
     </cache>
 
     <cache name="unicoreSessionResourceList"
-           maxEntriesLocalHeap="10000"
+           maxEntriesLocalHeap="100"
            maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
@@ -45,8 +45,8 @@
     <!-- UNICORE central services cache configuration -->
 
     <cache name="unicoreSessionSiteList"
-           maxEntriesLocalHeap="1000"
-           maxEntriesLocalDisk="100"
+           maxEntriesLocalHeap="100"
+           maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300" timeToLiveSeconds="300"
@@ -56,8 +56,8 @@
     </cache>
 
     <cache name="unicoreSessionBrokerList"
-           maxEntriesLocalHeap="1000"
-           maxEntriesLocalDisk="100"
+           maxEntriesLocalHeap="100"
+           maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300" timeToLiveSeconds="600"
@@ -67,8 +67,8 @@
     </cache>
 
     <cache name="unicoreSessionFactoryStorageList"
-           maxEntriesLocalHeap="1000"
-           maxEntriesLocalDisk="100"
+           maxEntriesLocalHeap="100"
+           maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300" timeToLiveSeconds="600"
@@ -78,8 +78,8 @@
     </cache>
 
     <cache name="unicoreSessionGlobalStorageList"
-           maxEntriesLocalHeap="1000"
-           maxEntriesLocalDisk="100"
+           maxEntriesLocalHeap="100"
+           maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300" timeToLiveSeconds="600"
