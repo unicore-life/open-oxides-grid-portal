@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.authn.SamlRequestHandler;
 import pl.edu.icm.oxides.authn.SamlResponseHandler;
@@ -31,20 +32,28 @@ public class OxidesController {
     private final SamlRequestHandler samlRequestHandler;
     private final SamlResponseHandler samlResponseHandler;
     private final UnicoreGridHandler unicoreGridHandler;
+    private final OxidesPagesHandler oxidesPagesHandler;
     private AuthenticationSession authenticationSession;
 
     @Autowired
     public OxidesController(SamlRequestHandler samlRequestHandler, SamlResponseHandler samlResponseHandler,
-                            UnicoreGridHandler unicoreGridHandler, AuthenticationSession authenticationSession) {
+                            UnicoreGridHandler unicoreGridHandler, OxidesPagesHandler oxidesPagesHandler,
+                            AuthenticationSession authenticationSession) {
         this.samlRequestHandler = samlRequestHandler;
         this.samlResponseHandler = samlResponseHandler;
         this.unicoreGridHandler = unicoreGridHandler;
+        this.oxidesPagesHandler = oxidesPagesHandler;
         this.authenticationSession = authenticationSession;
     }
 
     @RequestMapping(value = "welcome", method = RequestMethod.GET)
-    public String welcomePage() {
-        return "welcome";
+    public ModelAndView welcomePage() {
+        return oxidesPagesHandler.modelWelcomePage(authenticationSession);
+    }
+
+    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    public String signOut(HttpSession session) {
+        return oxidesPagesHandler.signOut(session);
     }
 
     @RequestMapping(value = "/")
