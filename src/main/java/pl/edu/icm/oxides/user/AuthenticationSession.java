@@ -13,22 +13,11 @@ import java.util.UUID;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 @Lazy
 public class AuthenticationSession {
-    private String name;
-    private String email;
-
-    private String idpUrl;
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
+    private UserAttributes attributes = new UserAttributes();
 
     private final String uuid = UUID.randomUUID().toString();
-
-    public String getIdpUrl() {
-        return idpUrl;
-    }
-
-    public void setIdpUrl(String idpUrl) {
-        this.idpUrl = idpUrl;
-    }
 
     public String getReturnUrl() {
         return returnUrl;
@@ -50,26 +39,21 @@ public class AuthenticationSession {
         return uuid;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public String toString() {
-        return String.format("AuthenticationSession{name=%s, email=%s, idpUrl='%s', returnUrl='%s', " +
-                        "trustDelegations=%s, uuid='%s'}",
-                name, email, idpUrl, returnUrl, trustDelegations, uuid);
+        return String.format("AuthenticationSession{returnUrl='%s', trustDelegations=%s, attributes=%s, uuid='%s'}",
+                returnUrl, trustDelegations, attributes, uuid);
+    }
+
+    public void storeAttribute(String key, String value) {
+        attributes.store(key, value);
+    }
+
+    public UserAttributes getAttributes() {
+        return attributes;
+    }
+
+    public String getCommonName() {
+        return attributes.getCommonName();
     }
 }

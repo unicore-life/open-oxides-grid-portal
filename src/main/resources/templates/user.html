@@ -1,0 +1,40 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="oxidesGridPortal">
+<head th:replace="include/header :: oxidesHeader"/>
+
+<body ng-controller="oxidesGridPortalController">
+<nav th:replace="include/navbar :: oxidesNavigationBar"/>
+
+<div class="container">
+    <div class="panel panel-default" th:if="${commonName}">
+        <div class="panel-heading">User name</div>
+        <div class="panel-body" th:text="${commonName}"/>
+    </div>
+
+    <div class="panel panel-default" th:if="${emailAddress}">
+        <div class="panel-heading">User e-mail address</div>
+        <div class="panel-body" th:text="${emailAddress}"/>
+    </div>
+
+
+    <div class="panel panel-default" th:if="${custodianDN}">
+        <div class="panel-heading">Grid distinguish name (DN)</div>
+        <div class="panel-body" th:text="${custodianDN}"/>
+    </div>
+
+    <div class="panel panel-default" th:unless="${#lists.isEmpty(memberGroups)}">
+        <div class="panel-heading">Groups member</div>
+        <ul class="list-group">
+            <li class="list-group-item" th:each="group : ${memberGroups}">
+                <span th:text="${group}"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- /.container -->
+
+<!-- ==================================================== -->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>

@@ -22,17 +22,17 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class SamlRequestHandler {
+class SamlRequestHandler {
     private final GridConfig gridConfig;
     private final GridIdentityProvider idProvider;
 
     @Autowired
-    public SamlRequestHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
+    SamlRequestHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
         this.gridConfig = gridConfig;
         this.idProvider = idProvider;
     }
 
-    public void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authnSession) {
+    void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authnSession) {
         String idpUrl = gridConfig.getIdpUrl();
         String targetUrl = gridConfig.getTargetUrl();
         try {

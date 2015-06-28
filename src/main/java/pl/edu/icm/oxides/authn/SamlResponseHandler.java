@@ -25,26 +25,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class SamlResponseHandler {
+class SamlResponseHandler {
     private final GridConfig gridConfig;
     private final GridIdentityProvider idProvider;
 
     @Autowired
-    public SamlResponseHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
+    SamlResponseHandler(GridConfig gridConfig, GridIdentityProvider idProvider) {
         this.gridConfig = gridConfig;
         this.idProvider = idProvider;
     }
 
-    public void processAuthenticationResponse(HttpServletRequest request,
-                                              HttpServletResponse response,
-                                              Optional<AuthenticationSession> authenticationSession) {
+    void processAuthenticationResponse(HttpServletRequest request,
+                                       HttpServletResponse response,
+                                       Optional<AuthenticationSession> authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
         String returnUrl = "/error";
         try {
@@ -70,9 +68,12 @@ public class SamlResponseHandler {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList())
         );
-        Map<String, List<String>> attributes = etdAssertionsWrapper.getAttributeData().getAttributes();
-        attributes.get("cn").stream().findFirst().ifPresent(authenticationSession::setName);
-        attributes.get("email").stream().findFirst().ifPresent(authenticationSession::setEmail);
+        etdAssertionsWrapper.getAttributeData().getAttributes().forEach(
+                (attributeKey, attributeValues) -> {
+                    attributeValues.stream()
+                            .forEach(value -> authenticationSession.storeAttribute(attributeKey, value));
+                }
+        );
     }
 
     private ResponseDocument decodeResponse(String response) throws SAMLValidationException {

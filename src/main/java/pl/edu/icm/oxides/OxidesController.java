@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.authn.SamlRequestHandler;
-import pl.edu.icm.oxides.authn.SamlResponseHandler;
+import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesUsersHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,20 +30,20 @@ import static java.util.Optional.ofNullable;
 @SessionAttributes("authenticationSession")
 @RequestMapping(value = "/oxides")
 public class OxidesController {
-    private final SamlRequestHandler samlRequestHandler;
-    private final SamlResponseHandler samlResponseHandler;
+    private final SamlAuthenticationHandler samlAuthenticationHandler;
     private final UnicoreGridHandler unicoreGridHandler;
     private final OxidesPagesHandler oxidesPagesHandler;
+    private final OxidesUsersHandler oxidesUsersHandler;
     private AuthenticationSession authenticationSession;
 
     @Autowired
-    public OxidesController(SamlRequestHandler samlRequestHandler, SamlResponseHandler samlResponseHandler,
+    public OxidesController(SamlAuthenticationHandler samlAuthenticationHandler,
                             UnicoreGridHandler unicoreGridHandler, OxidesPagesHandler oxidesPagesHandler,
-                            AuthenticationSession authenticationSession) {
-        this.samlRequestHandler = samlRequestHandler;
-        this.samlResponseHandler = samlResponseHandler;
+                            OxidesUsersHandler oxidesUsersHandler, AuthenticationSession authenticationSession) {
+        this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.unicoreGridHandler = unicoreGridHandler;
         this.oxidesPagesHandler = oxidesPagesHandler;
+        this.oxidesUsersHandler = oxidesUsersHandler;
         this.authenticationSession = authenticationSession;
     }
 
@@ -52,9 +52,14 @@ public class OxidesController {
         return oxidesPagesHandler.modelWelcomePage(ofNullable(authenticationSession));
     }
 
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public ModelAndView userPreferences() {
+        return oxidesUsersHandler.modelPreferencesPage(ofNullable(authenticationSession));
+    }
+
     @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String signOut(HttpSession session) {
-        return oxidesPagesHandler.signOut(session);
+        return oxidesUsersHandler.signOut(session);
     }
 
     @RequestMapping(value = "/unicore-sites")
@@ -92,13 +97,13 @@ public class OxidesController {
             authenticationSession.setReturnUrl(returnUrl);
         }
         logSessionData("SAML-G", session, authenticationSession);
-        samlRequestHandler.performAuthenticationRequest(response, authenticationSession);
+        samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
     }
 
     @RequestMapping(value = "/authn", method = RequestMethod.POST)
     public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
-        samlResponseHandler.processAuthenticationResponse(request, response, ofNullable(authenticationSession));
+        samlAuthenticationHandler.processAuthenticationResponse(request, response, authenticationSession);
     }
 
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
