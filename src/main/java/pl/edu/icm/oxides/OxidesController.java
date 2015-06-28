@@ -87,7 +87,7 @@ public class OxidesController {
 
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
     public void performAuthenticationRequest(HttpSession session, HttpServletResponse response,
-                                             @RequestParam(value = "returnUrl") String returnUrl) {
+                                             @RequestParam(value = "returnUrl", required = false) String returnUrl) {
         if (authenticationSession.getReturnUrl() == null && returnUrl != null) {
             authenticationSession.setReturnUrl(returnUrl);
         }
