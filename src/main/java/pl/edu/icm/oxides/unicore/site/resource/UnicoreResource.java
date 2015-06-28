@@ -10,9 +10,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.unigrids.x2006.x04.services.tss.TargetSystemPropertiesDocument.TargetSystemProperties;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.ArrayList;
 import java.util.List;

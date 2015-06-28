@@ -16,15 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridIdentityProvider;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
 import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,25 +44,18 @@ public class SamlResponseHandler {
 
     public void processAuthenticationResponse(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              AuthenticationSession authenticationSession) {
+                                              Optional<AuthenticationSession> authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
-        HttpSession session = request.getSession();
-
         String returnUrl = "/error";
         try {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
-            validateSamlResponse(responseDocument, authenticationSession.getUuid());
+            // TODO: when authentciationSession is null, getUuid is not a valid call
+            validateSamlResponse(responseDocument, authenticationSession.get().getUuid());
 
-            UserAssertionsWrapper userAssertionsWrapper = new UserAssertionsWrapper(responseDocument);
-
-            if (authenticationSession != null) {
-                authenticationSession.setTrustDelegations(
-                        userAssertionsWrapper.getEtdAssertions().stream()
-                                .map(assertionDocument -> toTrustDelegation(assertionDocument))
-                                .filter(trustDelegation -> trustDelegation != null)
-                                .collect(Collectors.toList())
-                );
-                returnUrl = authenticationSession.getReturnUrl();
+            EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
+            if (authenticationSession.isPresent()) {
+                storeAuthenticationResponseData(authenticationSession.get(), etdAssertionsWrapper);
+                returnUrl = authenticationSession.get().getReturnUrl();
             }
             response.sendRedirect(returnUrl);
         } catch (Exception e) {
@@ -66,14 +63,27 @@ public class SamlResponseHandler {
         }
     }
 
+    private void storeAuthenticationResponseData(AuthenticationSession authenticationSession, EtdAssertionsWrapper etdAssertionsWrapper) {
+        authenticationSession.setTrustDelegations(
+                etdAssertionsWrapper.getEtdAssertions().stream()
+                        .map(this::toTrustDelegation)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
+        Map<String, List<String>> attributes = etdAssertionsWrapper.getAttributeData().getAttributes();
+        attributes.get("cn").stream().findFirst().ifPresent(authenticationSession::setName);
+        attributes.get("email").stream().findFirst().ifPresent(authenticationSession::setEmail);
+    }
+
     private ResponseDocument decodeResponse(String response) throws SAMLValidationException {
         byte[] decoded = Base64.decode(response.getBytes());
         if (decoded == null) {
             throw new SAMLValidationException("The SAML response is not properly Base64 encoded");
         }
-        String respString = new String(decoded, StandardCharsets.UTF_8);
+        String responseString = new String(decoded, StandardCharsets.UTF_8);
+        log.trace(responseString);
         try {
-            return ResponseDocument.Factory.parse(respString);
+            return ResponseDocument.Factory.parse(responseString);
         } catch (XmlException e) {
             throw new SAMLValidationException(e.getMessage());
         }

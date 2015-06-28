@@ -17,14 +17,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserAssertionsWrapper {
-    private List<AssertionDocument> authnAssertions = new ArrayList<>();
-    private List<AssertionDocument> attributesAssertions = new ArrayList<>();
-    private List<AssertionDocument> etdAssertions = new ArrayList<>();
+class EtdAssertionsWrapper {
+    private final List<AssertionDocument> authnAssertions = new ArrayList<>();
+    private final List<AssertionDocument> attributesAssertions = new ArrayList<>();
+    private final List<AssertionDocument> etdAssertions = new ArrayList<>();
 
-    private UserAttributes attributes = new UserAttributes();
+    private final EtdAttributeData attributeData = EtdAttributeData.Builder.build();
 
-    public UserAssertionsWrapper(ResponseDocument responseDocument) throws IOException, XmlException {
+    EtdAssertionsWrapper(ResponseDocument responseDocument) throws IOException, XmlException {
         AssertionDocument[] assertionDocuments = SAMLUtils.getAssertions(responseDocument.getResponse());
         for (AssertionDocument document : assertionDocuments) {
             AssertionType assertion = document.getAssertion();
@@ -33,7 +33,7 @@ public class UserAssertionsWrapper {
                 authnAssertions.add(document);
             }
             if (assertion.sizeOfAttributeStatementArray() > 0) {
-                UserAttributes newAttributes = new UserAttributes();
+                EtdAttributeData newAttributes = EtdAttributeData.Builder.build();
                 for (AttributeStatementType statement : assertion.getAttributeStatementArray()) {
                     for (AttributeType attribute : statement.getAttributeArray()) {
                         String attributeName = attribute.getName();
@@ -49,25 +49,25 @@ public class UserAssertionsWrapper {
                 } else {
                     attributesAssertions.add(document);
                 }
-                attributes.merge(newAttributes);
+                attributeData.merge(newAttributes);
             }
         }
     }
 
-    public List<AssertionDocument> getAuthnAssertions() {
+    List<AssertionDocument> getAuthnAssertions() {
         return authnAssertions;
     }
 
-    public List<AssertionDocument> getAttributesAssertions() {
+    List<AssertionDocument> getAttributesAssertions() {
         return attributesAssertions;
     }
 
-    public List<AssertionDocument> getEtdAssertions() {
+    List<AssertionDocument> getEtdAssertions() {
         return etdAssertions;
     }
 
-    public UserAttributes getAttributes() {
-        return attributes;
+    EtdAttributeData getAttributeData() {
+        return attributeData;
     }
 
 

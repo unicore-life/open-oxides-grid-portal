@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.List;
 import java.util.stream.Collectors;

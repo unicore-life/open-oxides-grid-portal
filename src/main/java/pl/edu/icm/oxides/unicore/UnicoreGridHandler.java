@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
@@ -13,6 +12,7 @@ import pl.edu.icm.oxides.unicore.site.resource.UnicoreResource;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorage;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

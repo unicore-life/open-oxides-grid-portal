@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.authn.AuthenticationSession;
 import pl.edu.icm.oxides.authn.SamlRequestHandler;
 import pl.edu.icm.oxides.authn.SamlResponseHandler;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
@@ -18,12 +17,14 @@ import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 @Controller
 @SessionAttributes("authenticationSession")
@@ -46,37 +47,14 @@ public class OxidesController {
         this.authenticationSession = authenticationSession;
     }
 
-    @RequestMapping(value = "welcome", method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public ModelAndView welcomePage() {
-        return oxidesPagesHandler.modelWelcomePage(authenticationSession);
+        return oxidesPagesHandler.modelWelcomePage(ofNullable(authenticationSession));
     }
 
     @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String signOut(HttpSession session) {
         return oxidesPagesHandler.signOut(session);
-    }
-
-    @RequestMapping(value = "/")
-    public void mainView(HttpSession session, HttpServletResponse response) throws IOException {
-        if (authenticationSession.getReturnUrl() == null) {
-            authenticationSession.setReturnUrl("/oxides/final");
-        }
-        logSessionData("TEST-0", session, authenticationSession);
-        response.sendRedirect("/oxides/authn");
-    }
-
-    @RequestMapping(value = "/final")
-    @ResponseBody
-    public String finalPage(HttpSession session, HttpServletResponse response) throws IOException {
-        logSessionData("TEST-F", session, authenticationSession);
-        return authenticationSession.toString() + "<p><a href=\"/oxides/linked\">link</a></p>";
-    }
-
-    @RequestMapping(value = "/linked")
-    @ResponseBody
-    public String linkedPage(HttpSession session, HttpServletResponse response) throws IOException {
-        logSessionData("LINKED", session, authenticationSession);
-        return authenticationSession.toString();
     }
 
     @RequestMapping(value = "/unicore-sites")
@@ -120,7 +98,7 @@ public class OxidesController {
     @RequestMapping(value = "/authn", method = RequestMethod.POST)
     public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
-        samlResponseHandler.processAuthenticationResponse(request, response, authenticationSession);
+        samlResponseHandler.processAuthenticationResponse(request, response, ofNullable(authenticationSession));
     }
 
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {

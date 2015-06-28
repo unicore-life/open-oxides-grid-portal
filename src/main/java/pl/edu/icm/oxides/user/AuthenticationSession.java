@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.authn;
+package pl.edu.icm.oxides.user;
 
 import eu.unicore.security.etd.TrustDelegation;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +13,9 @@ import java.util.UUID;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 @Lazy
 public class AuthenticationSession {
+    private String name;
+    private String email;
+
     private String idpUrl;
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
@@ -47,9 +50,26 @@ public class AuthenticationSession {
         return uuid;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
-        return String.format("AuthenticationSession{idpUrl='%s', returnUrl='%s', trustDelegations=%s, uuid='%s'}",
-                idpUrl, returnUrl, trustDelegations, uuid);
+        return String.format("AuthenticationSession{name=%s, email=%s, idpUrl='%s', returnUrl='%s', " +
+                        "trustDelegations=%s, uuid='%s'}",
+                name, email, idpUrl, returnUrl, trustDelegations, uuid);
     }
 }

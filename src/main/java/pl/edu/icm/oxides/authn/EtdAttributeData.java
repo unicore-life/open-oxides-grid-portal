@@ -6,34 +6,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UserAttributes {
-    private Map<String, List<String>> attributes = new ConcurrentHashMap<>();
+final class EtdAttributeData {
+    private final Map<String, List<String>> attributes = new ConcurrentHashMap<>();
 
-    public void put(String name, String value) {
+    private EtdAttributeData() {
+    }
+
+    void put(String name, String value) {
         if (attributes.get(name) == null) {
             attributes.put(name, Collections.synchronizedList(new ArrayList()));
         }
         attributes.get(name).add(value);
     }
 
-    public void put(String name, List<String> values) {
+    void put(String name, List<String> values) {
         if (attributes.get(name) == null) {
             attributes.put(name, Collections.synchronizedList(new ArrayList()));
         }
         attributes.get(name).addAll(values);
     }
 
-    public Map<String, List<String>> getAttributes() {
+    Map<String, List<String>> getAttributes() {
         return attributes;
     }
 
-    public void merge(UserAttributes other) {
+    void merge(EtdAttributeData other) {
         for (Map.Entry<String, List<String>> entry : other.getAttributes().entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
 
-    public boolean containsKey(String name) {
+    boolean containsKey(String name) {
         return attributes.containsKey(name);
+    }
+
+    static class Builder {
+        static EtdAttributeData build() {
+            return new EtdAttributeData();
+        }
     }
 }

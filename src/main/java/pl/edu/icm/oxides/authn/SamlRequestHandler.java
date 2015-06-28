@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridIdentityProvider;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 import xmlbeans.org.oasis.saml2.protocol.AuthnRequestDocument;
 
 import javax.servlet.http.HttpServletResponse;

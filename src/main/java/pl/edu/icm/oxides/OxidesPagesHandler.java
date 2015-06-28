@@ -4,29 +4,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.authn.AuthenticationSession;
+import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Service
 public class OxidesPagesHandler {
-    public ModelAndView modelWelcomePage(AuthenticationSession authenticationSession) {
-        String userName = "";
-        if (authenticationSession != null
-                && authenticationSession.getTrustDelegations() != null
-                && authenticationSession.getTrustDelegations().size() > 0) {
-            userName = authenticationSession.getTrustDelegations().get(0).getCustodianDN();
-        }
-
+    public ModelAndView modelWelcomePage(Optional<AuthenticationSession> authenticationSession) {
         ModelAndView modelAndView = new ModelAndView("welcome");
-        modelAndView.addObject("userName", userName);
+        modelAndView.addObject("userName",
+                authenticationSession.map(AuthenticationSession::getName).orElse("")
+        );
         return modelAndView;
     }
 
     public String signOut(HttpSession session) {
         log.info(String.format("Invalidating session: %s", session.getId()));
         session.invalidate();
-        return "redirect:/oxides/welcome";
+        return "redirect:/oxides";
     }
 
     private Log log = LogFactory.getLog(OxidesPagesHandler.class);
