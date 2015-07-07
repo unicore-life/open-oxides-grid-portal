@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,18 +12,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
+import pl.edu.icm.oxides.simulation.OxidesSimulationsPage;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
-import pl.edu.icm.oxides.user.OxidesUsersHandler;
+import pl.edu.icm.oxides.user.OxidesUsersPage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
 
@@ -32,35 +35,59 @@ import static java.util.Optional.ofNullable;
 public class OxidesController {
     private final SamlAuthenticationHandler samlAuthenticationHandler;
     private final UnicoreGridHandler unicoreGridHandler;
-    private final OxidesPagesHandler oxidesPagesHandler;
-    private final OxidesUsersHandler oxidesUsersHandler;
+    private final OxidesWelcomePage oxidesWelcomePage;
+    private final OxidesSimulationsPage oxidesSimulationsPage;
+    private final OxidesUsersPage oxidesUsersPage;
     private AuthenticationSession authenticationSession;
 
     @Autowired
     public OxidesController(SamlAuthenticationHandler samlAuthenticationHandler,
-                            UnicoreGridHandler unicoreGridHandler, OxidesPagesHandler oxidesPagesHandler,
-                            OxidesUsersHandler oxidesUsersHandler, AuthenticationSession authenticationSession) {
+                            UnicoreGridHandler unicoreGridHandler,
+                            OxidesWelcomePage oxidesWelcomePage,
+                            OxidesSimulationsPage oxidesSimulationsPage,
+                            OxidesUsersPage oxidesUsersPage,
+                            AuthenticationSession authenticationSession) {
         this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.unicoreGridHandler = unicoreGridHandler;
-        this.oxidesPagesHandler = oxidesPagesHandler;
-        this.oxidesUsersHandler = oxidesUsersHandler;
+        this.oxidesWelcomePage = oxidesWelcomePage;
+        this.oxidesSimulationsPage = oxidesSimulationsPage;
+        this.oxidesUsersPage = oxidesUsersPage;
         this.authenticationSession = authenticationSession;
     }
 
     @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public ModelAndView welcomePage() {
-        return oxidesPagesHandler.modelWelcomePage(ofNullable(authenticationSession));
+        return oxidesWelcomePage.modelWelcomePage(ofNullable(authenticationSession));
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ModelAndView userPreferences() {
-        return oxidesUsersHandler.modelPreferencesPage(ofNullable(authenticationSession));
+    @RequestMapping(value = "/simulations", method = RequestMethod.GET)
+    public ModelAndView simulationsPage() {
+        return oxidesSimulationsPage.modelSimulationsPage(authenticationSession);
     }
 
-    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/simulations/{uuid}", method = RequestMethod.GET)
+    public ModelAndView oneSimulationPage(@PathVariable("uuid") UUID simulationUuid) {
+        return oxidesSimulationsPage.modelOneSimulationPage(authenticationSession, simulationUuid);
+    }
+
+    @RequestMapping(value = "/simulations/submit", method = RequestMethod.GET)
+    public ModelAndView submitSimulationPage() {
+        return oxidesSimulationsPage.modelSubmitSimulationPage(authenticationSession);
+    }
+
+    @RequestMapping(value = "/preferences", method = RequestMethod.GET)
+    public ModelAndView preferencesPage() {
+        return oxidesUsersPage.modelPreferencesPage(ofNullable(authenticationSession));
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String signOut(HttpSession session) {
-        return oxidesUsersHandler.signOut(session);
+        return oxidesUsersPage.signOutAndRedirect(session);
     }
+
+    /*
+    ==========================================================================================================
+     */
 
     @RequestMapping(value = "/unicore-sites")
     @ResponseBody
@@ -89,6 +116,10 @@ public class OxidesController {
         logSessionData("RESOURCES", session, authenticationSession);
         return unicoreGridHandler.listUserResources(authenticationSession, response);
     }
+
+    /*
+    ==========================================================================================================
+     */
 
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
     public void performAuthenticationRequest(HttpSession session, HttpServletResponse response,

@@ -19,13 +19,23 @@
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="oxides-navbar-collapse-panel">
+        <div class="collapse navbar-collapse" nodeId="oxides-navbar-collapse-panel">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/oxides">Home <span class="sr-only">(current)</span></a></li>
-                <li><a href="/oxides/unicore-sites">Sites</a></li>
-                <li><a href="/oxides/unicore-storages">Storages</a></li>
-                <li><a href="/oxides/unicore-jobs">Jobs</a></li>
-                <li><a href="/oxides/unicore-resources">Resources</a></li>
+                <li><a href="/oxides/simulations">Simulations</a></li>
+                <li><a href="/oxides/simulations/submit">Submit</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">Testing <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/oxides/unicore-sites">Sites</a></li>
+                        <li><a href="/oxides/unicore-storages">Storages</a></li>
+                        <li><a href="/oxides/unicore-jobs">Jobs</a></li>
+                        <li><a href="/oxides/unicore-resources">Resources</a></li>
+                    </ul>
+                </li>
             </ul>
 
             <span th:switch="${commonName}">
@@ -41,7 +51,7 @@
                             <span th:text="${commonName}"></span> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/oxides/user">Details</a></li>
+                            <li><a href="/oxides/preferences">Details</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/oxides/logout">Sign out</a></li>
                         </ul>

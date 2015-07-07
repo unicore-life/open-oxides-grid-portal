@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OxidesUsersHandler {
+public class OxidesUsersPage {
     public ModelAndView modelPreferencesPage(Optional<AuthenticationSession> authenticationSession) {
-        ModelAndView modelAndView = new ModelAndView("user");
+        ModelAndView modelAndView = new ModelAndView("preferences");
         modelAndView.addObject("commonName",
                 authenticationSession
                         .map(AuthenticationSession::getAttributes)
@@ -42,11 +42,11 @@ public class OxidesUsersHandler {
         return modelAndView;
     }
 
-    public String signOut(HttpSession session) {
+    public String signOutAndRedirect(HttpSession session) {
         log.info(String.format("Invalidating session: %s", session.getId()));
         session.invalidate();
         return "redirect:/oxides";
     }
 
-    private Log log = LogFactory.getLog(OxidesUsersHandler.class);
+    private Log log = LogFactory.getLog(OxidesUsersPage.class);
 }
