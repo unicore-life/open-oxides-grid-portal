@@ -1,4 +1,5 @@
 var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
+    'feeds',
     'ngRoute',
     'ui.bootstrap'
 ]);
