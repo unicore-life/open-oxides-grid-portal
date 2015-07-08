@@ -62,5 +62,5 @@ targetCompatibility = JavaVersion.VERSION_1_8
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.5'
 }
