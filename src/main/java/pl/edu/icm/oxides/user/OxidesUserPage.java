@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OxidesUsersPage {
+public class OxidesUserPage {
     public ModelAndView modelPreferencesPage(Optional<AuthenticationSession> authenticationSession) {
         ModelAndView modelAndView = new ModelAndView("preferences");
         modelAndView.addObject("commonName",
@@ -48,5 +48,5 @@ public class OxidesUsersPage {
         return "redirect:/oxides";
     }
 
-    private Log log = LogFactory.getLog(OxidesUsersPage.class);
+    private Log log = LogFactory.getLog(OxidesUserPage.class);
 }

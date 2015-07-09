@@ -16,17 +16,17 @@ import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 @Component
-public class UnicoreGridHandler {
+public class UnicoreGridResources {
     private final UnicoreSite siteHandler;
     private final UnicoreSiteStorage storageHandler;
     private final UnicoreJob jobHandler;
     private final UnicoreResource resourceHandler;
 
     @Autowired
-    public UnicoreGridHandler(UnicoreSite siteHandler,
-                              UnicoreSiteStorage storageHandler,
-                              UnicoreJob jobHandler,
-                              UnicoreResource resourceHandler) {
+    public UnicoreGridResources(UnicoreSite siteHandler,
+                                UnicoreSiteStorage storageHandler,
+                                UnicoreJob jobHandler,
+                                UnicoreResource resourceHandler) {
         this.siteHandler = siteHandler;
         this.storageHandler = storageHandler;
         this.jobHandler = jobHandler;

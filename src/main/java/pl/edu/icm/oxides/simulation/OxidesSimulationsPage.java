@@ -16,7 +16,7 @@ public class OxidesSimulationsPage {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
         }
         authenticationSession.setReturnUrl("/oxides/simulations/submit");
-        return new ModelAndView("redirect:/oxides/authn");
+        return redirectToAuthentication();
     }
 
     public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID simulationUuid) {
@@ -26,7 +26,7 @@ public class OxidesSimulationsPage {
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
-        return new ModelAndView("redirect:/oxides/authn");
+        return redirectToAuthentication();
     }
 
     public ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
@@ -34,7 +34,7 @@ public class OxidesSimulationsPage {
             return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));
         }
         authenticationSession.setReturnUrl("/oxides/simulations/submit");
-        return new ModelAndView("redirect:/oxides/authn");
+        return redirectToAuthentication();
     }
 
     private ModelAndView prepareBasicModelAndView(String htmlTemplateName,
@@ -52,5 +52,9 @@ public class OxidesSimulationsPage {
         return authenticationSession != null
                 && authenticationSession.getTrustDelegations() != null
                 && authenticationSession.getTrustDelegations().size() > 0;
+    }
+
+    private ModelAndView redirectToAuthentication() {
+        return new ModelAndView("redirect:/oxides/authn");
     }
 }
