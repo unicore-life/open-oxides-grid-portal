@@ -1,22 +1,19 @@
 package pl.edu.icm.oxides.unicore;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
-import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
-import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResource;
-import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorage;
-import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.status;
 
 @Component
 public class UnicoreGridHandler {
@@ -36,40 +33,32 @@ public class UnicoreGridHandler {
         this.resourceHandler = resourceHandler;
     }
 
-    public List<UnicoreSiteEntity> listUserSites(AuthenticationSession authenticationSession,
-                                                 HttpServletResponse response) {
+    public ResponseEntity<List> listUserSites(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return siteHandler.retrieveServiceList(authenticationSession);
+            return ok(siteHandler.retrieveServiceList(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/unicore-sites");
-        return redirectToAuthentication(response);
+        return unauthorizedResponse();
     }
 
-    public List<UnicoreSiteStorageEntity> listUserStorages(AuthenticationSession authenticationSession,
-                                                           HttpServletResponse response) {
+    public ResponseEntity<List> listUserStorages(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return storageHandler.retrieveSiteResourceList(authenticationSession);
+            return ok(storageHandler.retrieveSiteResourceList(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/unicore-storages");
-        return redirectToAuthentication(response);
+        return unauthorizedResponse();
     }
 
-    public List<UnicoreJobEntity> listUserJobs(AuthenticationSession authenticationSession,
-                                               HttpServletResponse response) {
+    public ResponseEntity<List> listUserJobs(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return jobHandler.retrieveSiteResourceList(authenticationSession);
+            return ok(jobHandler.retrieveSiteResourceList(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/unicore-jobs");
-        return redirectToAuthentication(response);
+        return unauthorizedResponse();
     }
 
-    public List<UnicoreResourceEntity> listUserResources(AuthenticationSession authenticationSession,
-                                                         HttpServletResponse response) {
+    public ResponseEntity<List> listUserResources(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return resourceHandler.retrieveSiteResourceList(authenticationSession);
+            return ok(resourceHandler.retrieveSiteResourceList(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/unicore-resources");
-        return redirectToAuthentication(response);
+        return unauthorizedResponse();
     }
 
     private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
@@ -78,14 +67,7 @@ public class UnicoreGridHandler {
                 && authenticationSession.getTrustDelegations().size() > 0;
     }
 
-    private List redirectToAuthentication(HttpServletResponse response) {
-        try {
-            response.sendRedirect("/oxides/authn");
-        } catch (IOException e) {
-            log.error("Problem with redirection!", e);
-        }
-        return null;
+    private ResponseEntity<List> unauthorizedResponse() {
+        return status(UNAUTHORIZED).body(null);
     }
-
-    private Log log = LogFactory.getLog(UnicoreGridHandler.class);
 }

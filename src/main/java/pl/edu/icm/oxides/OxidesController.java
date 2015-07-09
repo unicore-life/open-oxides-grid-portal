@@ -3,6 +3,8 @@ package pl.edu.icm.oxides;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.simulation.OxidesSimulationsPage;
 import pl.edu.icm.oxides.unicore.UnicoreGridHandler;
-import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
-import pl.edu.icm.oxides.unicore.site.job.UnicoreJobEntity;
-import pl.edu.icm.oxides.unicore.site.resource.UnicoreResourceEntity;
-import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorageEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.OxidesUsersPage;
 
@@ -89,32 +87,32 @@ public class OxidesController {
     ==========================================================================================================
      */
 
-    @RequestMapping(value = "/unicore-sites")
+    @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<UnicoreSiteEntity> listSites(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<List> listSites(HttpSession session) {
         logSessionData("SITES", session, authenticationSession);
-        return unicoreGridHandler.listUserSites(authenticationSession, response);
+        return unicoreGridHandler.listUserSites(authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore-storages")
+    @RequestMapping(value = "/unicore-storages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<UnicoreSiteStorageEntity> listStorages(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<List> listStorages(HttpSession session) {
         logSessionData("STORAGES", session, authenticationSession);
-        return unicoreGridHandler.listUserStorages(authenticationSession, response);
+        return unicoreGridHandler.listUserStorages(authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore-jobs")
+    @RequestMapping(value = "/unicore-jobs", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<UnicoreJobEntity> listJobs(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<List> listJobs(HttpSession session) {
         logSessionData("JOBS", session, authenticationSession);
-        return unicoreGridHandler.listUserJobs(authenticationSession, response);
+        return unicoreGridHandler.listUserJobs(authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore-resources")
+    @RequestMapping(value = "/unicore-resources", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<UnicoreResourceEntity> listResources(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<List> listResources(HttpSession session) {
         logSessionData("RESOURCES", session, authenticationSession);
-        return unicoreGridHandler.listUserResources(authenticationSession, response);
+        return unicoreGridHandler.listUserResources(authenticationSession);
     }
 
     /*
