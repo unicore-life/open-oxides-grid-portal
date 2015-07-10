@@ -15,7 +15,7 @@ public class OxidesSimulationsPage {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/simulations/submit");
+        authenticationSession.setReturnUrl("/oxides/simulations/main");
         return redirectToAuthentication();
     }
 

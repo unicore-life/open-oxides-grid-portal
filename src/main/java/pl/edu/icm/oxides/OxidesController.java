@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
+import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
@@ -77,6 +79,14 @@ public class OxidesController {
     /*
     ==========================================================================================================
      */
+
+    @RequestMapping(value = "/unicore/submit", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Void> submitSimulation(@RequestBody OxidesSimulation simulation) {
+        log.info("Submitted UNICORE Job: " + simulation);
+        return unicoreGridResources.submitSimulation(simulation, authenticationSession);
+    }
 
     @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

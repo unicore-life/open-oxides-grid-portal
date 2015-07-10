@@ -3,6 +3,8 @@ package pl.edu.icm.oxides.unicore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
+import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
 import pl.edu.icm.oxides.unicore.site.resource.UnicoreResource;
@@ -21,16 +23,19 @@ public class UnicoreGridResources {
     private final UnicoreSiteStorage storageHandler;
     private final UnicoreJob jobHandler;
     private final UnicoreResource resourceHandler;
+    private final UnicoreBroker unicoreBroker;
 
     @Autowired
     public UnicoreGridResources(UnicoreSite siteHandler,
                                 UnicoreSiteStorage storageHandler,
                                 UnicoreJob jobHandler,
-                                UnicoreResource resourceHandler) {
+                                UnicoreResource resourceHandler,
+                                UnicoreBroker unicoreBroker) {
         this.siteHandler = siteHandler;
         this.storageHandler = storageHandler;
         this.jobHandler = jobHandler;
         this.resourceHandler = resourceHandler;
+        this.unicoreBroker = unicoreBroker;
     }
 
     public ResponseEntity<List> listUserSites(AuthenticationSession authenticationSession) {
@@ -61,13 +66,21 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
+    public ResponseEntity<Void> submitSimulation(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
+            return ok(null);
+        }
+        return unauthorizedResponse();
+    }
+
     private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
         return authenticationSession != null
                 && authenticationSession.getTrustDelegations() != null
                 && authenticationSession.getTrustDelegations().size() > 0;
     }
 
-    private ResponseEntity<List> unauthorizedResponse() {
+    private <T> ResponseEntity<T> unauthorizedResponse() {
         return status(UNAUTHORIZED).body(null);
     }
 }
