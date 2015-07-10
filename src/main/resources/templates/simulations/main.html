@@ -8,9 +8,28 @@
 <!-- Wrap all page content here -->
 <div id="wrap">
     <!-- Begin page content -->
-    <div class="container">
+    <div class="container" ng-controller="oxidesSimulationsListingController">
 
         <h1>SIMULATIONS</h1>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Simulations</div>
+
+            <!-- Table -->
+            <table class="table">
+                <theader>
+                    <tr>
+                        <td>URI</td>
+                    </tr>
+                </theader>
+                <tbody>
+                <tr ng-repeat="simulation in simulations">
+                    <td>{{ simulation.uri }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <!-- /.container -->
 </div>
