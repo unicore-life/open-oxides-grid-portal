@@ -88,6 +88,40 @@
 </nav>
 
 <div class="container">
+
+    <p>
+
+    <form name="detailsForm" novalidate ng-controller="oxidesSubmitSimulationController">
+
+        <label class="control-label" for="inputTitle">*Title</label>
+        <input type="text" id="inputTitle" name="inputTitle" placeholder="Title"
+               ng-model="title" ng-required="true" ng-minlength="3" ng-pattern="/^[A-z]+$/"
+               class="ng-pristine ng-valid-minlength ng-valid-pattern ng-invalid ng-invalid-required"/>
+
+        <div class="alert alert-error" ng-show="detailsForm.inputTitle.$dirty && detailsForm.inputTitle.$invalid">
+            <small ng-if="detailsForm.inputReporter.$error.required">Required!</small>
+            <small ng-if="detailsForm.inputReporter.$error.minlength">Too short!</small>
+            <small ng-if="detailsForm.inputReporter.$error.pattern">Letters only please!</small>
+        </div>
+
+        <div ng-if="currentStory">
+            <button class="btn" ng-click="updateCancel()">Cancel</button>
+            <button class="btn btn-inverse pull-right"
+                    ng-disabled="!detailsForm.$valid"
+                    ng-click="updateStory()">Update
+            </button>
+        </div>
+        <div ng-if="!currentStory">
+            <button class="btn btn-inverse pull-right"
+                    ng-disabled="!detailsForm.$valid"
+                    ng-click="createStory()">New Story
+            </button>
+        </div>
+    </form>
+    </p>
+
+    <hr/>
+
     <div>
         <label>Name:</label>
         <input type="text" ng-model="yourName" placeholder="Enter a name here"/>

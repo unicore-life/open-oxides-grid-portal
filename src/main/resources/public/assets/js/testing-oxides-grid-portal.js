@@ -33,7 +33,8 @@ oxidesGridPortalApp.controller('oxidesGridPortalController', function ($scope, d
             angular.copy(data, $scope.myData);
         })
         .error(function(data, status, headers, config) {
-            alert('Failed: HTTP Status Code = ' + status);
+//            alert('Failed: HTTP Status Code = ' + status);
+            console.log('Failed: HTTP Status Code = ' + status);
         });
 });
 
@@ -47,3 +48,14 @@ oxidesGridPortalApp.factory('dataService', ['$http', function ($http) {
 }]);
 
 //oxidesGridPortalApp.value('modelService', []);
+
+
+oxidesGridPortalApp.controller('oxidesSubmitSimulationController', function ($scope) {
+    $scope.title = null;
+
+    $scope.resetForm = function () {
+        $scope.title = 'x';
+
+        $scope.detailsForm.$setPristine();
+    };
+});
