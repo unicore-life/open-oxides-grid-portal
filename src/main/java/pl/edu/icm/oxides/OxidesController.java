@@ -23,6 +23,7 @@ import pl.edu.icm.oxides.user.AuthenticationSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,7 +84,7 @@ public class OxidesController {
     @RequestMapping(value = "/unicore/submit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Void> submitSimulation(@RequestBody OxidesSimulation simulation) {
+    public ResponseEntity<Void> submitSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
         return unicoreGridResources.submitSimulation(simulation, authenticationSession);
     }

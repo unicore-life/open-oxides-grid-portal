@@ -46,3 +46,22 @@ oxidesGridPortalApp.factory('oxidesSimulationsListingService',
 
 oxidesGridPortalApp.value('modelSimulationsListing', []);
 
+
+oxidesGridPortalApp.controller('oxidesSubmitSimulationController', function ($scope) {
+    $scope.simulationFormFields = [
+        {'id': 'simulationName',    'label': 'Name',        'placeholder': 'Simulation Name'},
+        {'id': 'simulationProject', 'label': 'Project',     'placeholder': 'Grant ID'},
+        {'id': 'simulationQueue',   'label': 'Queue',       'placeholder': 'Queue'},
+        {'id': 'simulationMemory',  'label': 'Memory',      'placeholder': 'Memory [MB]'},
+        {'id': 'simulationNodes',   'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
+        {'id': 'simulationCPUs',    'label': 'CPUs / Node', 'placeholder': 'CPUs per node'}
+    ];
+
+    $scope.resetForm = function () {
+        $scope.simulationSubmitForm.$setPristine();
+    };
+
+    $scope.submitForm = function () {
+        console.log($scope.simulationSubmitForm);
+    }
+});
