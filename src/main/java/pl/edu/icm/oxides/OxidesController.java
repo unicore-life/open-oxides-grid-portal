@@ -131,9 +131,9 @@ public class OxidesController {
     }
 
     @RequestMapping(value = "/authn", method = RequestMethod.POST)
-    public void processAuthenticationResponse(HttpServletRequest request, HttpServletResponse response) {
+    public String processAuthenticationResponse(HttpServletRequest request) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
-        samlAuthenticationHandler.processAuthenticationResponse(request, response, authenticationSession);
+        return samlAuthenticationHandler.processAuthenticationResponse(request, authenticationSession);
     }
 
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {

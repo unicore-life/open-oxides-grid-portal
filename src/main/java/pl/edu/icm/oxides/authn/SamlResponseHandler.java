@@ -21,12 +21,10 @@ import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
 import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,28 +38,27 @@ class SamlResponseHandler {
         this.idProvider = idProvider;
     }
 
-    void processAuthenticationResponse(HttpServletRequest request,
-                                       HttpServletResponse response,
-                                       Optional<AuthenticationSession> authenticationSession) {
+    String processAuthenticationResponse(HttpServletRequest request, AuthenticationSession authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
         String returnUrl = "/error";
         try {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
-            // TODO: when authentciationSession is null, getUuid is not a valid call
-            validateSamlResponse(responseDocument, authenticationSession.get().getUuid());
+            // TODO: when authenticationSession is null, getUuid is not a valid call
+            validateSamlResponse(responseDocument, authenticationSession.getUuid());
 
             EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
-            if (authenticationSession.isPresent()) {
-                storeAuthenticationResponseData(authenticationSession.get(), etdAssertionsWrapper);
-                returnUrl = authenticationSession.get().getReturnUrl();
+            if (authenticationSession != null) {
+                processAuthenticationResponseData(authenticationSession, etdAssertionsWrapper);
+                returnUrl = authenticationSession.getReturnUrl();
             }
-            response.sendRedirect(returnUrl);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Could not parse authentication response properly!", e);
         }
+        return String.format("redirect:%s", returnUrl);
     }
 
-    private void storeAuthenticationResponseData(AuthenticationSession authenticationSession, EtdAssertionsWrapper etdAssertionsWrapper) {
+    private void processAuthenticationResponseData(AuthenticationSession authenticationSession,
+                                                   EtdAssertionsWrapper etdAssertionsWrapper) {
         authenticationSession.setTrustDelegations(
                 etdAssertionsWrapper.getEtdAssertions().stream()
                         .map(this::toTrustDelegation)

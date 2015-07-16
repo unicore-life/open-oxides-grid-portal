@@ -32,12 +32,12 @@ class SamlRequestHandler {
         this.idProvider = idProvider;
     }
 
-    void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authnSession) {
+    void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authenticationSession) {
         String idpUrl = gridConfig.getIdpUrl();
         String targetUrl = gridConfig.getTargetUrl();
         try {
             AuthnRequest authnRequest = createRequest(idpUrl, targetUrl,
-                    idProvider.getGridCredential(), authnSession.getUuid());
+                    idProvider.getGridCredential(), authenticationSession.getUuid());
             AuthnRequestDocument authnRequestDocument = AuthnRequestDocument.Factory.parse(
                     authnRequest.getXMLBeanDoc().xmlText());
 
