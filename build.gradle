@@ -46,6 +46,10 @@ dependencies {
             'org.apache.httpcomponents:httpclient'
 }
 
+configurations {
+    all*.exclude module: 'javax.servlet'
+}
+
 repositories {
     mavenCentral()
     maven { url 'http://unicore-dev.zam.kfa-juelich.de/maven' }
@@ -62,5 +66,5 @@ targetCompatibility = JavaVersion.VERSION_1_8
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.5'
 }
