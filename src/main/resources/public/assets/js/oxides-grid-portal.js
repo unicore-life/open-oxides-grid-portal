@@ -18,8 +18,9 @@ oxidesGridPortalApp.controller('oxidesGridPortalController', function ($scope) {
   $scope.yourName = null;
 });
 
+
 oxidesGridPortalApp.controller('oxidesSimulationsListingController',
-    function ($scope, oxidesSimulationsListingService, modelSimulationsListing) {
+    function ($scope, $location, oxidesSimulationsListingService, modelSimulationsListing) {
         $scope.simulations = modelSimulationsListing;
 
         oxidesSimulationsListingService.getJson()
@@ -32,19 +33,53 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
     }
 );
 
-
 oxidesGridPortalApp.factory('oxidesSimulationsListingService',
     ['$http', function ($http) {
         return {
             getJson: function () {
-                return $http.get('/oxides/unicore-jobs');
+                return $http.get('/oxides/unicore/jobs', {
+                    headers: { 'Content-Type': 'application/json'},
+                    data: ''
+                });
             }
         };
     }]
 );
 
-
 oxidesGridPortalApp.value('modelSimulationsListing', []);
+
+
+oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
+    function ($scope, $location, oxidesSimulationFilesListingService) {
+        $scope.simulationFiles = [];
+
+        oxidesSimulationFilesListingService.getSimulationFilesList($location.absUrl())
+            .success(function(data, status, headers, config) {
+                angular.copy(data, $scope.simulationFiles);
+            })
+            .error(function(data, status, headers, config) {
+                alert('Failed: HTTP Status Code = ' + status);
+            });
+    }
+);
+
+oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
+    ['$http', function ($http) {
+        return {
+            getSimulationFilesList: function (absoluteUrl) {
+                var request = {
+                    method: 'GET',
+                    url: '/oxides/unicore/jobs/' + absoluteUrl.substr(-36) + '/files',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: ''
+                }
+                return $http(request);
+            }
+        };
+    }]
+);
 
 
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController', function ($scope) {

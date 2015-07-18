@@ -34,15 +34,15 @@
 
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
+                    <button type="reset" class="btn btn-default"
+                            ng-click="resetForm()">
+                        Reset
+                    </button>
+
                     <button type="submit" class="btn btn-primary"
                             ng-disabled="!simulationSubmitForm.$valid"
                             ng-click="submitForm()">
                         Submit Simulation
-                    </button>
-
-                    <button type="reset" class="btn btn-default"
-                            ng-click="resetForm()">
-                        Reset
                     </button>
                 </div>
             </div>

@@ -16,6 +16,11 @@ public class UnicoreJobEntity implements Serializable {
         return uri;
     }
 
+    public String getUuid() {
+        // FIXME: remove it - redundant with uri
+        return uri.substring(uri.length() - 36);
+    }
+
     @JsonIgnore
     public EndpointReferenceType getEpr() {
         EndpointReferenceType epr = EndpointReferenceType.Factory.newInstance();

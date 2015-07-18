@@ -1,21 +1,28 @@
 package pl.edu.icm.oxides.unicore.site.job;
 
+import de.fzj.unicore.uas.client.JobClient;
+import de.fzj.unicore.uas.client.StorageClient;
 import de.fzj.unicore.uas.client.TSFClient;
 import de.fzj.unicore.uas.client.TSSClient;
+import de.fzj.unicore.wsrflite.xmlbeans.BaseFault;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.unigrids.services.atomic.types.GridFileType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,8 +51,47 @@ public class UnicoreJob {
                 .collect(Collectors.toList());
     }
 
-    public List<EndpointReferenceType> toAccessibleTargetSystems(UnicoreSiteEntity unicoreSiteEntity,
-                                                                 IClientConfiguration clientConfiguration) {
+    public List<String> listJobFiles(UUID simulationUuid, Optional<String> path, AuthenticationSession authenticationSession) {
+        // FIXME: testing and temporary implementation
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+        Optional<StorageClient> storageClient = retrieveSiteResourceList(authenticationSession)
+                .stream()
+                .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(simulationUuid.toString()))
+                .map(unicoreJobEntity -> {
+                    try {
+                        return new JobClient(unicoreJobEntity.getEpr(), clientConfiguration);
+                    } catch (Exception e) {
+                        log.warn("ERROR creating TSSClient", e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .map(jobClient -> {
+                    try {
+                        return jobClient.getUspaceClient();
+                    } catch (Exception e) {
+                        log.warn("Error getting UspaceClient", e);
+                    }
+                    return null;
+                })
+                .findAny();
+
+        List<String> listing = new ArrayList<>();
+        storageClient.ifPresent(client -> {
+            try {
+                GridFileType[] gridFileTypes = client.listDirectory(path.orElse("/"));
+                for (GridFileType gridFileType : gridFileTypes) {
+                    listing.add(gridFileType.getPath());
+                }
+            } catch (BaseFault baseFault) {
+                baseFault.printStackTrace();
+            }
+        });
+        return listing;
+    }
+
+    private List<EndpointReferenceType> toAccessibleTargetSystems(UnicoreSiteEntity unicoreSiteEntity,
+                                                                  IClientConfiguration clientConfiguration) {
         try {
             return new TSFClient(unicoreSiteEntity.getEpr(), clientConfiguration)
                     .getAccessibleTargetSystems();

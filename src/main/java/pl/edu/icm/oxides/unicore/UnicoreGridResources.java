@@ -12,7 +12,9 @@ import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorage;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.List;
+import java.util.UUID;
 
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
@@ -70,6 +72,13 @@ public class UnicoreGridResources {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
             return ok(null);
+        }
+        return unauthorizedResponse();
+    }
+
+    public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            return ok(jobHandler.listJobFiles(simulationUuid, ofNullable(path), authenticationSession));
         }
         return unauthorizedResponse();
     }

@@ -8,9 +8,28 @@
 <!-- Wrap all page content here -->
 <div id="wrap">
     <!-- Begin page content -->
-    <div class="container">
+    <div class="container" ng-controller="oxidesSimulationFilesListingController">
 
-        <h1>ONE SIMULATION (<span th:text="${uuid}"></span>)</h1>
+        <h1>Simulation: <span th:text="${uuid}"></span></h1>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Files</div>
+
+            <!-- Table -->
+            <table class="table">
+                <theader>
+                    <tr>
+                        <td>Path</td>
+                    </tr>
+                </theader>
+                <tbody>
+                <tr ng-repeat="simulationFile in simulationFiles">
+                    <td>{{ simulationFile }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <!-- /.container -->
 </div>

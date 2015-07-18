@@ -77,7 +77,7 @@ public class OxidesController {
         return oxidesGridPortalPages.signOutAndRedirect(session);
     }
 
-    /*
+    /* PLANNED JSON ENDPOINTS:
     ==========================================================================================================
      */
 
@@ -89,12 +89,36 @@ public class OxidesController {
         return unicoreGridResources.submitSimulation(simulation, authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List> listSites(HttpSession session) {
-        logSessionData("SITES", session, authenticationSession);
-        return unicoreGridResources.listUserSites(authenticationSession);
+    public String uploadFileToGrid(HttpSession session) {
+        logSessionData("UNICORE-UPLOAD", session, authenticationSession);
+        return "TODO";
     }
+
+    @RequestMapping(value = "/unicore/jobs", method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List> retrieveUnicoreJobs(HttpSession session) {
+        logSessionData("UNICORE-JOBS", session, authenticationSession);
+        return unicoreGridResources.listUserJobs(authenticationSession);
+    }
+
+
+    @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List> listSimulationFiles(@PathVariable(value = "uuid") UUID simulationUuid,
+                                                    @RequestParam(value = "path", required = false) String path,
+                                                    HttpSession session) {
+        logSessionData("UNICORE-JOB-FILES", session, authenticationSession);
+        return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
+    }
+
+    /* TO BE DECIDED:
+    ==========================================================================================================
+     */
 
     @RequestMapping(value = "/unicore-storages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -103,11 +127,15 @@ public class OxidesController {
         return unicoreGridResources.listUserStorages(authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore-jobs", produces = MediaType.APPLICATION_JSON_VALUE)
+    /* TO BE REMOVED:
+    ==========================================================================================================
+     */
+
+    @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List> listJobs(HttpSession session) {
-        logSessionData("JOBS", session, authenticationSession);
-        return unicoreGridResources.listUserJobs(authenticationSession);
+    public ResponseEntity<List> listSites(HttpSession session) {
+        logSessionData("SITES", session, authenticationSession);
+        return unicoreGridResources.listUserSites(authenticationSession);
     }
 
     @RequestMapping(value = "/unicore-resources", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -117,7 +145,7 @@ public class OxidesController {
         return unicoreGridResources.listUserResources(authenticationSession);
     }
 
-    /*
+    /* AUTHENTICATION ENDPOINTS:
     ==========================================================================================================
      */
 

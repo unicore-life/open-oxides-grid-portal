@@ -21,11 +21,13 @@
                 <theader>
                     <tr>
                         <td>URI</td>
+                        <td>Link</td>
                     </tr>
                 </theader>
                 <tbody>
                 <tr ng-repeat="simulation in simulations">
                     <td>{{ simulation.uri }}</td>
+                    <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
                 </tr>
                 </tbody>
             </table>
