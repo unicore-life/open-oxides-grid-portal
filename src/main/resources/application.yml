@@ -14,5 +14,9 @@ grid:
   targetUrl: https://localhost:8443/oxides/authn
 #  targetUrl: https://alfred.mat.umk.pl:8443/authn/saml
 
+multipart:
+  maxFileSize: 16MB
+  maxRequestSize: 64MB
+
 logging.level.pl.icm.edu.oxides: DEBUG
 logging.level.: INFO

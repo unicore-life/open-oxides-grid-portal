@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
@@ -82,7 +83,8 @@ public class OxidesController {
      */
 
     @RequestMapping(value = "/unicore/submit", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Void> submitSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
@@ -90,15 +92,20 @@ public class OxidesController {
     }
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @ResponseBody
-    public String uploadFileToGrid(HttpSession session) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("uploadFile") MultipartFile file,
+                                                   @RequestParam("destinationUri") String uri,
+                                                   HttpSession session) {
         logSessionData("UNICORE-UPLOAD", session, authenticationSession);
-        return "TODO";
+        return unicoreGridResources.uploadFile(file, uri, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/jobs", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> retrieveUnicoreJobs(HttpSession session) {
         logSessionData("UNICORE-JOBS", session, authenticationSession);
@@ -107,7 +114,8 @@ public class OxidesController {
 
 
     @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> listSimulationFiles(@PathVariable(value = "uuid") UUID simulationUuid,
                                                     @RequestParam(value = "path", required = false) String path,
@@ -150,8 +158,9 @@ public class OxidesController {
      */
 
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
-    public void performAuthenticationRequest(HttpSession session, HttpServletResponse response,
-                                             @RequestParam(value = "returnUrl", required = false) String returnUrl) {
+    public void performAuthenticationRequest(@RequestParam(value = "returnUrl", required = false) String returnUrl,
+                                             HttpSession session,
+                                             HttpServletResponse response) {
         if (authenticationSession.getReturnUrl() == null && returnUrl != null) {
             authenticationSession.setReturnUrl(returnUrl);
         }

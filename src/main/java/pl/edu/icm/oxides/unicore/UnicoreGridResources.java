@@ -3,6 +3,7 @@ package pl.edu.icm.oxides.unicore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
@@ -26,18 +27,21 @@ public class UnicoreGridResources {
     private final UnicoreJob jobHandler;
     private final UnicoreResource resourceHandler;
     private final UnicoreBroker unicoreBroker;
+    private final GridFileUploader fileUploader;
 
     @Autowired
     public UnicoreGridResources(UnicoreSite siteHandler,
                                 UnicoreSiteStorage storageHandler,
                                 UnicoreJob jobHandler,
                                 UnicoreResource resourceHandler,
-                                UnicoreBroker unicoreBroker) {
+                                UnicoreBroker unicoreBroker,
+                                GridFileUploader fileUploader) {
         this.siteHandler = siteHandler;
         this.storageHandler = storageHandler;
         this.jobHandler = jobHandler;
         this.resourceHandler = resourceHandler;
         this.unicoreBroker = unicoreBroker;
+        this.fileUploader = fileUploader;
     }
 
     public ResponseEntity<List> listUserSites(AuthenticationSession authenticationSession) {
@@ -79,6 +83,13 @@ public class UnicoreGridResources {
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return ok(jobHandler.listJobFiles(simulationUuid, ofNullable(path), authenticationSession));
+        }
+        return unauthorizedResponse();
+    }
+
+    public ResponseEntity<String> uploadFile(MultipartFile file, String uri, AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            return ok(fileUploader.uploadFileToGrid(file, uri, authenticationSession));
         }
         return unauthorizedResponse();
     }
