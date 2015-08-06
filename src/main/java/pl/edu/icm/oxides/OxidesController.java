@@ -93,7 +93,7 @@ public class OxidesController {
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            produces = MediaType.TEXT_PLAIN_VALUE
     )
     @ResponseBody
     public ResponseEntity<String> handleFileUpload(@RequestParam("uploadFile") MultipartFile file,
