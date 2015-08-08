@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -31,5 +32,11 @@ public class AngularTestingController {
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public OxidesSimulation submitSimulation(@RequestBody OxidesSimulation simulation) {
         return new OxidesSimulation("DONE");
+    }
+
+    @RequestMapping(value = "/testing-long-call", method = GET, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> respondAfterMoment() throws InterruptedException {
+        Thread.sleep(5000);
+        return ResponseEntity.ok("DONE");
     }
 }

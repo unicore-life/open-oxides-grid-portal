@@ -32,16 +32,19 @@
     <script src="/webjars/angularjs/1.3.13/angular-route.min.js"></script>
     <script src="/webjars/angular-feeds/0.0.3/angular-feeds.min.js"></script>
     <script src="/webjars/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
-
     <script src="/webjars/nervgh-angular-file-upload/1.1.5-1/angular-file-upload.min.js"></script>
 
+
     <link rel="stylesheet" href="/assets/js/angular-spinkit.min.css">
+
     <script src="/assets/js/angular-spinkit.min.js"></script>
+
 
     <!-- Open Oxides JavaScript -->
     <!--<script src="/assets/js/oxides-grid-portal.js"></script>-->
     <script src="/assets/js/testing-oxides-grid-portal.js"></script>
     <script src="/assets/js/testing-angular-upload-file.js"></script>
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -53,52 +56,32 @@
 <body>
 
 <div class="container">
-    <h2>Testing file upload</h2>
+    <h2>Testing spinner</h2>
 
-    <form action="/oxides/unicore/upload" method="POST" enctype="multipart/form-data">
-        File to upload: <input type="file" name="uploadFile"/>
-        <br/>
+    <table width="100%" ng-controller="spinkitCtrl">
+        <tr>
+            <td style="background-color: cyan">
+                <input type="button" ng-click="getPageAndShow()" value="Get Data"/>
+            </td>
 
-        <input type="hidden" name="destinationUri" value="TODO">
-        <br/>
+            <td style="background-color: beige" align="center">
+                <input type="text" ng-model="spinkitData"/>
 
-        <input type="submit" value="Upload"/> Press here to upload the file!
-    </form>
+                <chasing-dots-spinner ng-show="spinkitShow"></chasing-dots-spinner>
+                <circle-spinner ng-show="spinkitShow"></circle-spinner>
+                <three-bounce-spinner ng-show="spinkitShow"></three-bounce-spinner>
+                <fading-circle-spinner ng-show="spinkitShow"></fading-circle-spinner>
 
-
-    <hr/>
-
-
-    <div ng-controller="uploadController">
-        <input type="text" ng-model="destinationUri" placeholder="Destination URI"/>
-
-        <input type="file" nv-file-select uploader="uploader"/>
-
-        <br/>
-
-        <ul>
-            <li ng-repeat="item in uploader.queue">
-                Name: <span ng-bind="item.file.name"></span>
-                (<span nowrap>{{ item.file.size/1024/1024|number:2 }} MB</span>)
-
-                <div class="progress" style="margin-bottom: 0;">
-                    <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
-                </div>
-
-                <div nowrap>
-                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"
-                            ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-                        <span class="glyphicon glyphicon-upload"></span> Upload
-                    </button>
-
-                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
-                            ng-disabled="!item.isUploading">
-                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                    </button>
-                </div>
-            </li>
-        </ul>
-    </div>
+                <!--<rotating-plane-spinner ng-show="spinkitShow"></rotating-plane-spinner>-->
+                <!--<double-bounce-spinner ng-show="spinkitShow"></double-bounce-spinner>-->
+                <!--<wave-spinner ng-show="spinkitShow"></wave-spinner>-->
+                <!--<wandering-cubes-spinner ng-show="spinkitShow"></wandering-cubes-spinner>-->
+                <!--<pulse-spinner ng-show="spinkitShow"></pulse-spinner>-->
+                <!--<cube-grid-spinner ng-show="spinkitShow"></cube-grid-spinner>-->
+                <!--<word-press-spinner ng-show="spinkitShow"></word-press-spinner>-->
+            </td>
+        </tr>
+    </table>
 
 </div>
 

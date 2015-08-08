@@ -1,6 +1,36 @@
 var myApp = angular.module('myApp', [
-    'angularFileUpload'
+    'angularFileUpload',
+    'angular-spinkit'
 ]);
+
+
+myApp.controller('spinkitCtrl', function ($scope, $http) {
+    $scope.spinkitData = 'x';
+    $scope.spinkitShow = false;
+
+    $scope.getPageAndShow = function () {
+        $scope.spinkitData = '';
+        $scope.spinkitShow = true;
+
+        var request = {
+            method: 'GET',
+            url: '/testing-long-call',
+            headers: {'Content-Type': 'application/json'},
+            data: ''
+        };
+        $http(request).then(
+            function (response) {
+                $scope.spinkitData = response.data;
+                $scope.spinkitShow = false;
+            },
+            function (response) {
+                console.warn('Failed: HTTP Status Code = ' + response.status);
+                $scope.spinkitData = response.statusText;
+                $scope.spinkitShow = false;
+            }
+        );
+    };
+});
 
 
 myApp.controller('uploadController', function ($scope, FileUploader) {
