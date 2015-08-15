@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
@@ -90,6 +91,14 @@ public class UnicoreGridResources {
     public ResponseEntity<String> uploadFile(MultipartFile file, String uri, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return ok(fileUploader.uploadFileToGrid(file, uri, authenticationSession));
+        }
+        return unauthorizedResponse();
+    }
+
+    public ResponseEntity<Void> destroyUserJob(UUID simulationUuid, AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            // TODO
+            return noContent().build();
         }
         return unauthorizedResponse();
     }

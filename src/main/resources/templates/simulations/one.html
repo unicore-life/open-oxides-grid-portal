@@ -16,16 +16,18 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Files</div>
 
+            <div ng-show="showSpinKit">
+                <chasing-dots-spinner></chasing-dots-spinner>
+            </div>
+
             <!-- Table -->
-            <table class="table">
-                <theader>
-                    <tr>
-                        <td>Path</td>
-                    </tr>
-                </theader>
+            <table class="table" ng-show="!showSpinKit">
                 <tbody>
                 <tr ng-repeat="simulationFile in simulationFiles">
                     <td>{{ simulationFile }}</td>
+                    <td>
+                        <button ng-click="viewFile(simulationFile)">View</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>

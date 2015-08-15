@@ -16,18 +16,27 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Simulations</div>
 
+            <div ng-show="showSpinKit">
+                <chasing-dots-spinner></chasing-dots-spinner>
+            </div>
+
             <!-- Table -->
-            <table class="table">
-                <theader>
-                    <tr>
-                        <td>URI</td>
-                        <td>Link</td>
-                    </tr>
-                </theader>
+            <table class="table" ng-show="!showSpinKit">
+                <!--<theader>-->
+                <!--<tr>-->
+                <!--<td colspan="3">-->
+                <!--</td>-->
+                <!--</tr>-->
+                <!--</theader>-->
+
                 <tbody>
                 <tr ng-repeat="simulation in simulations">
                     <td>{{ simulation.uri }}</td>
                     <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
+                    <td>
+                        <button ng-click="destroyJob(simulation.uuid)">X</button>
+                        <!--<a ng-click="destroyJob(simulation.uuid)" href="javascript:void(0);">X</a>-->
+                    </td>
                 </tr>
                 </tbody>
             </table>

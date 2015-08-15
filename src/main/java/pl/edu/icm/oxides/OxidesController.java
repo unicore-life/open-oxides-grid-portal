@@ -128,6 +128,14 @@ public class OxidesController {
     ==========================================================================================================
      */
 
+    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<Void> destroyJob(@PathVariable(value = "uuid") UUID simulationUuid,
+                                           HttpSession session) {
+        logSessionData("DELETE-UNICORE-JOB", session, authenticationSession);
+        return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
+    }
+
     @RequestMapping(value = "/unicore-storages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> listStorages(HttpSession session) {
