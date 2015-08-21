@@ -12,6 +12,7 @@ import pl.edu.icm.oxides.unicore.site.resource.UnicoreResource;
 import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorage;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,6 +85,14 @@ public class UnicoreGridResources {
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return ok(jobHandler.listJobFiles(simulationUuid, ofNullable(path), authenticationSession));
+        }
+        return unauthorizedResponse();
+    }
+
+    public ResponseEntity<Void> downloadUserJobFile(UUID simulationUuid, String path, HttpServletResponse response, AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            jobHandler.downloadJobFile(simulationUuid, ofNullable(path), response, authenticationSession);
+            return ok().build();
         }
         return unauthorizedResponse();
     }

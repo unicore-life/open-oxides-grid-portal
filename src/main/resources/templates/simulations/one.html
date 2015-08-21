@@ -8,13 +8,23 @@
 <!-- Wrap all page content here -->
 <div id="wrap">
     <!-- Begin page content -->
-    <div class="container" ng-controller="oxidesSimulationFilesListingController">
+    <div class="container" ng-controller="oxidesSimulationFilesListingController"
+         th:attr="ng-init='filePath=\''+${path}+'\''">
 
         <h1>Simulation: <span th:text="${uuid}"></span></h1>
 
+        <ol class="breadcrumb">
+            <li ng-repeat="pathElement in getBreadCrumbPath()" ng-class="{'active': $last}">
+                <span ng-if="$first && $last">{{ pathElement }}</span>
+                <a href="/" ng-if="$first && !$last">{{ pathElement }}</a>
+                <a href="#" ng-if="$middle">{{ pathElement }}</a>
+                <span ng-if="!$first && $last">{{ pathElement }}</span>
+            </li>
+        </ol>
+
         <div class="panel panel-default">
             <!-- Default panel contents -->
-            <div class="panel-heading">Files</div>
+            <div class="panel-heading">Files of <span ng-model="filePath"></span></div>
 
             <div ng-show="showSpinKit">
                 <chasing-dots-spinner></chasing-dots-spinner>
@@ -24,9 +34,13 @@
             <table class="table" ng-show="!showSpinKit">
                 <tbody>
                 <tr ng-repeat="simulationFile in simulationFiles">
-                    <td>{{ simulationFile }}</td>
+                    <td>{{ simulationFile.path }}</td>
+                    <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
+                           ng-show="simulationFile.directory">Show Dir</a></td>
+                    <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
+                           ng-show="!simulationFile.directory">Show File</a></td>
                     <td>
-                        <button ng-click="viewFile(simulationFile)">View</button>
+                        <button ng-click="viewFile(simulationFile.path)">View</button>
                     </td>
                 </tr>
                 </tbody>

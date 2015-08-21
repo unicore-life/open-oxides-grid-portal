@@ -35,8 +35,8 @@ public class OxidesGridPortalPages {
         return oxidesSimulationsPage.modelSimulationsPage(authenticationSession);
     }
 
-    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID uuid) {
-        return oxidesSimulationsPage.modelOneSimulationPage(authenticationSession, uuid);
+    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID uuid, String path) {
+        return oxidesSimulationsPage.modelOneSimulationPage(authenticationSession, uuid, ofNullable(path));
     }
 
     public ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {

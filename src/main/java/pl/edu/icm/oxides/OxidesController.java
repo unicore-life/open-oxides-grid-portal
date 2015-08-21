@@ -59,8 +59,9 @@ public class OxidesController {
     }
 
     @RequestMapping(value = "/simulations/{uuid}", method = RequestMethod.GET)
-    public ModelAndView oneSimulationPage(@PathVariable("uuid") UUID simulationUuid) {
-        return oxidesGridPortalPages.modelOneSimulationPage(authenticationSession, simulationUuid);
+    public ModelAndView oneSimulationPage(@PathVariable("uuid") UUID simulationUuid,
+                                          @RequestParam(value = "path", required = false) String path) {
+        return oxidesGridPortalPages.modelOneSimulationPage(authenticationSession, simulationUuid, path);
     }
 
     @RequestMapping(value = "/simulations/submit", method = RequestMethod.GET)
@@ -122,6 +123,17 @@ public class OxidesController {
                                                     HttpSession session) {
         logSessionData("UNICORE-JOB-FILES", session, authenticationSession);
         return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
+    }
+
+
+    @RequestMapping(value = "/unicore/files/{uuid}", method = RequestMethod.GET)
+    public ResponseEntity<Void> downloadSimulationFile(
+            @PathVariable(value = "uuid") UUID simulationUuid,
+            @RequestParam(value = "path", required = false) String path,
+            HttpServletResponse response,
+            HttpSession session) {
+        logSessionData("UNICORE-JOB-DOWNLOAD", session, authenticationSession);
+        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
     }
 
     /* TO BE DECIDED:

@@ -1,9 +1,21 @@
 var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
-    'feeds',
-    'angular-spinkit',
-    'ngRoute',
-    'ui.bootstrap'
-]);
+        'feeds',
+        'angular-spinkit',
+        'ngRoute',
+        'ui.bootstrap'
+    ]
+);
+
+//oxidesGridPortalApp
+//   .config(function($routeProvider, $locationProvider) {
+//        // use the HTML5 History API
+//        $locationProvider.html5Mode(true);
+//    });
+
+//.config(['$locationProvider', function($locationProvider) {
+//        $locationProvider.html5Mode(true);
+//    }]
+//);
 
 
 oxidesGridPortalApp.controller('oxidesGridPortalController', function ($scope) {
@@ -67,14 +79,32 @@ oxidesGridPortalApp.value('modelSimulationsListing', []);
 
 
 oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
-    function ($scope, $location, oxidesSimulationFilesListingService) {
+    function ($scope, $location, $routeParams, oxidesSimulationFilesListingService) {
         $scope.simulationFiles = [];
+        $scope.filePath;
         $scope.showSpinKit = true;
 
         $scope.viewFile = function (simulationFile) {
-            console.info('Viewing file: ' + simulationFile);
+            console.info('Viewing file: ' + simulationFile + ' / ' + $scope.filePath);
 
             // TODO
+        };
+
+        $scope.getBreadCrumbPath = function () {
+            console.log($scope.filePath);
+            var result = [ ];
+
+            var pathElements = $scope.filePath.replace(/\/$/, "").split('/');
+            console.log("pathElements = {" + pathElements + "}");
+
+            var arrayLength = pathElements.length;
+            for (var i = 1; i < arrayLength; i++) {
+                result.push(pathElements[i]);
+            }
+            result[0] = 'Simulation Directory';
+
+            console.info(result);
+            return result;
         };
 
         oxidesSimulationFilesListingService.getSimulationFilesList($location.absUrl())
@@ -93,9 +123,20 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
     ['$http', function ($http) {
         return {
             getSimulationFilesList: function (absoluteUrl) {
+                var uuid = "", query = "";
+                var queryIndex = absoluteUrl.indexOf("?");
+
+                if (queryIndex >= 0) {
+                    uuid = absoluteUrl.substr(0, queryIndex).substr(-36);
+                    query = absoluteUrl.substr(queryIndex);
+                }
+                else {
+                    uuid = absoluteUrl.substr(-36);
+                }
+
                 var request = {
                     method: 'GET',
-                    url: '/oxides/unicore/jobs/' + absoluteUrl.substr(-36) + '/files',
+                    url: '/oxides/unicore/jobs/' + uuid + '/files' + query,
                     headers: {
                         'Content-Type': 'application/json'
                     },

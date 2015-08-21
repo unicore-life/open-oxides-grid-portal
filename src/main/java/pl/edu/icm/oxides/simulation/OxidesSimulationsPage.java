@@ -19,10 +19,13 @@ public class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
-    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID simulationUuid) {
+    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession,
+                                               UUID simulationUuid,
+                                               Optional<String> path) {
         if (isValidAuthenticationSession(authenticationSession)) {
             ModelAndView modelAndView = prepareBasicModelAndView("simulations/one", ofNullable(authenticationSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
+            modelAndView.addObject("path", path.orElse("/"));
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
