@@ -12,11 +12,6 @@ var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
 //        $locationProvider.html5Mode(true);
 //    });
 
-//.config(['$locationProvider', function($locationProvider) {
-//        $locationProvider.html5Mode(true);
-//    }]
-//);
-
 
 oxidesGridPortalApp.controller('oxidesGridPortalController', function ($scope) {
     $scope.phones = [
@@ -79,32 +74,34 @@ oxidesGridPortalApp.value('modelSimulationsListing', []);
 
 
 oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
-    function ($scope, $location, $routeParams, oxidesSimulationFilesListingService) {
+    function ($scope, $location, oxidesSimulationFilesListingService) {
         $scope.simulationFiles = [];
-        $scope.filePath;
+        $scope.breadCrumbElements = [];
         $scope.showSpinKit = true;
 
-        $scope.viewFile = function (simulationFile) {
-            console.info('Viewing file: ' + simulationFile + ' / ' + $scope.filePath);
-
-            // TODO
-        };
-
-        $scope.getBreadCrumbPath = function () {
-            console.log($scope.filePath);
-            var result = [ ];
-
-            var pathElements = $scope.filePath.replace(/\/$/, "").split('/');
-            console.log("pathElements = {" + pathElements + "}");
-
-            var arrayLength = pathElements.length;
-            for (var i = 1; i < arrayLength; i++) {
-                result.push(pathElements[i]);
+        $scope.initializeBreadCrumb = function (filePath) {
+            var locationUrl = $location.absUrl();
+            var i = locationUrl.indexOf('?');
+            if (i >= 0) {
+                locationUrl = locationUrl.substr(0, i);
             }
-            result[0] = 'Simulation Directory';
+            $scope.breadCrumbElements.push({
+                label: 'Simulation Directory',
+                href: locationUrl
+            });
 
-            console.info(result);
-            return result;
+            var pathElements = filePath.split('/');
+            var pathSoFar = '/';
+            for (var i = 0; i < pathElements.length; i++) {
+                if (pathElements[i] != '') {
+                    pathSoFar += (pathElements[i] + '/');
+                    $scope.breadCrumbElements.push({
+                        label: pathElements[i],
+                        href: locationUrl + '?path=' + pathSoFar
+                    });
+                }
+            }
+            //console.info($scope.breadCrumbElements);
         };
 
         oxidesSimulationFilesListingService.getSimulationFilesList($location.absUrl())

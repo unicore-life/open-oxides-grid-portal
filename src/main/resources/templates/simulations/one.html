@@ -9,22 +9,22 @@
 <div id="wrap">
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationFilesListingController"
-         th:attr="ng-init='filePath=\''+${path}+'\''">
+         th:attr="ng-init='initializeBreadCrumb(\''+${path}+'\')'">
 
         <h1>Simulation: <span th:text="${uuid}"></span></h1>
 
         <ol class="breadcrumb">
-            <li ng-repeat="pathElement in getBreadCrumbPath()" ng-class="{'active': $last}">
-                <span ng-if="$first && $last">{{ pathElement }}</span>
-                <a href="/" ng-if="$first && !$last">{{ pathElement }}</a>
-                <a href="#" ng-if="$middle">{{ pathElement }}</a>
-                <span ng-if="!$first && $last">{{ pathElement }}</span>
+            <li ng-repeat="element in breadCrumbElements" ng-class="{'active': $last}">
+                <span ng-if="$first &amp;&amp; $last">{{ element.label }}</span>
+                <a href="{{ element.href }}" ng-if="$first &amp;&amp; !$last">{{ element.label }}</a>
+                <a href="{{ element.href }}" ng-if="$middle">{{ element.label }}</a>
+                <span ng-if="!$first &amp;&amp; $last">{{ element.label }}</span>
             </li>
         </ol>
 
         <div class="panel panel-default">
             <!-- Default panel contents -->
-            <div class="panel-heading">Files of <span ng-model="filePath"></span></div>
+            <div class="panel-heading">Files of <span th:text="${path}"></span></div>
 
             <div ng-show="showSpinKit">
                 <chasing-dots-spinner></chasing-dots-spinner>
@@ -39,9 +39,6 @@
                            ng-show="simulationFile.directory">Show Dir</a></td>
                     <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
                            ng-show="!simulationFile.directory">Show File</a></td>
-                    <td>
-                        <button ng-click="viewFile(simulationFile.path)">View</button>
-                    </td>
                 </tr>
                 </tbody>
             </table>
