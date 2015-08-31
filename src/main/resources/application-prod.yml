@@ -1,0 +1,5 @@
+server:
+  port: 443
+grid:
+  idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web
+  targetUrl: https://oxides.nebula.grid.icm.edu.pl/oxides/authn
