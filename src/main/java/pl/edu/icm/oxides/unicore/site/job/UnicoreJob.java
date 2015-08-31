@@ -77,7 +77,10 @@ public class UnicoreJob {
         return listing;
     }
 
-    public void downloadJobFile(UUID simulationUuid, Optional<String> path, HttpServletResponse response, AuthenticationSession authenticationSession) {
+    public void downloadJobFile(UUID simulationUuid,
+                                Optional<String> path,
+                                HttpServletResponse response,
+                                AuthenticationSession authenticationSession) {
         // FIXME: testing and temporary implementation
         Optional<StorageClient> storageClient = getStorageClient(simulationUuid, authenticationSession);
 

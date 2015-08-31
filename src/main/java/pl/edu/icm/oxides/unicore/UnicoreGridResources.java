@@ -89,7 +89,10 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<Void> downloadUserJobFile(UUID simulationUuid, String path, HttpServletResponse response, AuthenticationSession authenticationSession) {
+    public ResponseEntity<Void> downloadUserJobFile(UUID simulationUuid,
+                                                    String path,
+                                                    HttpServletResponse response,
+                                                    AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             jobHandler.downloadJobFile(simulationUuid, ofNullable(path), response, authenticationSession);
             return ok().build();
