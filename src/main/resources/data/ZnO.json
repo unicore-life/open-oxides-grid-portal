@@ -1,0 +1,45 @@
+{
+    "title":  "Zinc oxide",
+    "data": [
+        { "content_type": "image", "title": "Image 00", "data": "temp-photo.jpg" },
+        { "content_type": "video", "title": "Video 00", "data": "http://player.vimeo.com/video/37176398" },
+        { "content_type": "notes", "title": "Notes 00", "data": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+        {
+            "content_type": "chart",
+            "title": "chart 00",
+            "chart_type": "line",
+            "config": {
+                "labels": false,
+                "title": "Products",
+                "legend": {
+                    "display": true,
+                    "position": "right"
+                },
+                "innerRadius": 0,
+                "lineLegend": "lineEnd"
+            },
+            "data": {
+                "series": [ "Sales", "Income", "Expense" ],
+                "data": [
+                    {
+                        "x": "Jack",
+                        "y": [ 100, 210, 384 ],
+                        "tooltip": "this is tooltip"
+                    },
+                    {
+                        "x": "John",
+                        "y": [ 300, 289, 456 ]
+                    },
+                    {
+                        "x": "Stacy",
+                        "y": [ 351, 170, 255 ]
+                    },
+                    {
+                        "x": "Luke",
+                        "y": [ 54, 341, 879 ]
+                    }
+                ]
+            }
+        }
+    ]
+}
