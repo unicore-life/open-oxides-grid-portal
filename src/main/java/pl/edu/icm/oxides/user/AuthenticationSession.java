@@ -56,4 +56,8 @@ public class AuthenticationSession {
     public String getCommonName() {
         return attributes.getCommonName();
     }
+
+    public boolean isGroupMember(String groupName) {
+        return attributes.getMemberGroups().contains(groupName);
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
+import pl.edu.icm.oxides.open.OpenOxidesResources;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
 import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
@@ -31,19 +32,22 @@ import java.util.UUID;
 @Controller
 @SessionAttributes("authenticationSession")
 @RequestMapping(value = "/oxides")
-public class OxidesController {
+public class OxidesEndpoints {
     private final OxidesGridPortalPages oxidesGridPortalPages;
     private final UnicoreGridResources unicoreGridResources;
+    private final OpenOxidesResources openOxidesResources;
     private final SamlAuthenticationHandler samlAuthenticationHandler;
     private AuthenticationSession authenticationSession;
 
     @Autowired
-    public OxidesController(OxidesGridPortalPages oxidesGridPortalPages,
-                            UnicoreGridResources unicoreGridResources,
-                            SamlAuthenticationHandler samlAuthenticationHandler,
-                            AuthenticationSession authenticationSession) {
+    public OxidesEndpoints(OxidesGridPortalPages oxidesGridPortalPages,
+                           UnicoreGridResources unicoreGridResources,
+                           OpenOxidesResources openOxidesResources,
+                           SamlAuthenticationHandler samlAuthenticationHandler,
+                           AuthenticationSession authenticationSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
+        this.openOxidesResources = openOxidesResources;
         this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.authenticationSession = authenticationSession;
     }
@@ -139,7 +143,6 @@ public class OxidesController {
     /* TO BE DECIDED:
     ==========================================================================================================
      */
-
     @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Void> destroyJob(@PathVariable(value = "uuid") UUID simulationUuid,
@@ -173,10 +176,28 @@ public class OxidesController {
         return unicoreGridResources.listUserResources(authenticationSession);
     }
 
+
+    /* OPEN OXIDES PORTAL ENDPOINTS:
+    ==========================================================================================================
+     */
+    @RequestMapping(value = "/data", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> listSimulationFiles(@RequestParam(value = "name") String name,
+                                                      HttpSession session) {
+        logSessionData("OPEN-OXIDES", session, authenticationSession);
+        return openOxidesResources.getParticleParameters(name, authenticationSession);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public void performAuthenticationRequest(HttpServletResponse response) {
+        authenticationSession.setReturnUrl("http://openoxides.icm.edu.pl");
+        samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
+    }
+
+
     /* AUTHENTICATION ENDPOINTS:
     ==========================================================================================================
      */
-
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
     public void performAuthenticationRequest(@RequestParam(value = "returnUrl", required = false) String returnUrl,
                                              HttpSession session,
@@ -194,10 +215,14 @@ public class OxidesController {
         return samlAuthenticationHandler.processAuthenticationResponse(request, authenticationSession);
     }
 
+
+    /* HELPER METHOD:
+    ==========================================================================================================
+     */
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
         log.info(String.format("%10s: %s", logPrefix, session.getId()));
         log.info(String.format("%10s: %s", logPrefix, authnSession));
     }
 
-    private Log log = LogFactory.getLog(OxidesController.class);
+    private Log log = LogFactory.getLog(OxidesEndpoints.class);
 }
