@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import pl.edu.icm.oxides.config.OpenOxidesConfig;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.io.BufferedReader;
@@ -20,12 +21,14 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
-@Repository
+@Service
 public class OpenOxidesResources {
+    private final OpenOxidesConfig openOxidesConfig;
     private final FileResourceLoader fileResourceLoader;
 
     @Autowired
-    public OpenOxidesResources(FileResourceLoader fileResourceLoader) {
+    public OpenOxidesResources(OpenOxidesConfig openOxidesConfig, FileResourceLoader fileResourceLoader) {
+        this.openOxidesConfig = openOxidesConfig;
         this.fileResourceLoader = fileResourceLoader;
     }
 
@@ -64,9 +67,8 @@ public class OpenOxidesResources {
     }
 
     private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
-        // TODO: group name from file
         return authenticationSession != null
-                && authenticationSession.isGroupMember("/vo.plgrid.pl/groups");
+                && authenticationSession.isGroupMember(openOxidesConfig.getGroupName());
     }
 
     private Log log = LogFactory.getLog(OpenOxidesResources.class);
