@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
+import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
@@ -30,11 +31,13 @@ import java.util.stream.Collectors;
 @Repository
 public class UnicoreBroker {
     private final GridConfig gridConfig;
+    private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
 
     @Autowired
-    public UnicoreBroker(GridConfig gridConfig, GridClientHelper clientHelper) {
+    public UnicoreBroker(GridConfig gridConfig, GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
         this.gridConfig = gridConfig;
+        this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
     }
 
@@ -59,9 +62,13 @@ public class UnicoreBroker {
 
         Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
 
+        String simulationName = "_OpenOxides__" + simulation.getName();
         JobDefinitionDocument jobDefinitionDocument =
-                BrokeredJobModel.prepareJobDefinitionDocument("Date", "1.0", simulation.getName());
-        log.info("BROKER JOB: " + jobDefinitionDocument.toString());
+                BrokeredJobModel.prepareJobDefinitionDocument(
+                        oxidesConfig.getApplicationName(),
+                        oxidesConfig.getApplicationVersion(),
+                        simulationName);
+        log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
 
         SubmitWorkAssignmentRequestDocument waDoc = SubmitWorkAssignmentRequestDocument.Factory
@@ -78,9 +85,11 @@ public class UnicoreBroker {
         String workAssignmentID = WSUtilities.newUniqueID();
         workAssignment.setId(workAssignmentID);
 
-//        if (waStorageEPR != null) {
-//            workAssignment.setStorageEPR(waStorageEPR);
-//        }
+        workAssignment.setStorageEPR(
+                authenticationSession
+                        .getStorageClient()
+                        .getEPR()
+        );
 
         /*
          * if(!isJSDL && builder.getImports().size()>0){
@@ -88,6 +97,7 @@ public class UnicoreBroker {
          * uploadLocalData(builder, waID); }catch(IOException ex){
          * error("Can't upload local files.",ex); endProcessing(1); } }
          */
+        log.info("BROKER WORK ASSIGNMENT: " + workAssignment.toString());
         SubmitWorkAssignmentResponseDocument response =
                 brokerClient.get().submitWorkAssignment(waDoc);
 

@@ -1,5 +1,6 @@
 package pl.edu.icm.oxides.user;
 
+import de.fzj.unicore.uas.client.StorageClient;
 import eu.unicore.security.etd.TrustDelegation;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -15,8 +16,9 @@ import java.util.UUID;
 public class AuthenticationSession {
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
-    private UserAttributes attributes = new UserAttributes();
+    private StorageClient storageClient;
 
+    private final UserAttributes attributes = new UserAttributes();
     private final String uuid = UUID.randomUUID().toString();
 
     public String getReturnUrl() {
@@ -33,6 +35,14 @@ public class AuthenticationSession {
 
     public void setTrustDelegations(List<TrustDelegation> trustDelegations) {
         this.trustDelegations = trustDelegations;
+    }
+
+    public StorageClient getStorageClient() {
+        return storageClient;
+    }
+
+    public void setStorageClient(StorageClient storageClient) {
+        this.storageClient = storageClient;
     }
 
     public String getUuid() {

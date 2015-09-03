@@ -22,7 +22,7 @@ public class CachingResourcesManager {
     public void initializeSignedInUserResources(AuthenticationSession authenticationSession) {
         log.info("Staring caching resources calls for user " + authenticationSession.getCommonName());
         taskExecutor.execute(() -> {
-            // Of course can not use session scoped, so should remodelled caching:
+            // TODO: Of course can not use session scoped, so should remodelled caching:
             //jobHandler.retrieveSiteResourceList(authenticationSession);
             log.info("Finished caching resources calls for user");
         });

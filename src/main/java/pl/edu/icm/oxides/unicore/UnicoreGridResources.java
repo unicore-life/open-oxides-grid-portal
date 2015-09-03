@@ -77,7 +77,7 @@ public class UnicoreGridResources {
     public ResponseEntity<Void> submitSimulation(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
-            return ok(null);
+            return ResponseEntity.noContent().build();
         }
         return unauthorizedResponse();
     }

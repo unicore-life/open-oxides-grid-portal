@@ -9,6 +9,10 @@ grid:
   targetUrl: https://localhost:8443/oxides/authn
 #  targetUrl: https://alfred.mat.umk.pl:8443/authn/saml
 
+gridOxides:
+  applicationName: Date
+  applicationVersion: 1.0
+
 server:
   port: 8443
   ssl:

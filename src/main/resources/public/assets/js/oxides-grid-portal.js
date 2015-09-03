@@ -146,21 +146,71 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
 );
 
 
-oxidesGridPortalApp.controller('oxidesSubmitSimulationController', function ($scope) {
-    $scope.simulationFormFields = [
-        {'id': 'simulationName', 'label': 'Name', 'placeholder': 'Simulation Name'},
-        {'id': 'simulationProject', 'label': 'Project', 'placeholder': 'Grant ID'},
-        {'id': 'simulationQueue', 'label': 'Queue', 'placeholder': 'Queue'},
-        {'id': 'simulationMemory', 'label': 'Memory', 'placeholder': 'Memory [MB]'},
-        {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
-        {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'}
-    ];
+oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
+    function ($scope, oxidesSubmitSimulationService) {
+        $scope.simulationParameters = {
+            simulationName: 'A',
+            simulationProject: 'B',
+            simulationQueue: 'c',
+            simulationMemory: 'd',
+            simulationNodes: 'e',
+            simulationCPUs: 'f'
+        };
+        $scope.simulationFormFields = [
+            {'id': 'simulationName', 'label': 'Name', 'placeholder': 'Simulation Name'},
+            {'id': 'simulationProject', 'label': 'Project', 'placeholder': 'Grant ID'},
+            {'id': 'simulationQueue', 'label': 'Queue', 'placeholder': 'Queue'},
+            {'id': 'simulationMemory', 'label': 'Memory', 'placeholder': 'Memory [MB]'},
+            {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
+            {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'}
+        ];
 
-    $scope.resetForm = function () {
-        $scope.simulationSubmitForm.$setPristine();
-    };
+        $scope.resetForm = function () {
+            $scope.simulationSubmitForm.$setPristine();
+        };
 
-    $scope.submitForm = function () {
-        console.log($scope.simulationSubmitForm);
+        $scope.submitForm = function () {
+            // Creating JSON with simulation description:
+            var oxidesSimulation = {};
+            var offset = 'simulation'.length;
+            $scope.simulationFormFields.map(function(it) {
+                var parameterValue = $scope.simulationParameters[it.id];
+                if (parameterValue != null && parameterValue != '') {
+                    var parameterName = it.id.substr(offset).toLowerCase();
+                    oxidesSimulation[parameterName] = parameterValue;
+                }
+            });
+            var oxidesSimulationJson = JSON.stringify(oxidesSimulation);
+
+            // Submitting simulation:
+            oxidesSubmitSimulationService.submitSimulation(oxidesSimulationJson)
+                .success(function (data, status, headers, config) {
+                    console.info('Submitted: HTTP Status Code = ' + status);
+                })
+                .error(function (data, status, headers, config) {
+                    console.error('Failed: HTTP Status Code = ' + status);
+                });
+        }
     }
-});
+);
+
+oxidesGridPortalApp.factory('oxidesSubmitSimulationService',
+    ['$http', function ($http) {
+        return {
+            submitSimulation: function (oxidesSimulationJson) {
+                console.info(oxidesSimulationJson);
+
+                var request = {
+                    method: 'POST',
+                    url: '/oxides/unicore/submit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: oxidesSimulationJson
+                };
+                return $http(request);
+            }
+        };
+    }]
+);
+
