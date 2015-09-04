@@ -4,11 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class UnicoreJobEntity implements Serializable {
     private final String uri;
+    private final String name;
+    private final String status;
+    private final Calendar submissionTime;
+    private final String queue;
 
-    public UnicoreJobEntity(EndpointReferenceType uri) {
+    public UnicoreJobEntity(EndpointReferenceType uri,
+                            String name,
+                            String status,
+                            Calendar submissionTime,
+                            String queue) {
+        this.name = name;
+        this.status = status;
+        this.submissionTime = submissionTime;
+        this.queue = queue;
         this.uri = uri.getAddress().getStringValue();
     }
 
@@ -19,6 +33,29 @@ public class UnicoreJobEntity implements Serializable {
     public String getUuid() {
         // FIXME: remove it - redundant with uri
         return uri.substring(uri.length() - 36);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getSubmissionTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(submissionTime.getTimeZone());
+        return dateFormat.format(submissionTime.getTime());
+    }
+
+    public String getQueue() {
+        return queue;
+    }
+
+    @JsonIgnore
+    public long getTimestamp() {
+        return submissionTime.getTimeInMillis();
     }
 
     @JsonIgnore

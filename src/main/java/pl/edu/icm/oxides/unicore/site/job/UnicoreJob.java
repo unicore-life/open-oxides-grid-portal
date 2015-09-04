@@ -5,6 +5,7 @@ import de.fzj.unicore.uas.client.StorageClient;
 import de.fzj.unicore.uas.client.TSFClient;
 import de.fzj.unicore.uas.client.TSSClient;
 import de.fzj.unicore.wsrflite.xmlbeans.BaseFault;
+import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,6 @@ import pl.edu.icm.oxides.simulation.model.SimulationGridFile;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
-import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,17 +33,19 @@ import java.util.stream.Collectors;
 public class UnicoreJob {
     private final GridClientHelper clientHelper;
     private final UnicoreSite unicoreSite;
+    private final UnicoreJobClient jobClient;
 
     @Autowired
-    public UnicoreJob(GridClientHelper clientHelper, UnicoreSite unicoreSite) {
+    public UnicoreJob(GridClientHelper clientHelper, UnicoreSite unicoreSite, UnicoreJobClient jobClient) {
         this.clientHelper = clientHelper;
         this.unicoreSite = unicoreSite;
+        this.jobClient = jobClient;
     }
 
-    @Cacheable(value = "unicoreSessionJobList", key = "#authenticationSession.uuid")
-    public List<UnicoreJobEntity> retrieveSiteResourceList(AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
-        return unicoreSite.retrieveServiceList(authenticationSession)
+    @Cacheable(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
+    public List<UnicoreJobEntity> retrieveSiteResourceList(TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
+        return unicoreSite.retrieveServiceList(trustDelegation)
                 .parallelStream()
                 .map(siteEntity -> toAccessibleTargetSystems(siteEntity, clientConfiguration))
                 .filter(Objects::nonNull)
@@ -51,13 +53,16 @@ public class UnicoreJob {
                 .map(targetSystemEpr -> toTargetSystemJobList(targetSystemEpr, clientConfiguration))
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
-                .map(this::toUnicoreJobEntity)
+                .map(epr -> toUnicoreJobEntity(epr, trustDelegation))
+                .sorted((o1, o2) -> o1.getTimestamp() < o2.getTimestamp() ? -1 : 1)
                 .collect(Collectors.toList());
     }
 
-    public List<SimulationGridFile> listJobFiles(UUID simulationUuid, Optional<String> path, AuthenticationSession authenticationSession) {
+    public List<SimulationGridFile> listJobFiles(UUID simulationUuid,
+                                                 Optional<String> path,
+                                                 TrustDelegation trustDelegation) {
         // FIXME: testing and temporary implementation
-        Optional<StorageClient> storageClient = getStorageClient(simulationUuid, authenticationSession);
+        Optional<StorageClient> storageClient = getStorageClient(simulationUuid, trustDelegation);
 
         List<SimulationGridFile> listing = new ArrayList<>();
         storageClient.ifPresent(client -> {
@@ -80,9 +85,9 @@ public class UnicoreJob {
     public void downloadJobFile(UUID simulationUuid,
                                 Optional<String> path,
                                 HttpServletResponse response,
-                                AuthenticationSession authenticationSession) {
+                                TrustDelegation trustDelegation) {
         // FIXME: testing and temporary implementation
-        Optional<StorageClient> storageClient = getStorageClient(simulationUuid, authenticationSession);
+        Optional<StorageClient> storageClient = getStorageClient(simulationUuid, trustDelegation);
 
         path.ifPresent(filePath -> {
             storageClient.ifPresent(sms -> {
@@ -102,9 +107,9 @@ public class UnicoreJob {
         }
     }
 
-    private Optional<StorageClient> getStorageClient(UUID simulationUuid, AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
-        return retrieveSiteResourceList(authenticationSession)
+    private Optional<StorageClient> getStorageClient(UUID simulationUuid, TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
+        return retrieveSiteResourceList(trustDelegation)
                 .stream()
                 .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(simulationUuid.toString()))
                 .map(unicoreJobEntity -> {
@@ -152,8 +157,8 @@ public class UnicoreJob {
         return null;
     }
 
-    private UnicoreJobEntity toUnicoreJobEntity(EndpointReferenceType epr) {
-        return new UnicoreJobEntity(epr);
+    private UnicoreJobEntity toUnicoreJobEntity(EndpointReferenceType epr, TrustDelegation trustDelegation) {
+        return jobClient.retrieveJobProperties(epr.getAddress().getStringValue(), trustDelegation);
     }
 
     private Log log = LogFactory.getLog(UnicoreJob.class);

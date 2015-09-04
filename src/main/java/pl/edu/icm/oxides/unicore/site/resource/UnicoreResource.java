@@ -1,6 +1,7 @@
 package pl.edu.icm.oxides.unicore.site.resource;
 
 import de.fzj.unicore.uas.client.TSSClient;
+import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +13,6 @@ import org.unigrids.x2006.x04.services.tss.TargetSystemPropertiesDocument.Target
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
-import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +32,10 @@ public class UnicoreResource {
         this.unicoreSite = unicoreSite;
     }
 
-    @Cacheable(value = "unicoreSessionResourceList", key = "#authenticationSession.uuid")
-    public List<UnicoreResourceEntity> retrieveSiteResourceList(AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
-        return unicoreSite.retrieveServiceList(authenticationSession)
+    @Cacheable(value = "unicoreSessionResourceList", key = "#trustDelegation.custodianDN")
+    public List<UnicoreResourceEntity> retrieveSiteResourceList(TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
+        return unicoreSite.retrieveServiceList(trustDelegation)
                 .parallelStream()
                 .map(siteEntity -> toAccessibleTargetSystems(siteEntity, clientConfiguration))
                 .filter(Objects::nonNull)

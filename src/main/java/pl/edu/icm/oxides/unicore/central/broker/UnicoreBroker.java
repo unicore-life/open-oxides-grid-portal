@@ -2,6 +2,7 @@ package pl.edu.icm.oxides.unicore.central.broker;
 
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
 import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
+import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,15 +42,16 @@ public class UnicoreBroker {
         this.clientHelper = clientHelper;
     }
 
-    @Cacheable(value = "unicoreSessionBrokerList", key = "#authenticationSession.uuid")
-    public List<UnicoreBrokerEntity> retrieveServiceList(AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+    @Cacheable(value = "unicoreSessionBrokerList", key = "#trustDelegation.custodianDN")
+    public List<UnicoreBrokerEntity> retrieveServiceList(TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
         log.debug("COLLECT BROKERS");
         return collectBrokerServiceList(clientConfiguration);
     }
 
     public void submitBrokeredJob(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
-        UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession).stream()
+        UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
+                .stream()
                 .findAny()
                 .orElseThrow(() -> new UnavailableBrokerException(new Exception("NO BROKER AT ALL!")));
 
@@ -87,6 +89,7 @@ public class UnicoreBroker {
 
         workAssignment.setStorageEPR(
                 authenticationSession
+                        .getResources()
                         .getStorageClient()
                         .getEPR()
         );

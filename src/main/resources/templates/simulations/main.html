@@ -32,6 +32,10 @@
                 <tbody>
                 <tr ng-repeat="simulation in simulations">
                     <td>{{ simulation.uri }}</td>
+                    <td>{{ simulation.name }}</td>
+                    <td>{{ simulation.status }}</td>
+                    <td>{{ simulation.submissionTime }}</td>
+                    <td>{{ simulation.queue }}</td>
                     <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
                     <td>
                         <button ng-click="destroyJob(simulation.uuid)">X</button>

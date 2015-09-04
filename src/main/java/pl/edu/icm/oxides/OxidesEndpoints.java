@@ -21,6 +21,7 @@ import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
 import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
 import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.UserResourcesManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,7 @@ public class OxidesEndpoints {
     private final UnicoreGridResources unicoreGridResources;
     private final OpenOxidesResources openOxidesResources;
     private final SamlAuthenticationHandler samlAuthenticationHandler;
+    private final UserResourcesManager userResourcesManager;
     private AuthenticationSession authenticationSession;
 
     @Autowired
@@ -44,14 +46,20 @@ public class OxidesEndpoints {
                            UnicoreGridResources unicoreGridResources,
                            OpenOxidesResources openOxidesResources,
                            SamlAuthenticationHandler samlAuthenticationHandler,
+                           UserResourcesManager userResourcesManager,
                            AuthenticationSession authenticationSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
         this.openOxidesResources = openOxidesResources;
         this.samlAuthenticationHandler = samlAuthenticationHandler;
+        this.userResourcesManager = userResourcesManager;
         this.authenticationSession = authenticationSession;
     }
 
+    /*
+        MVC ENDPOINTS:
+    ==========================================================================================================
+    */
     @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public ModelAndView welcomePage() {
         return oxidesGridPortalPages.modelWelcomePage(authenticationSession);
@@ -83,10 +91,11 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.signOutAndRedirect(session);
     }
 
-    /* PLANNED JSON ENDPOINTS:
+
+    /*
+            JSON ENDPOINTS:
     ==========================================================================================================
      */
-
     @RequestMapping(value = "/unicore/submit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -117,7 +126,6 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserJobs(authenticationSession);
     }
 
-
     @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -129,7 +137,6 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
     }
 
-
     @RequestMapping(value = "/unicore/files/{uuid}", method = RequestMethod.GET)
     public ResponseEntity<Void> downloadSimulationFile(
             @PathVariable(value = "uuid") UUID simulationUuid,
@@ -140,7 +147,9 @@ public class OxidesEndpoints {
         return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
     }
 
-    /* TO BE DECIDED:
+
+    /*
+            TO BE DECIDED:
     ==========================================================================================================
      */
     @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
@@ -158,10 +167,11 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserStorages(authenticationSession);
     }
 
-    /* TO BE REMOVED:
+
+    /*
+            TO BE REMOVED:
     ==========================================================================================================
      */
-
     @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> listSites(HttpSession session) {
@@ -177,13 +187,14 @@ public class OxidesEndpoints {
     }
 
 
-    /* OPEN OXIDES PORTAL ENDPOINTS:
+    /*
+            OPEN OXIDES PORTAL ENDPOINTS:
     ==========================================================================================================
      */
     @RequestMapping(value = "/data", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> listSimulationFiles(@RequestParam(value = "name") String name,
-                                                      HttpSession session) {
+    public ResponseEntity<String> retrieveStructureData(@RequestParam(value = "name") String name,
+                                                        HttpSession session) {
         logSessionData("OPEN-OXIDES", session, authenticationSession);
         return openOxidesResources.getParticleParameters(name, authenticationSession);
     }
@@ -195,7 +206,8 @@ public class OxidesEndpoints {
     }
 
 
-    /* AUTHENTICATION ENDPOINTS:
+    /*
+            AUTHENTICATION ENDPOINTS:
     ==========================================================================================================
      */
     @RequestMapping(value = "/authn", method = RequestMethod.GET)
@@ -212,17 +224,26 @@ public class OxidesEndpoints {
     @RequestMapping(value = "/authn", method = RequestMethod.POST)
     public String processAuthenticationResponse(HttpServletRequest request) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
-        return samlAuthenticationHandler.processAuthenticationResponse(request, authenticationSession);
+        return processResponseAndUserSessionInitialization(request, authenticationSession);
+    }
+
+    private String processResponseAndUserSessionInitialization(HttpServletRequest request,
+                                                               AuthenticationSession authenticationSession) {
+        String returnUrl = samlAuthenticationHandler.processAuthenticationResponse(request, authenticationSession);
+        userResourcesManager.initializeAfterSuccessfulSignIn(authenticationSession);
+        return returnUrl;
     }
 
 
-    /* HELPER METHOD:
+    /*
+            HELPER METHOD:
     ==========================================================================================================
      */
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
         log.info(String.format("%10s: %s", logPrefix, session.getId()));
         log.info(String.format("%10s: %s", logPrefix, authnSession));
     }
+
 
     private Log log = LogFactory.getLog(OxidesEndpoints.class);
 }

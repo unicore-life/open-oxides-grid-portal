@@ -48,28 +48,28 @@ public class UnicoreGridResources {
 
     public ResponseEntity<List> listUserSites(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(siteHandler.retrieveServiceList(authenticationSession));
+            return ok(siteHandler.retrieveServiceList(authenticationSession.getSelectedTrustDelegation()));
         }
         return unauthorizedResponse();
     }
 
     public ResponseEntity<List> listUserStorages(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(storageHandler.retrieveSiteResourceList(authenticationSession));
+            return ok(storageHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
         }
         return unauthorizedResponse();
     }
 
     public ResponseEntity<List> listUserJobs(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(jobHandler.retrieveSiteResourceList(authenticationSession));
+            return ok(jobHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
         }
         return unauthorizedResponse();
     }
 
     public ResponseEntity<List> listUserResources(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(resourceHandler.retrieveSiteResourceList(authenticationSession));
+            return ok(resourceHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
         }
         return unauthorizedResponse();
     }
@@ -84,7 +84,9 @@ public class UnicoreGridResources {
 
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(jobHandler.listJobFiles(simulationUuid, ofNullable(path), authenticationSession));
+            return ok(jobHandler.listJobFiles(simulationUuid,
+                    ofNullable(path),
+                    authenticationSession.getSelectedTrustDelegation()));
         }
         return unauthorizedResponse();
     }
@@ -94,7 +96,10 @@ public class UnicoreGridResources {
                                                     HttpServletResponse response,
                                                     AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            jobHandler.downloadJobFile(simulationUuid, ofNullable(path), response, authenticationSession);
+            jobHandler.downloadJobFile(simulationUuid,
+                    ofNullable(path),
+                    response,
+                    authenticationSession.getSelectedTrustDelegation());
             return ok().build();
         }
         return unauthorizedResponse();

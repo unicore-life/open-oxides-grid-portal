@@ -1,5 +1,6 @@
 package pl.edu.icm.oxides.unicore;
 
+import eu.unicore.security.etd.TrustDelegation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,14 @@ public class CachingResourcesManager {
     }
 
     public void initializeSignedInUserResources(AuthenticationSession authenticationSession) {
-        log.info("Staring caching resources calls for user " + authenticationSession.getCommonName());
+        TrustDelegation trustDelegation = authenticationSession.getSelectedTrustDelegation();
         taskExecutor.execute(() -> {
-            // TODO: Of course can not use session scoped, so should remodelled caching:
-            //jobHandler.retrieveSiteResourceList(authenticationSession);
-            log.info("Finished caching resources calls for user");
+            String custodianDN = trustDelegation.getCustodianDN();
+            log.info("Staring caching resources calls for user <" + custodianDN + ">");
+
+            jobHandler.retrieveSiteResourceList(trustDelegation);
+
+            log.info("Finished caching resources calls for user <" + custodianDN + ">");
         });
     }
 

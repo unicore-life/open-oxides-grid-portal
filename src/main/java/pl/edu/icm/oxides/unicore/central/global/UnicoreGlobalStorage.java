@@ -2,6 +2,7 @@ package pl.edu.icm.oxides.unicore.central.global;
 
 import de.fzj.unicore.uas.StorageManagement;
 import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
+import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
-import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,9 +27,9 @@ public class UnicoreGlobalStorage {
         this.clientHelper = clientHelper;
     }
 
-    @Cacheable(value = "unicoreSessionGlobalStorageList", key = "#authenticationSession.uuid")
-    public List<UnicoreGlobalStorageEntity> retrieveServiceList(AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+    @Cacheable(value = "unicoreSessionGlobalStorageList", key = "#trustDelegation.custodianDN")
+    public List<UnicoreGlobalStorageEntity> retrieveServiceList(TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
         return collectGlobalStorageServiceList(clientConfiguration);
     }
 

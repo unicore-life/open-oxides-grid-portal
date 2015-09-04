@@ -1,7 +1,8 @@
 package pl.edu.icm.oxides.user;
 
-import de.fzj.unicore.uas.client.StorageClient;
 import eu.unicore.security.etd.TrustDelegation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -16,9 +17,9 @@ import java.util.UUID;
 public class AuthenticationSession {
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
-    private StorageClient storageClient;
 
     private final UserAttributes attributes = new UserAttributes();
+    private final UserResources resources = new UserResources();
     private final String uuid = UUID.randomUUID().toString();
 
     public String getReturnUrl() {
@@ -37,12 +38,8 @@ public class AuthenticationSession {
         this.trustDelegations = trustDelegations;
     }
 
-    public StorageClient getStorageClient() {
-        return storageClient;
-    }
-
-    public void setStorageClient(StorageClient storageClient) {
-        this.storageClient = storageClient;
+    public UserResources getResources() {
+        return resources;
     }
 
     public String getUuid() {
@@ -70,4 +67,16 @@ public class AuthenticationSession {
     public boolean isGroupMember(String groupName) {
         return attributes.getMemberGroups().contains(groupName);
     }
+
+    public TrustDelegation getSelectedTrustDelegation() {
+        TrustDelegation trustDelegation = trustDelegations.get(0);
+        if (trustDelegations.size() > 1) {
+            log.warn(String.format("Too many trust delegations. Using the one with custodian DN = <%s> and " +
+                            "subject = <%s> issued by <%s>.", trustDelegation.getCustodianDN(),
+                    trustDelegation.getSubjectName(), trustDelegation.getIssuerName()));
+        }
+        return trustDelegation;
+    }
+
+    private Log log = LogFactory.getLog(AuthenticationSession.class);
 }

@@ -2,6 +2,7 @@ package pl.edu.icm.oxides.unicore.central.tss;
 
 import de.fzj.unicore.uas.TargetSystemFactory;
 import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
+import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
-import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,9 +27,9 @@ public class UnicoreSite {
         this.clientHelper = clientHelper;
     }
 
-    @Cacheable(value = "unicoreSessionSiteList", key = "#authenticationSession.uuid")
-    public List<UnicoreSiteEntity> retrieveServiceList(AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+    @Cacheable(value = "unicoreSessionSiteList", key = "#trustDelegation.custodianDN")
+    public List<UnicoreSiteEntity> retrieveServiceList(TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
         return collectTargetSystemList(clientConfiguration);
     }
 
