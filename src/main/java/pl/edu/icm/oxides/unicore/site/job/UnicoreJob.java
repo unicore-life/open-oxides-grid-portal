@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
+import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.simulation.model.SimulationGridFile;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
@@ -34,12 +35,17 @@ public class UnicoreJob {
     private final GridClientHelper clientHelper;
     private final UnicoreSite unicoreSite;
     private final UnicoreJobClient jobClient;
+    private final GridOxidesConfig oxidesConfig;
 
     @Autowired
-    public UnicoreJob(GridClientHelper clientHelper, UnicoreSite unicoreSite, UnicoreJobClient jobClient) {
+    public UnicoreJob(GridClientHelper clientHelper,
+                      UnicoreSite unicoreSite,
+                      UnicoreJobClient jobClient,
+                      GridOxidesConfig oxidesConfig) {
         this.clientHelper = clientHelper;
         this.unicoreSite = unicoreSite;
         this.jobClient = jobClient;
+        this.oxidesConfig = oxidesConfig;
     }
 
     @Cacheable(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
@@ -54,7 +60,8 @@ public class UnicoreJob {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .map(epr -> toUnicoreJobEntity(epr, trustDelegation))
-                .sorted((o1, o2) -> o1.getTimestamp() < o2.getTimestamp() ? -1 : 1)
+                .filter(unicoreJobEntity -> unicoreJobEntity.getName().startsWith(oxidesConfig.getJobPrefix()))
+                .sorted((o1, o2) -> o1.getTimestamp() > o2.getTimestamp() ? -1 : 1)
                 .collect(Collectors.toList());
     }
 

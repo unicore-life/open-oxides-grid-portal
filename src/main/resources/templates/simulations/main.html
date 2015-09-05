@@ -22,17 +22,20 @@
 
             <!-- Table -->
             <table class="table" ng-show="!showSpinKit">
-                <!--<theader>-->
-                <!--<tr>-->
-                <!--<td colspan="3">-->
-                <!--</td>-->
-                <!--</tr>-->
-                <!--</theader>-->
+                <theader>
+                    <tr>
+                        <td>Name</td>
+                        <td>Status</td>
+                        <td>Submission Time</td>
+                        <td>Queue</td>
+                        <td>.1</td>
+                        <td>.2</td>
+                    </tr>
+                </theader>
 
                 <tbody>
                 <tr ng-repeat="simulation in simulations">
-                    <td>{{ simulation.uri }}</td>
-                    <td>{{ simulation.name }}</td>
+                    <td ng-attr-title="{{ simulation.uri }}">{{ simulation.name }}</td>
                     <td>{{ simulation.status }}</td>
                     <td>{{ simulation.submissionTime }}</td>
                     <td>{{ simulation.queue }}</td>

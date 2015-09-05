@@ -64,7 +64,7 @@ public class UnicoreBroker {
 
         Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
 
-        String simulationName = "_OpenOxides__" + simulation.getName();
+        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
         JobDefinitionDocument jobDefinitionDocument =
                 BrokeredJobModel.prepareJobDefinitionDocument(
                         oxidesConfig.getApplicationName(),
