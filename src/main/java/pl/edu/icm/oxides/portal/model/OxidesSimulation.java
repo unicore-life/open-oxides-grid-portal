@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.simulation.model;
+package pl.edu.icm.oxides.portal.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
-import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
+import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.user.AuthenticationSession;
@@ -69,7 +69,8 @@ public class UnicoreBroker {
                 BrokeredJobModel.prepareJobDefinitionDocument(
                         oxidesConfig.getApplicationName(),
                         oxidesConfig.getApplicationVersion(),
-                        simulationName);
+                        simulationName,
+                        authenticationSession.getResources().getImportFiles());
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
 

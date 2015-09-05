@@ -16,7 +16,7 @@ import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
-import pl.edu.icm.oxides.simulation.model.SimulationGridFile;
+import pl.edu.icm.oxides.portal.model.SimulationGridFile;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;

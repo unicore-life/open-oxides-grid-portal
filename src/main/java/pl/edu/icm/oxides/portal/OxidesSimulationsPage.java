@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.simulation;
+package pl.edu.icm.oxides.portal;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,8 +10,8 @@ import java.util.UUID;
 import static java.util.Optional.ofNullable;
 
 @Service
-public class OxidesSimulationsPage {
-    public ModelAndView modelSimulationsPage(AuthenticationSession authenticationSession) {
+class OxidesSimulationsPage {
+    ModelAndView modelSimulationsPage(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
         }
@@ -19,7 +19,7 @@ public class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
-    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession,
+    ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession,
                                                UUID simulationUuid,
                                                Optional<String> path) {
         if (isValidAuthenticationSession(authenticationSession)) {
@@ -32,7 +32,7 @@ public class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
-    public ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
+    ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));
         }

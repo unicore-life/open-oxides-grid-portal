@@ -7,8 +7,8 @@ import pl.edu.icm.oxides.user.AuthenticationSession;
 import java.util.Optional;
 
 @Service
-public class OxidesWelcomePage {
-    public ModelAndView modelWelcomePage(Optional<AuthenticationSession> authenticationSession) {
+class OxidesWelcomePage {
+    ModelAndView modelWelcomePage(Optional<AuthenticationSession> authenticationSession) {
         ModelAndView modelAndView = new ModelAndView("welcome");
         modelAndView.addObject("commonName",
                 authenticationSession

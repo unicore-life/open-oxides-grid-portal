@@ -48,6 +48,38 @@
                 </div>
             </div>
         </form>
+
+
+        <div ng-controller="oxidesFileGridUploadController">
+            <input type="file" nv-file-select="nv-file-select" uploader="uploader"/>
+
+            <br/>
+
+            <ul>
+                <li ng-repeat="item in uploader.queue">
+                    Name: <span ng-bind="item.file.name"></span>
+                    (<span nowrap="nowrap">{{ item.file.size/1024/1024|number:2 }} MB</span>)
+
+                    <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                    </div>
+
+                    <div nowrap="nowrap">
+                        <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"
+                                ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        </button>
+
+                        <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
+                                ng-disabled="!item.isUploading">
+                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
     </div>
     <!-- /.container -->
 </div>

@@ -3,7 +3,6 @@ package pl.edu.icm.oxides.portal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.simulation.OxidesSimulationsPage;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.OxidesUserPage;
 

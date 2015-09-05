@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.open.OpenOxidesResources;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
-import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
+import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.UserResourcesManager;

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import pl.edu.icm.oxides.simulation.model.OxidesSimulation;
+import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;

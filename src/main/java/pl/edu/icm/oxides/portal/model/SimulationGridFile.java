@@ -1,4 +1,4 @@
-package pl.edu.icm.oxides.simulation.model;
+package pl.edu.icm.oxides.portal.model;
 
 public class SimulationGridFile {
     private final String path;

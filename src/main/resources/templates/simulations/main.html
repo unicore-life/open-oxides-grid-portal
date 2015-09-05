@@ -20,33 +20,37 @@
                 <chasing-dots-spinner></chasing-dots-spinner>
             </div>
 
-            <!-- Table -->
-            <table class="table" ng-show="!showSpinKit">
-                <theader>
-                    <tr>
-                        <td>Name</td>
-                        <td>Status</td>
-                        <td>Submission Time</td>
-                        <td>Queue</td>
-                        <td>.1</td>
-                        <td>.2</td>
-                    </tr>
-                </theader>
+            <div class="table-responsive">
+                <!-- Table -->
+                <table class="table table-hover" ng-show="!showSpinKit">
+                    <theader>
+                        <tr>
+                            <td>Name</td>
+                            <td>Status</td>
+                            <td>Submission Time</td>
+                            <td>Queue</td>
+                            <td>.1</td>
+                            <td>.2</td>
+                        </tr>
+                    </theader>
 
-                <tbody>
-                <tr ng-repeat="simulation in simulations">
-                    <td ng-attr-title="{{ simulation.uri }}">{{ simulation.name }}</td>
-                    <td>{{ simulation.status }}</td>
-                    <td>{{ simulation.submissionTime }}</td>
-                    <td>{{ simulation.queue }}</td>
-                    <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
-                    <td>
-                        <button ng-click="destroyJob(simulation.uuid)">X</button>
-                        <!--<a ng-click="destroyJob(simulation.uuid)" href="javascript:void(0);">X</a>-->
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                    <tr ng-repeat="simulation in simulations">
+                        <td ng-attr-title="{{ simulation.uri }}">{{ simulation.name }}</td>
+                        <td>{{ simulation.status }}</td>
+                        <td>{{ simulation.submissionTime }}</td>
+                        <td>{{ simulation.queue }}</td>
+                        <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
+                        <td>
+                            <button ng-click="destroyJob(simulation.uuid)">X</button>
+                            <!--<a ng-click="destroyJob(simulation.uuid)" href="javascript:void(0);">X</a>-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+
         </div>
     </div>
     <!-- /.container -->

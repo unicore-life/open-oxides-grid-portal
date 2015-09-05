@@ -1,16 +1,16 @@
 package pl.edu.icm.oxides.unicore;
 
-import eu.unicore.util.httpclient.IClientConfiguration;
+import de.fzj.unicore.uas.client.StorageClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.unigrids.services.atomic.types.ProtocolType;
 import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.UserResources;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.InputStream;
 
 @Service
 public class GridFileUploader {
@@ -22,7 +22,7 @@ public class GridFileUploader {
     }
 
     public String uploadFileToGrid(MultipartFile file, String uri, AuthenticationSession authenticationSession) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+        UserResources userResources = authenticationSession.getResources();
 
         String fileName = file.getName();
         String originalFilename = file.getOriginalFilename();
@@ -31,11 +31,20 @@ public class GridFileUploader {
         String name = originalFilename;
         if (!file.isEmpty()) {
             try {
-                byte[] bytes = file.getBytes();
-                BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File(name)));
-                stream.write(bytes);
-                stream.close();
+//                byte[] bytes = file.getBytes();
+//                BufferedOutputStream stream =
+//                        new BufferedOutputStream(new FileOutputStream(new File(name)));
+//                stream.write(bytes);
+//                stream.close();
+
+                String fileUri = importFileToGrid(
+                        userResources.getStorageClient(),
+                        name,
+                        file.getInputStream()
+                );
+
+                userResources.getImportFiles().put(name, fileUri);
+
                 return "You successfully uploaded " + name + "!";
             } catch (Exception e) {
                 return "You failed to upload " + name + " => " + e.getMessage();
@@ -43,6 +52,15 @@ public class GridFileUploader {
         } else {
             return "You failed to upload " + name + " because the file was empty.";
         }
+    }
+
+    private String importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
+//        InputStream source = new ByteArrayInputStream(content.getBytes());
+        storageClient.getImport(filename, ProtocolType.BFT,
+                ProtocolType.RBYTEIO).writeAllData(source);
+        return ProtocolType.BFT + ":"
+                + storageClient.getEPR().getAddress().getStringValue()
+                + "#" + filename;
     }
 
     private Log log = LogFactory.getLog(GridFileUploader.class);

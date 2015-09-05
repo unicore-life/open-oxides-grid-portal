@@ -38,6 +38,7 @@
                     <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
                            ng-show="simulationFile.directory">Show Dir</a></td>
                     <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
+                           target="_blank"
                            ng-show="!simulationFile.directory">Show File</a></td>
                 </tr>
                 </tbody>
