@@ -70,6 +70,7 @@ public class UnicoreBroker {
                         oxidesConfig.getApplicationName(),
                         oxidesConfig.getApplicationVersion(),
                         simulationName,
+                        simulation,
                         authenticationSession.getResources().getImportFiles());
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 

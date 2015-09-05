@@ -111,10 +111,9 @@ public class OxidesEndpoints {
     )
     @ResponseBody
     public ResponseEntity<String> handleFileUpload(@RequestParam("uploadFile") MultipartFile file,
-                                                   @RequestParam("destinationUri") String uri,
                                                    HttpSession session) {
         logSessionData("UNICORE-UPLOAD", session, authenticationSession);
-        return unicoreGridResources.uploadFile(file, uri, authenticationSession);
+        return unicoreGridResources.uploadFile(file, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/jobs", method = RequestMethod.GET,

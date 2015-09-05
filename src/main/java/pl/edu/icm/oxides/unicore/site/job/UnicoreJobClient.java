@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.unigrids.x2006.x04.services.jms.JobPropertiesDocument;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
+import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 
 import java.util.Calendar;
@@ -18,10 +19,12 @@ import java.util.Calendar;
 @Component
 @CacheConfig(cacheNames = {"unicoreSessionJobClientList"})
 public class UnicoreJobClient {
+    private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
 
     @Autowired
-    public UnicoreJobClient(GridClientHelper clientHelper) {
+    public UnicoreJobClient(GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
+        this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
     }
 
@@ -46,7 +49,8 @@ public class UnicoreJobClient {
 
             return new UnicoreJobEntity(epr, name, status, submissionTime, queue);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error retrieving job properties for job <" + uri + "> of <"
+                    + trustDelegation.getCustodianDN() + ">", e);
             return null;
         }
     }

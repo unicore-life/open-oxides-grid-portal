@@ -105,9 +105,9 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<String> uploadFile(MultipartFile file, String uri, AuthenticationSession authenticationSession) {
+    public ResponseEntity<String> uploadFile(MultipartFile file, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(fileUploader.uploadFileToGrid(file, uri, authenticationSession));
+            return ok(fileUploader.uploadFileToGrid(file, authenticationSession));
         }
         return unauthorizedResponse();
     }

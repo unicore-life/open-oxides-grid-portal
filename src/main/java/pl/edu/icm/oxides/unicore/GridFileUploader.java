@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.unigrids.services.atomic.types.ProtocolType;
+import pl.edu.icm.oxides.portal.model.SimulationImportFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.UserResources;
 
@@ -21,7 +22,7 @@ public class GridFileUploader {
         this.clientHelper = clientHelper;
     }
 
-    public String uploadFileToGrid(MultipartFile file, String uri, AuthenticationSession authenticationSession) {
+    public String uploadFileToGrid(MultipartFile file, AuthenticationSession authenticationSession) {
         UserResources userResources = authenticationSession.getResources();
 
         String fileName = file.getName();
@@ -37,13 +38,13 @@ public class GridFileUploader {
 //                stream.write(bytes);
 //                stream.close();
 
-                String fileUri = importFileToGrid(
+                String uri = importFileToGrid(
                         userResources.getStorageClient(),
                         name,
                         file.getInputStream()
                 );
 
-                userResources.getImportFiles().put(name, fileUri);
+                userResources.getImportFiles().put(name, new SimulationImportFile(name, file.getSize(), uri));
 
                 return "You successfully uploaded " + name + "!";
             } catch (Exception e) {

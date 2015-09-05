@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 public class UnicoreJobEntity implements Serializable {
     private final String uri;
-    private final String name;
+    private final String fullName;
     private final String status;
     private final Calendar submissionTime;
     private final String queue;
@@ -19,7 +19,7 @@ public class UnicoreJobEntity implements Serializable {
                             String status,
                             Calendar submissionTime,
                             String queue) {
-        this.name = name;
+        this.fullName = name;
         this.status = status;
         this.submissionTime = submissionTime;
         this.queue = queue;
@@ -36,7 +36,7 @@ public class UnicoreJobEntity implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return fullName.substring("_OpenOxides__".length());
     }
 
     public String getStatus() {
@@ -51,6 +51,11 @@ public class UnicoreJobEntity implements Serializable {
 
     public String getQueue() {
         return queue;
+    }
+
+    @JsonIgnore
+    public String getFullName() {
+        return fullName;
     }
 
     @JsonIgnore
