@@ -12,7 +12,14 @@
         <form name="simulationSubmitForm" class="form-horizontal" ng-controller="oxidesSubmitSimulationController">
             <h2 class="form-signin-heading">Simulation Description</h2>
 
-            <div class="form-group" ng-repeat="simulationField in simulationFormFields">
+            <button type="button" class="btn btn-default btn-xs pull-right"
+                    ng-click="toggleAdvanced()">
+                <span ng-model="toggleAdvancedLabel">Show advanced parameters
+                </span>
+            </button>
+
+            <div class="form-group" ng-repeat="simulationField in simulationFormFields"
+                 ng-show="isVisible(simulationField.id)">
                 <label ng-attr-for="{{ simulationField.id }}" class="col-sm-2 control-label">
                     {{ simulationField.label }}
                 </label>

@@ -30,19 +30,23 @@
                 <chasing-dots-spinner></chasing-dots-spinner>
             </div>
 
-            <!-- Table -->
-            <table class="table" ng-show="!showSpinKit">
-                <tbody>
-                <tr ng-repeat="simulationFile in simulationFiles">
-                    <td>{{ simulationFile.path }}</td>
-                    <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
-                           ng-show="simulationFile.directory">Show Dir</a></td>
-                    <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
-                           target="_blank"
-                           ng-show="!simulationFile.directory">Show File</a></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive" ng-show="!showSpinKit">
+                <!-- Table -->
+                <table class="table table-hover">
+                    <tbody>
+                    <tr ng-repeat="simulationFile in simulationFiles">
+                        <td>{{ simulationFile.path }}</td>
+                        <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
+                               ng-show="simulationFile.directory">Show Dir</a></td>
+                        <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
+                               target="_blank"
+                               ng-show="!simulationFile.directory">Show File</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+
         </div>
     </div>
     <!-- /.container -->

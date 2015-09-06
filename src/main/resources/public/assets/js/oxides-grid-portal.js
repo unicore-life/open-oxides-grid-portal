@@ -165,6 +165,19 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
             {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'}
         ];
+        $scope.visibleAdvanced = false;
+        $scope.toggleAdvancedLabel = 'Show advanced parameters';
+
+        $scope.toggleAdvanced = function () {
+            console.log('ASD');
+        };
+
+        $scope.isVisible = function (parameterName) {
+            if (parameterName == 'simulationName' || parameterName == 'simulationProject') {
+                return true;
+            }
+            return false;
+        };
 
         $scope.resetForm = function () {
             $scope.simulationSubmitForm.$setPristine();
@@ -174,8 +187,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             // Creating JSON with simulation description:
             var oxidesSimulation = {};
             var offset = 'simulation'.length;
-            $scope.simulationFormFields.map(function(it) {
-                var parameterValue = $scope.simulationParameters[it.id];
+            $scope.simulationFormFields.map(function (it) {
+                var parameterValue = $scope.simulationParameters[it.id].value;
                 if (parameterValue != null && parameterValue != '') {
                     var parameterName = it.id.substr(offset).toLowerCase();
                     oxidesSimulation[parameterName] = parameterValue;
@@ -224,9 +237,9 @@ oxidesGridPortalApp.controller('oxidesFileGridUploadController',
             url: '/oxides/unicore/upload',
             alias: 'uploadFile',
             queueLimit: 1,
-    //        formData: [{
-    //            destinationUri: $scope.destinationUri
-    //        }],
+            //        formData: [{
+            //            destinationUri: $scope.destinationUri
+            //        }],
             removeAfterUpload: true,
 
             onBeforeUploadItem: function (item) {
@@ -245,7 +258,7 @@ oxidesGridPortalApp.controller('oxidesFileGridUploadController',
                 $scope.uploader._directives.select[0].element[0].value = '';
                 console.log('STATUS: ' + status);
             },
-    });
+        });
 
 //        $scope.uploader.FileSelect.prototype.isEmptyAfterSelection = function () {
 //            return true; // true|false

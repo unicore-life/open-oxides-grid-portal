@@ -20,19 +20,19 @@
                 <chasing-dots-spinner></chasing-dots-spinner>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" ng-show="!showSpinKit">
                 <!-- Table -->
-                <table class="table table-hover" ng-show="!showSpinKit">
-                    <theader>
-                        <tr>
-                            <td>Name</td>
-                            <td>Status</td>
-                            <td>Submission Time</td>
-                            <td>Queue</td>
-                            <td>.1</td>
-                            <td>.2</td>
-                        </tr>
-                    </theader>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Submission Time</th>
+                        <th>Queue</th>
+                        <th>.1</th>
+                        <th>.2</th>
+                    </tr>
+                    </thead>
 
                     <tbody>
                     <tr ng-repeat="simulation in simulations">
@@ -42,7 +42,11 @@
                         <td>{{ simulation.queue }}</td>
                         <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
                         <td>
-                            <button ng-click="destroyJob(simulation.uuid)">X</button>
+                            <!--<button ng-click="destroyJob(simulation.uuid)">X</button>-->
+                            <button type="button" class="close" aria-label="Destroy Job"
+                                    ng-click="destroyJob(simulation.uuid)">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                             <!--<a ng-click="destroyJob(simulation.uuid)" href="javascript:void(0);">X</a>-->
                         </td>
                     </tr>
