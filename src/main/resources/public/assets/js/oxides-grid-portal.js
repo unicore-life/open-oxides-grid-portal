@@ -39,11 +39,19 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
         $scope.simulations = modelSimulationsListing;
         $scope.showSpinKit = true;
 
-        $scope.destroyJob = function (uuid) {
-            //$http.delete('/oxides/unicore/jobs')
-            console.warn('Deleting job: ' + uuid);
+        $scope.destroyJob = function (uuid, idx) {
+            console.warn('Deleting job: ' + uuid + ' (' + idx + ')');
+            $scope.simulations.splice(idx, 1);
 
-            // TODO
+            $http.delete('/oxides/unicore/jobs/' + uuid, {
+                headers: {'Content-Type': 'application/json'},
+                data: ''
+            })
+//            .success(function (data, status, headers, config) {
+//            })
+            .error(function (data, status, headers, config) {
+                console.error('Failed: HTTP Status Code = ' + status);
+            });
         };
 
         oxidesSimulationsListingService.getJson()
@@ -150,12 +158,13 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
     function ($scope, oxidesSubmitSimulationService) {
         $scope.simulationParameters = {
-            simulationName: 'A',
-            simulationProject: 'B',
-            simulationQueue: 'c',
-            simulationMemory: 'd',
-            simulationNodes: 'e',
-            simulationCPUs: 'f'
+            simulationName: 'nazwa jako taka',
+            simulationProject: 'grancik',
+            simulationQueue: '',
+            simulationMemory: '',
+            simulationNodes: '',
+            simulationCPUs: '',
+            simulationReservation: ''
         };
         $scope.simulationFormFields = [
             {'id': 'simulationName', 'label': 'Name', 'placeholder': 'Simulation Name'},
@@ -163,20 +172,28 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             {'id': 'simulationQueue', 'label': 'Queue', 'placeholder': 'Queue'},
             {'id': 'simulationMemory', 'label': 'Memory', 'placeholder': 'Memory [MB]'},
             {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
-            {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'}
+            {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'},
+            {'id': 'simulationReservation', 'label': 'Reservation', 'placeholder': 'Reservation ID'}
         ];
         $scope.visibleAdvanced = false;
-        $scope.toggleAdvancedLabel = 'Show advanced parameters';
+        $scope.toggleAdvancedLabel = 'Show Advanced Parameters';
 
         $scope.toggleAdvanced = function () {
-            console.log('ASD');
+            var prefix = $scope.toggleAdvancedLabel.substr(0, 4).toLowerCase();
+            var toggledPrefix = (prefix == 'show') ? 'Hide' : 'Show';
+
+            $scope.toggleAdvancedLabel = toggledPrefix + ' Advanced Parameters';
+            $scope.visibleAdvanced = ! $scope.visibleAdvanced;
         };
 
-        $scope.isVisible = function (parameterName) {
+        $scope.isParameterRequired = function (parameterName) {
             if (parameterName == 'simulationName' || parameterName == 'simulationProject') {
                 return true;
             }
             return false;
+        };
+        $scope.isAdvancedVisible = function (parameterName) {
+            return $scope.isParameterRequired(parameterName) || $scope.visibleAdvanced;
         };
 
         $scope.resetForm = function () {
@@ -188,7 +205,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             var oxidesSimulation = {};
             var offset = 'simulation'.length;
             $scope.simulationFormFields.map(function (it) {
-                var parameterValue = $scope.simulationParameters[it.id].value;
+                var parameterValue = $scope.simulationParameters[it.id];
                 if (parameterValue != null && parameterValue != '') {
                     var parameterName = it.id.substr(offset).toLowerCase();
                     oxidesSimulation[parameterName] = parameterValue;
@@ -264,4 +281,25 @@ oxidesGridPortalApp.controller('oxidesFileGridUploadController',
 //            return true; // true|false
 //        };
     }
+);
+
+
+/**
+ * A generic confirmation for risky actions.
+ * Usage: Add attributes: ng-really-message="Are you sure"? ng-really-click="takeAction()" function
+ */
+oxidesGridPortalApp.directive('ngReallyClick',
+    [ function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                element.bind('click', function() {
+                    var message = attrs.ngReallyMessage;
+                    if (message && confirm(message)) {
+                        scope.$apply(attrs.ngReallyClick);
+                    }
+                });
+            }
+        }
+    }]
 );

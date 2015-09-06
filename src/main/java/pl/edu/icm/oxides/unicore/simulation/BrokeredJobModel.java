@@ -5,6 +5,8 @@ import eu.unicore.jsdl.extensions.IgnoreFailureDocument;
 import eu.unicore.jsdl.extensions.ResourceRequestDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationType;
@@ -77,13 +79,13 @@ public final class BrokeredJobModel {
         ResourcesDocument resourcesDocument = ResourcesDocument.Factory.newInstance();
         ResourcesType resourcesType = resourcesDocument.addNewResources();
 
-        if (simulation.getProject() != null) {
+        if (!isNullOrBlank(simulation.getProject())) {
             insertResourceRequest("Project", simulation.getProject(), resourcesDocument);
         }
-        if (simulation.getQueue() != null) {
+        if (!isNullOrBlank(simulation.getQueue())) {
             insertResourceRequest("Queue", simulation.getQueue(), resourcesDocument);
         }
-        if (simulation.getMemory() != null) {
+        if (!isNullOrBlank(simulation.getMemory())) {
             try {
                 BigDecimal memory = new BigDecimal(simulation.getMemory()).multiply(new BigDecimal(1024L * 1024L));
                 resourcesType.addNewIndividualPhysicalMemory().addNewExact().setStringValue(memory.toPlainString());
@@ -91,18 +93,25 @@ public final class BrokeredJobModel {
                 log.warn("Memory is not a number! Skipping resource restriction.", e);
             }
         }
-        if (simulation.getNodes() != null) {
+        if (!isNullOrBlank(simulation.getNodes())) {
             try {
                 resourcesType.addNewTotalResourceCount().addNewExact().setStringValue(simulation.getNodes());
             } catch (XmlValueOutOfRangeException e) {
                 log.warn("Wrong nodes number. Skipping resource restriction.", e);
             }
         }
-        if (simulation.getCpus() != null) {
+        if (!isNullOrBlank(simulation.getCpus())) {
             try {
                 resourcesType.addNewIndividualCPUCount().addNewExact().setStringValue(simulation.getCpus());
             } catch (XmlValueOutOfRangeException e) {
                 log.warn("Wrong CPUs number. Skipping resource restriction.", e);
+            }
+        }
+        if (!isNullOrBlank(simulation.getReservation())) {
+            try {
+                insertReservation(simulation.getReservation(), resourcesDocument);
+            } catch (XmlException e) {
+                log.warn("Could not add reservation resource! Skipping it.", e);
             }
         }
         return resourcesType;
@@ -113,6 +122,17 @@ public final class BrokeredJobModel {
         resourceRequestDocument.addNewResourceRequest().setName(name);
         resourceRequestDocument.getResourceRequest().setValue(value);
         WSUtilities.append(resourceRequestDocument, resourcesDocument);
+    }
+
+    private static void insertReservation(String id, ResourcesDocument resourcesDocument) throws XmlException {
+        String reservationXml = "<u6rr:ReservationReference xmlns:u6rr=\"http://www.unicore.eu/unicore/xnjs\">"
+                + id + "</u6rr:ReservationReference>";
+        XmlObject xmlObject = XmlObject.Factory.parse(reservationXml);
+        WSUtilities.append(xmlObject, resourcesDocument);
+    }
+
+    private static boolean isNullOrBlank(String param) {
+        return param == null || param.trim().length() == 0;
     }
 
     private static Log log = LogFactory.getLog(BrokeredJobModel.class);

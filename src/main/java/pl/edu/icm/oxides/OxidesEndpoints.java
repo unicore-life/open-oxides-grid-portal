@@ -125,6 +125,14 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserJobs(authenticationSession);
     }
 
+    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<Void> destroyUnicoreJob(@PathVariable(value = "uuid") UUID simulationUuid,
+                                                  HttpSession session) {
+        logSessionData("DELETE-UNICORE-JOB", session, authenticationSession);
+        return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
+    }
+
     @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -151,14 +159,6 @@ public class OxidesEndpoints {
             TO BE DECIDED:
     ==========================================================================================================
      */
-    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<Void> destroyJob(@PathVariable(value = "uuid") UUID simulationUuid,
-                                           HttpSession session) {
-        logSessionData("DELETE-UNICORE-JOB", session, authenticationSession);
-        return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
-    }
-
     @RequestMapping(value = "/unicore-storages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> listStorages(HttpSession session) {

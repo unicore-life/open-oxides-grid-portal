@@ -10,7 +10,7 @@
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationsListingController">
 
-        <h1>SIMULATIONS</h1>
+        <h2>Open Oxides Simulations</h2>
 
         <div class="panel panel-default">
             <!-- Default panel contents -->
@@ -28,9 +28,8 @@
                         <th>Name</th>
                         <th>Status</th>
                         <th>Submission Time</th>
-                        <th>Queue</th>
-                        <th>.1</th>
-                        <th>.2</th>
+                        <!--<th>Queue</th>-->
+                        <th>Actions</th>
                     </tr>
                     </thead>
 
@@ -39,15 +38,18 @@
                         <td ng-attr-title="{{ simulation.uri }}">{{ simulation.name }}</td>
                         <td>{{ simulation.status }}</td>
                         <td>{{ simulation.submissionTime }}</td>
-                        <td>{{ simulation.queue }}</td>
-                        <td><a ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show</a></td>
+                        <!--<td>{{ simulation.queue }}</td>-->
                         <td>
-                            <!--<button ng-click="destroyJob(simulation.uuid)">X</button>-->
-                            <button type="button" class="close" aria-label="Destroy Job"
-                                    ng-click="destroyJob(simulation.uuid)">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <!--<a ng-click="destroyJob(simulation.uuid)" href="javascript:void(0);">X</a>-->
+                            <a class="btn btn-default btn-xs" role="button"
+                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show Files</a>
+
+                            &nbsp;
+
+                            <a class="btn btn-default btn-xs" role="button"
+                               ng-really-message="Are you sure?"
+                               ng-really-click="destroyJob(simulation.uuid, $index)">
+                                Destroy <span aria-hidden="true">&times;</span>
+                            </a>
                         </td>
                     </tr>
                     </tbody>

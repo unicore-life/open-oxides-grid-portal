@@ -11,7 +11,7 @@
     <div class="container" ng-controller="oxidesSimulationFilesListingController"
          th:attr="ng-init='initializeBreadCrumb(\''+${path}+'\')'">
 
-        <h1>Simulation: <span th:text="${uuid}"></span></h1>
+        <h2>Simulation: <span th:text="${uuid}"></span></h2>
 
         <ol class="breadcrumb">
             <li ng-repeat="element in breadCrumbElements" ng-class="{'active': $last}">
@@ -37,10 +37,12 @@
                     <tr ng-repeat="simulationFile in simulationFiles">
                         <td>{{ simulationFile.path }}</td>
                         <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
-                               ng-show="simulationFile.directory">Show Dir</a></td>
+                               class="btn btn-default btn-xs" role="button"
+                               ng-show="simulationFile.directory">Enter Directory</a></td>
                         <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
-                               target="_blank"
-                               ng-show="!simulationFile.directory">Show File</a></td>
+                               class="btn btn-default btn-xs" role="button"
+                               ng-show="!simulationFile.directory"
+                               target="_blank">Show File</a></td>
                     </tr>
                     </tbody>
                 </table>

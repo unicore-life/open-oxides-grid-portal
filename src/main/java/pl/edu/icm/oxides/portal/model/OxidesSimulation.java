@@ -14,6 +14,7 @@ public class OxidesSimulation {
     private final String memory;
     private final String nodes;
     private final String cpus;
+    private final String reservation;
 
     @JsonCreator
     public OxidesSimulation(@JsonProperty("name") String name,
@@ -21,13 +22,15 @@ public class OxidesSimulation {
                             @JsonProperty("queue") String queue,
                             @JsonProperty("memory") String memory,
                             @JsonProperty("nodes") String nodes,
-                            @JsonProperty("cpus") String cpus) {
+                            @JsonProperty("cpus") String cpus,
+                            @JsonProperty("reservation") String reservation) {
         this.name = name;
         this.project = project;
         this.queue = queue;
         this.memory = memory;
         this.nodes = nodes;
         this.cpus = cpus;
+        this.reservation = reservation;
     }
 
     public String getName() {
@@ -54,15 +57,14 @@ public class OxidesSimulation {
         return cpus;
     }
 
+    public String getReservation() {
+        return reservation;
+    }
+
     @Override
     public String toString() {
-        return "OxidesSimulation{" +
-                "name='" + name + '\'' +
-                ", project='" + project + '\'' +
-                ", queue='" + queue + '\'' +
-                ", memory='" + memory + '\'' +
-                ", nodes='" + nodes + '\'' +
-                ", cpus='" + cpus + '\'' +
-                '}';
+        return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', " +
+                        "memory='%s', nodes='%s', cpus='%s', reservation='%s'}",
+                name, project, queue, memory, nodes, cpus, reservation);
     }
 }

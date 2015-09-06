@@ -5,12 +5,15 @@ import de.fzj.unicore.uas.client.StorageClient;
 import de.fzj.unicore.uas.client.TSFClient;
 import de.fzj.unicore.uas.client.TSSClient;
 import de.fzj.unicore.wsrflite.xmlbeans.BaseFault;
+import de.fzj.unicore.wsrflite.xmlbeans.client.BaseWSRFClient;
 import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
@@ -36,16 +39,19 @@ public class UnicoreJob {
     private final UnicoreSite unicoreSite;
     private final UnicoreJobClient jobClient;
     private final GridOxidesConfig oxidesConfig;
+    private final ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
     public UnicoreJob(GridClientHelper clientHelper,
                       UnicoreSite unicoreSite,
                       UnicoreJobClient jobClient,
-                      GridOxidesConfig oxidesConfig) {
+                      GridOxidesConfig oxidesConfig,
+                      ThreadPoolTaskExecutor taskExecutor) {
         this.clientHelper = clientHelper;
         this.unicoreSite = unicoreSite;
         this.jobClient = jobClient;
         this.oxidesConfig = oxidesConfig;
+        this.taskExecutor = taskExecutor;
     }
 
     @Cacheable(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
@@ -112,6 +118,28 @@ public class UnicoreJob {
         } catch (IOException e) {
             log.error("problem with buffer flush", e);
         }
+    }
+
+    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
+    public void destroyJob(UUID simulationUuid, TrustDelegation trustDelegation) {
+        String uuidString = String.valueOf(simulationUuid);
+        taskExecutor.execute(() -> {
+            retrieveSiteResourceList(trustDelegation)
+                    .stream()
+                    .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(uuidString))
+                    .forEach(jobEntity -> {
+                                try {
+                                    new BaseWSRFClient(
+                                            jobEntity.getEpr(),
+                                            clientHelper.createClientConfiguration(trustDelegation)
+                                    )
+                                            .destroy();
+                                } catch (Exception e) {
+                                    log.error("Could not destroy job <" + jobEntity.getUri() + ">", e);
+                                }
+                            }
+                    );
+        });
     }
 
     private Optional<StorageClient> getStorageClient(UUID simulationUuid, TrustDelegation trustDelegation) {

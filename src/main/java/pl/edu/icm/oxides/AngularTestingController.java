@@ -31,7 +31,7 @@ public class AngularTestingController {
     @RequestMapping(value = "/testing-post", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public OxidesSimulation submitSimulation(@RequestBody OxidesSimulation simulation) {
-        return new OxidesSimulation("DONE", "project", "queue", "memory", "nodes", "cpus");
+        return new OxidesSimulation("DONE", "project", "queue", "memory", "nodes", "cpus", "reservation");
     }
 
     @RequestMapping(value = "/testing-long-call", method = GET, produces = TEXT_PLAIN_VALUE)

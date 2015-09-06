@@ -114,7 +114,7 @@ public class UnicoreGridResources {
 
     public ResponseEntity<Void> destroyUserJob(UUID simulationUuid, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            // TODO
+            jobHandler.destroyJob(simulationUuid, authenticationSession.getSelectedTrustDelegation());
             return noContent().build();
         }
         return unauthorizedResponse();
