@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class AngularTestingController {
     @RequestMapping(value = "/testing-post", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public OxidesSimulation submitSimulation(@RequestBody OxidesSimulation simulation) {
-        return new OxidesSimulation("DONE", "project", "queue", "memory", "nodes", "cpus", "reservation");
+        return new OxidesSimulation("DONE", "project", "queue", "memory", "nodes", "cpus", "reservation",
+                "script", new ArrayList<>());
     }
 
     @RequestMapping(value = "/testing-long-call", method = GET, produces = TEXT_PLAIN_VALUE)

@@ -54,6 +54,11 @@ public class UnicoreJobEntity implements Serializable {
     }
 
     @JsonIgnore
+    public boolean isCompleted() {
+        return "SUCCESSFUL".equalsIgnoreCase(status) || "FAILED".equalsIgnoreCase(status);
+    }
+
+    @JsonIgnore
     public String getFullName() {
         return fullName;
     }

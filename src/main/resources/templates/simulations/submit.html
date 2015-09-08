@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="oxidesGridPortal">
 <head th:replace="include/header :: oxidesHeader"/>
 
-<body ng-controller="oxidesGridPortalController">
+<body>
 <nav th:replace="include/navbar :: oxidesNavigationBar"/>
 
 <!-- Wrap all page content here -->
@@ -32,6 +32,7 @@
                            ng-attr-placeholder="{{ simulationField.placeholder }}"
                            ng-model="simulationParameters[simulationField.id]"
                            ng-required="isParameterRequired(simulationField.id)"
+                           ng-maxlength="32"
                            class="form-control"/>
                 </div>
             </div>
@@ -40,34 +41,40 @@
                 <label for="simulationScript" class="col-sm-2 control-label">Script</label>
 
                 <div class="col-sm-10">
-                    <textarea id="simulationScript" class="form-control" rows="11" placeholder="Script"></textarea>
+                    <textarea id="simulationScript" class="form-control"
+                              rows="11" placeholder="Script" required="required"
+                              ng-model="simulationScriptText" ng-maxlength="1048576" ng-trim="true">
+                    </textarea>
                 </div>
             </div>
 
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="reset" class="btn btn-default"
-                            ng-click="resetForm()">
-                        Reset
-                    </button>
-
-                    <button type="submit" class="btn btn-primary"
-                            ng-disabled="!simulationSubmitForm.$valid"
-                            ng-click="submitForm()">
-                        Submit Simulation
-                    </button>
-                </div>
-            </div>
-
-
-            <div class="form-group" ng-controller="oxidesFileGridUploadController">
                 <label for="simulationFiles" class="col-sm-2 control-label">Files</label>
 
                 <div class="col-sm-10">
-                    <input id="simulationFiles" type="file" nv-file-select="nv-file-select" uploader="uploader"/>
+                    <p ng-show="simulationUploadFilesList.length > 0">
+                    <ul>
+                        <li ng-repeat="simulationUploadFile in simulationUploadFilesList">
+                            {{ simulationUploadFile }}
+                            &nbsp;
+                            <a class="btn btn-default btn-xs" role="button"
+                               ng-really-message="Are you sure?"
+                               ng-really-click="removeUploadFile($index)">
+                                <span aria-hidden="true">&times;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    </p>
 
-                    <br/>
+                    <div ng-show="simulationUploadFilesList.length == 0">
+                        <p class="text-muted">( none )</p>
+                    </div>
 
+                    <input id="simulationFiles" type="file"
+                           nv-file-select="nv-file-select"
+                           uploader="uploader"/>
+
+                    <p>
                     <ul>
                         <li ng-repeat="item in uploader.queue">
                             Name: <span ng-bind="item.file.name"></span>
@@ -91,6 +98,22 @@
                             </div>
                         </li>
                     </ul>
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="reset" class="btn btn-default"
+                            ng-click="resetForm()">
+                        Reset
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                            ng-disabled="!simulationSubmitForm.$valid"
+                            ng-click="submitForm()">
+                        Submit Simulation
+                    </button>
                 </div>
             </div>
 

@@ -46,7 +46,7 @@
 </head>
 
 
-<body ng-controller="oxidesGridPortalController">
+<body>
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -89,8 +89,6 @@
 
 <div class="container">
 
-    <p>
-
     <form name="detailsForm" novalidate ng-controller="oxidesSubmitSimulationController">
 
         <label class="control-label" for="inputTitle">*Title</label>
@@ -118,46 +116,6 @@
             </button>
         </div>
     </form>
-    </p>
-
-    <hr/>
-
-    <ol class="breadcrumb">
-        <li>A</li>
-        <li class="active">B</li>
-    </ol>
-
-    <div>
-        <label>Name:</label>
-        <input type="text" ng-model="yourName" placeholder="Enter a name here"/>
-        <hr/>
-        <h1>Hello {{yourName}}!</h1>
-    </div>
-
-    <hr/>
-
-    <ul>
-        <li ng-repeat="phone in phones">
-            <span>{{phone.name}}</span>
-
-            <p>{{phone.snippet}}</p>
-        </li>
-    </ul>
-
-    <hr/>
-
-    <table>
-        <theader>
-            <tr>
-                <td>Item</td>
-            </tr>
-        </theader>
-        <tbody>
-        <tr ng-repeat="item in myData">
-            <td>{{ item }}</td>
-        </tr>
-        </tbody>
-    </table>
 
 </div>
 <!-- /.container -->

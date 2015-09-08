@@ -14,26 +14,6 @@ var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
 //    });
 
 
-oxidesGridPortalApp.controller('oxidesGridPortalController', function ($scope) {
-    $scope.phones = [
-        {
-            'name': 'Nexus S',
-            'snippet': 'Fast just got faster with Nexus S.'
-        },
-        {
-            'name': 'Motorola XOOM� with Wi-Fi',
-            'snippet': 'The Next, Next Generation tablet.'
-        },
-        {
-            'name': 'MOTOROLA XOOM�',
-            'snippet': 'The Next, Next Generation tablet.'
-        }
-    ];
-
-    $scope.yourName = null;
-});
-
-
 oxidesGridPortalApp.controller('oxidesSimulationsListingController',
     function ($scope, $location, $http, oxidesSimulationsListingService, modelSimulationsListing) {
         $scope.simulations = modelSimulationsListing;
@@ -156,7 +136,7 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
 
 
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
-    function ($scope, oxidesSubmitSimulationService) {
+    function ($scope, oxidesSubmitSimulationService, FileUploader) {
         $scope.simulationParameters = {
             simulationName: 'nazwa jako taka',
             simulationProject: 'grancik',
@@ -166,6 +146,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             simulationCPUs: '',
             simulationReservation: ''
         };
+        $scope.simulationScriptText = '';
+        $scope.simulationUploadFilesList = [];
         $scope.simulationFormFields = [
             {'id': 'simulationName', 'label': 'Name', 'placeholder': 'Simulation Name'},
             {'id': 'simulationProject', 'label': 'Project', 'placeholder': 'Grant ID'},
@@ -175,8 +157,10 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'},
             {'id': 'simulationReservation', 'label': 'Reservation', 'placeholder': 'Reservation ID'}
         ];
+
         $scope.visibleAdvanced = false;
         $scope.toggleAdvancedLabel = 'Show Advanced Parameters';
+
 
         $scope.toggleAdvanced = function () {
             var prefix = $scope.toggleAdvancedLabel.substr(0, 4).toLowerCase();
@@ -196,6 +180,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             return $scope.isParameterRequired(parameterName) || $scope.visibleAdvanced;
         };
 
+
         $scope.resetForm = function () {
             $scope.simulationSubmitForm.$setPristine();
         };
@@ -211,6 +196,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
                     oxidesSimulation[parameterName] = parameterValue;
                 }
             });
+            oxidesSimulation['script'] = $scope.simulationScriptText;
+            oxidesSimulation['files'] = $scope.simulationUploadFilesList;
             var oxidesSimulationJson = JSON.stringify(oxidesSimulation);
 
             // Submitting simulation:
@@ -221,7 +208,49 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
                 .error(function (data, status, headers, config) {
                     console.error('Failed: HTTP Status Code = ' + status);
                 });
-        }
+        };
+
+
+        $scope.removeUploadFile = function(idx) {
+            $scope.simulationUploadFilesList.splice(idx, 1);
+        };
+
+        $scope.uploader = new FileUploader({
+            url: '/oxides/unicore/upload',
+            alias: 'uploadFile',
+            queueLimit: 1,
+            //        formData: [{
+            //            destinationUri: $scope.destinationUri
+            //        }],
+            removeAfterUpload: true,
+
+//            onBeforeUploadItem: function (item) {
+//                Array.prototype.push.apply(item.formData, [{
+//                    destinationUri: $scope.destinationUri,
+//                }]);
+//            },
+
+            onSuccessItem: function (item, response, status, headers) {
+                console.info('SUCCESS');
+            },
+
+            onCompleteItem: function (item, response, status, headers) {
+                this.clearQueue();
+
+                var filename = item.file.name;
+                var arrayLength = $scope.simulationUploadFilesList.length;
+                for (var i = arrayLength - 1; i >= 0; i--) {
+                    if($scope.simulationUploadFilesList[i] === filename) {
+                       $scope.simulationUploadFilesList.splice(i, 1);
+                    }
+                }
+                $scope.simulationUploadFilesList.push(filename);
+
+                // Workaround for re-upload:
+                $scope.uploader._directives.select[0].element[0].value = '';
+                console.log('STATUS: ' + status);
+            },
+        });
     }
 );
 
@@ -243,44 +272,6 @@ oxidesGridPortalApp.factory('oxidesSubmitSimulationService',
             }
         };
     }]
-);
-
-
-oxidesGridPortalApp.controller('oxidesFileGridUploadController',
-    function ($scope, FileUploader) {
-        $scope.destinationUri = 'TODO';
-
-        $scope.uploader = new FileUploader({
-            url: '/oxides/unicore/upload',
-            alias: 'uploadFile',
-            queueLimit: 1,
-            //        formData: [{
-            //            destinationUri: $scope.destinationUri
-            //        }],
-            removeAfterUpload: true,
-
-            onBeforeUploadItem: function (item) {
-                Array.prototype.push.apply(item.formData, [{
-                    destinationUri: $scope.destinationUri,
-                }]);
-            },
-
-            onSuccessItem: function (item, response, status, headers) {
-                console.info('SUCCESS');
-            },
-
-            onCompleteItem: function (item, response, status, headers) {
-                this.clearQueue();
-                // Workaround for re-upload:
-                $scope.uploader._directives.select[0].element[0].value = '';
-                console.log('STATUS: ' + status);
-            },
-        });
-
-//        $scope.uploader.FileSelect.prototype.isEmptyAfterSelection = function () {
-//            return true; // true|false
-//        };
-    }
 );
 
 

@@ -63,6 +63,10 @@ public class UnicoreBroker {
 //        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
 
         Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
+        EndpointReferenceType storageEpr = authenticationSession
+                .getResources()
+                .getStorageClient()
+                .getEPR();
 
         String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
         JobDefinitionDocument jobDefinitionDocument =
@@ -71,7 +75,7 @@ public class UnicoreBroker {
                         oxidesConfig.getApplicationVersion(),
                         simulationName,
                         simulation,
-                        authenticationSession.getResources().getImportFiles());
+                        storageEpr);
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
 
@@ -89,13 +93,7 @@ public class UnicoreBroker {
         String workAssignmentID = WSUtilities.newUniqueID();
         workAssignment.setId(workAssignmentID);
 
-        workAssignment.setStorageEPR(
-                authenticationSession
-                        .getResources()
-                        .getStorageClient()
-                        .getEPR()
-        );
-
+        workAssignment.setStorageEPR(storageEpr);
         /*
          * if(!isJSDL && builder.getImports().size()>0){
          * createWorkflowDataStorage(); wa.setStorageEPR(storageEPR); try{

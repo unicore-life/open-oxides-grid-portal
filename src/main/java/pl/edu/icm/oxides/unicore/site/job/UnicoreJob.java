@@ -66,6 +66,7 @@ public class UnicoreJob {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .map(epr -> toUnicoreJobEntity(epr, trustDelegation))
+                .filter(Objects::nonNull)
                 .filter(unicoreJobEntity -> unicoreJobEntity.getFullName().startsWith(oxidesConfig.getJobPrefix()))
                 .sorted((o1, o2) -> o1.getTimestamp() > o2.getTimestamp() ? -1 : 1)
                 .collect(Collectors.toList());

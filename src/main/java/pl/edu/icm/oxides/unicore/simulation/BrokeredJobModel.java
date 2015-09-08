@@ -17,13 +17,13 @@ import org.ggf.schemas.jsdl.x2005.x11.jsdl.JobDefinitionDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.JobDescriptionType;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ResourcesDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ResourcesType;
+import org.unigrids.services.atomic.types.ProtocolType;
+import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
-import pl.edu.icm.oxides.portal.model.SimulationImportFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public final class BrokeredJobModel {
     private BrokeredJobModel() {
@@ -33,7 +33,7 @@ public final class BrokeredJobModel {
                                                                      String applicationVersion,
                                                                      String simulationName,
                                                                      OxidesSimulation simulation,
-                                                                     Map<String, SimulationImportFile> importFiles) {
+                                                                     EndpointReferenceType storageEpr) {
         JobDescriptionType jobDesc = JobDescriptionType.Factory.newInstance();
         ApplicationDocument appDoc = ApplicationDocument.Factory.newInstance();
         ApplicationType app = appDoc.addNewApplication();
@@ -43,7 +43,7 @@ public final class BrokeredJobModel {
 
         jobDesc.addNewJobIdentification().setJobName(simulationName);
 
-        List<DataStagingType> dataStaging = createDataStagingFragment(importFiles);
+        List<DataStagingType> dataStaging = createDataStagingFragment(simulation.getFiles(), storageEpr);
         jobDesc.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
 
         jobDesc.setResources(prepareResourceFragment(simulation));
@@ -54,16 +54,16 @@ public final class BrokeredJobModel {
         return jobDefinitionDocument;
     }
 
-    private static List<DataStagingType> createDataStagingFragment(Map<String, SimulationImportFile> importFiles) {
+    private static List<DataStagingType> createDataStagingFragment(List<String> files, EndpointReferenceType epr) {
         List<DataStagingType> dataStagingList = new ArrayList<>();
 
-        importFiles.forEach((filename, importFile) -> {
+        files.forEach((filename) -> {
             DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
             DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-            dataStagingType.setFileName(importFile.getName());
+            dataStagingType.setFileName(filename);
             dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
 
-            dataStagingType.addNewSource().setURI(importFile.getUri());
+            dataStagingType.addNewSource().setURI(filenameToStorageUri(filename, epr));
 
             IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
             ifd.setIgnoreFailure(false);
@@ -73,6 +73,10 @@ public final class BrokeredJobModel {
         });
 
         return dataStagingList;
+    }
+
+    private static String filenameToStorageUri(String filename, EndpointReferenceType storageEpr) {
+        return ProtocolType.BFT + ":" + storageEpr.getAddress().getStringValue() + "#" + filename;
     }
 
     private static ResourcesType prepareResourceFragment(OxidesSimulation simulation) {

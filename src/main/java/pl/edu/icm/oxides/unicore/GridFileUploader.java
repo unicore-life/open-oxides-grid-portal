@@ -6,12 +6,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.unigrids.services.atomic.types.ProtocolType;
-import pl.edu.icm.oxides.portal.model.SimulationImportFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.UserResources;
 
 import java.io.InputStream;
+
+import static org.unigrids.services.atomic.types.ProtocolType.BFT;
+import static org.unigrids.services.atomic.types.ProtocolType.RBYTEIO;
 
 @Service
 public class GridFileUploader {
@@ -38,13 +39,11 @@ public class GridFileUploader {
 //                stream.write(bytes);
 //                stream.close();
 
-                String uri = importFileToGrid(
+                importFileToGrid(
                         userResources.getStorageClient(),
                         name,
                         file.getInputStream()
                 );
-
-                userResources.getImportFiles().put(name, new SimulationImportFile(name, file.getSize(), uri));
 
                 return "You successfully uploaded " + name + "!";
             } catch (Exception e) {
@@ -57,11 +56,10 @@ public class GridFileUploader {
 
     private String importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
 //        InputStream source = new ByteArrayInputStream(content.getBytes());
-        storageClient.getImport(filename, ProtocolType.BFT,
-                ProtocolType.RBYTEIO).writeAllData(source);
-        return ProtocolType.BFT + ":"
-                + storageClient.getEPR().getAddress().getStringValue()
-                + "#" + filename;
+        storageClient
+                .getImport(filename, BFT, RBYTEIO)
+                .writeAllData(source);
+        return BFT + ":" + storageClient.getEPR().getAddress().getStringValue() + "#" + filename;
     }
 
     private Log log = LogFactory.getLog(GridFileUploader.class);

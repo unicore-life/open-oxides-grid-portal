@@ -28,8 +28,7 @@ public class UnicoreJobClient {
         this.clientHelper = clientHelper;
     }
 
-    //    @Cacheable(key = "#trustDelegation.custodianDN", unless = "#result.completed")
-    @Cacheable(key = "#trustDelegation.custodianDN+'_'+#uri")
+    @Cacheable(key = "#trustDelegation.custodianDN+'_'+#uri", unless = "#result == null || !#result.completed")
     public UnicoreJobEntity retrieveJobProperties(String uri, TrustDelegation trustDelegation) {
         EndpointReferenceType epr = EndpointReferenceType.Factory.newInstance();
         epr.addNewAddress().setStringValue(uri);

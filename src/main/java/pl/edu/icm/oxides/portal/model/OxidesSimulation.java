@@ -4,17 +4,31 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Collections;
+import java.util.List;
 
 public class OxidesSimulation {
     @NotNull
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String name;
     @NotNull
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String project;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String queue;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String memory;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String nodes;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String cpus;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String reservation;
+    @NotNull
+    @Size(max = SIMULATION_SCRIPT_MAX_LENGTH)
+    private final String script;
+    private final List<String> files;
 
     @JsonCreator
     public OxidesSimulation(@JsonProperty("name") String name,
@@ -23,7 +37,9 @@ public class OxidesSimulation {
                             @JsonProperty("memory") String memory,
                             @JsonProperty("nodes") String nodes,
                             @JsonProperty("cpus") String cpus,
-                            @JsonProperty("reservation") String reservation) {
+                            @JsonProperty("reservation") String reservation,
+                            @JsonProperty("script") String script,
+                            @JsonProperty("files") List<String> files) {
         this.name = name;
         this.project = project;
         this.queue = queue;
@@ -31,6 +47,8 @@ public class OxidesSimulation {
         this.nodes = nodes;
         this.cpus = cpus;
         this.reservation = reservation;
+        this.script = script;
+        this.files = files == null ? Collections.emptyList() : Collections.unmodifiableList(files);
     }
 
     public String getName() {
@@ -61,10 +79,21 @@ public class OxidesSimulation {
         return reservation;
     }
 
+    public String getScript() {
+        return script;
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
     @Override
     public String toString() {
-        return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', " +
-                        "memory='%s', nodes='%s', cpus='%s', reservation='%s'}",
-                name, project, queue, memory, nodes, cpus, reservation);
+        return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', memory='%s', " +
+                        "nodes='%s', cpus='%s', reservation='%s', script='%s', files=%s}",
+                name, project, queue, memory, nodes, cpus, reservation, script, files);
     }
+
+    private static final int SIMULATION_RESOURCE_MAX_LENGTH = 32;
+    private static final int SIMULATION_SCRIPT_MAX_LENGTH = 1024 * 1024;
 }
