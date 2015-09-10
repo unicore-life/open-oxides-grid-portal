@@ -28,6 +28,7 @@ import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -129,7 +130,16 @@ public class UnicoreJob {
                 baseFault.printStackTrace();
             }
         });
-        return listing;
+
+        Comparator<SimulationGridFile> simulationGridFileComparator = (o1, o2) -> {
+            if (o1.isDirectory() != o2.isDirectory()) {
+                return o2.isDirectory() ? 1 : -1;
+            }
+            return o1.getPath().compareToIgnoreCase(o2.getPath());
+        };
+        return listing.stream()
+                .sorted(simulationGridFileComparator)
+                .collect(Collectors.toList());
     }
 
     public void downloadJobFile(UUID simulationUuid,

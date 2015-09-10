@@ -17,6 +17,9 @@ import org.ggf.schemas.jsdl.x2005.x11.jsdl.JobDefinitionDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.JobDescriptionType;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ResourcesDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ResourcesType;
+import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.EnvironmentType;
+import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.POSIXApplicationDocument;
+import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.POSIXApplicationType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
@@ -39,7 +42,18 @@ public final class BrokeredJobModel {
         ApplicationDocument appDoc = ApplicationDocument.Factory.newInstance();
         ApplicationType app = appDoc.addNewApplication();
         app.setApplicationName(applicationName);
-        app.setApplicationVersion(applicationVersion);
+        if (applicationVersion != null) {
+            app.setApplicationVersion(applicationVersion);
+        }
+
+        // TODO:
+        POSIXApplicationDocument posixApplicationDocument = POSIXApplicationDocument.Factory.newInstance();
+        POSIXApplicationType posixApplicationType = posixApplicationDocument.addNewPOSIXApplication();
+        EnvironmentType environmentType = posixApplicationType.addNewEnvironment();
+        environmentType.setName("SOURCE");
+        environmentType.setStringValue(INPUT_SCRIPT_DESTINATION_NAME);
+        WSUtilities.append(posixApplicationDocument, app);
+
         jobDesc.setApplication(app);
 
         jobDesc.addNewJobIdentification().setJobName(simulationName);
@@ -57,6 +71,21 @@ public final class BrokeredJobModel {
 
         return jobDefinitionDocument;
     }
+
+    public static void main(String[] args) {
+        EndpointReferenceType endpointReferenceType = EndpointReferenceType.Factory.newInstance();
+        endpointReferenceType.addNewAddress().setStringValue("RRRRRRRRRRRRRRRR");
+        OxidesSimulation simulation = new OxidesSimulation("name", "project", null, null, null, null, null, "hostname", new ArrayList<String>());
+        System.out.println(
+                prepareJobDefinitionDocument(
+                        "AAA",
+                        null,
+                        "BBB",
+                        simulation,
+                        "inpucik",
+                        endpointReferenceType));
+    }
+
 
     private static List<DataStagingType> createDataStagingFragment(List<String> files,
                                                                    String inputScriptName,
@@ -80,10 +109,9 @@ public final class BrokeredJobModel {
 
         // Workaround for script input:
         //
-        String destinationFileName = "input";
         DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
         DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-        dataStagingType.setFileName(destinationFileName);
+        dataStagingType.setFileName(INPUT_SCRIPT_DESTINATION_NAME);
         dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
         dataStagingType.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
 
@@ -161,4 +189,6 @@ public final class BrokeredJobModel {
     }
 
     private static Log log = LogFactory.getLog(BrokeredJobModel.class);
+
+    private static final String INPUT_SCRIPT_DESTINATION_NAME = "input";
 }
