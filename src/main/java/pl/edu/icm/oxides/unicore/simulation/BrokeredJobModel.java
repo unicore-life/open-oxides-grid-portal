@@ -33,6 +33,7 @@ public final class BrokeredJobModel {
                                                                      String applicationVersion,
                                                                      String simulationName,
                                                                      OxidesSimulation simulation,
+                                                                     String inputScriptName,
                                                                      EndpointReferenceType storageEpr) {
         JobDescriptionType jobDesc = JobDescriptionType.Factory.newInstance();
         ApplicationDocument appDoc = ApplicationDocument.Factory.newInstance();
@@ -43,7 +44,10 @@ public final class BrokeredJobModel {
 
         jobDesc.addNewJobIdentification().setJobName(simulationName);
 
-        List<DataStagingType> dataStaging = createDataStagingFragment(simulation.getFiles(), storageEpr);
+        List<DataStagingType> dataStaging = createDataStagingFragment(
+                simulation.getFiles(),
+                inputScriptName,
+                storageEpr);
         jobDesc.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
 
         jobDesc.setResources(prepareResourceFragment(simulation));
@@ -54,7 +58,9 @@ public final class BrokeredJobModel {
         return jobDefinitionDocument;
     }
 
-    private static List<DataStagingType> createDataStagingFragment(List<String> files, EndpointReferenceType epr) {
+    private static List<DataStagingType> createDataStagingFragment(List<String> files,
+                                                                   String inputScriptName,
+                                                                   EndpointReferenceType epr) {
         List<DataStagingType> dataStagingList = new ArrayList<>();
 
         files.forEach((filename) -> {
@@ -71,6 +77,21 @@ public final class BrokeredJobModel {
             WSUtilities.append(ifd, dataStagingDocument);
             dataStagingList.add(dataStagingType);
         });
+
+        // Workaround for script input:
+        //
+        String destinationFileName = "input";
+        DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
+        DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
+        dataStagingType.setFileName(destinationFileName);
+        dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
+        dataStagingType.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
+
+        IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
+        ifd.setIgnoreFailure(false);
+        WSUtilities.append(ifd, dataStagingDocument);
+
+        dataStagingList.add(dataStagingType);
 
         return dataStagingList;
     }

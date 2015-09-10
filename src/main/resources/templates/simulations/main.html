@@ -10,7 +10,7 @@
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationsListingController">
 
-        <h2>Open Oxides Simulations</h2>
+        <h3>Open Oxides Simulations</h3>
 
         <div class="panel panel-default">
             <!-- Default panel contents -->
@@ -42,6 +42,11 @@
                         <td>
                             <a class="btn btn-default btn-xs" role="button"
                                ng-attr-href="/oxides/simulations/{{ simulation.uuid }}">Show Files</a>
+
+                            &nbsp;
+
+                            <a class="btn btn-default btn-xs" role="button"
+                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/details">Details</a>
 
                             &nbsp;
 

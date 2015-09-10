@@ -10,8 +10,8 @@ grid:
 #  targetUrl: https://alfred.mat.umk.pl:8443/authn/saml
 
 gridOxides:
-  applicationName: Date
-  applicationVersion: 1.0
+  applicationName: Bash shell
+  applicationVersion: 4.1.2
   jobPrefix: _OpenOxides__
 
 server:

@@ -54,7 +54,7 @@ public class GridFileUploader {
         }
     }
 
-    private String importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
+    public String importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
 //        InputStream source = new ByteArrayInputStream(content.getBytes());
         storageClient
                 .getImport(filename, BFT, RBYTEIO)

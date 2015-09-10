@@ -1,0 +1,62 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="oxidesGridPortal">
+<head th:replace="include/header :: oxidesHeader"/>
+
+<body>
+<nav th:replace="include/navbar :: oxidesNavigationBar"/>
+
+<!-- Wrap all page content here -->
+<div id="wrap">
+    <!-- Begin page content -->
+    <div class="container" ng-controller="oxidesSimulationDetailsController"
+         th:attr="ng-init='initialize(\''+${uuid}+'\')'">
+
+        <div class="panel panel-default" th:if="${details.name}">
+            <div class="panel-heading">Simulation name</div>
+            <div class="panel-body" th:text="${details.name}"/>
+        </div>
+
+        <div class="panel panel-default" th:if="${details.submissionTime}">
+            <div class="panel-heading">Submission time</div>
+            <div class="panel-body" th:text="${details.submissionTime}"/>
+        </div>
+
+        <div class="panel panel-default" th:if="${details.terminationTime}">
+            <div class="panel-heading">Termination time</div>
+            <div class="panel-body" th:text="${details.terminationTime}"/>
+        </div>
+
+        <div class="panel panel-default" th:if="${details.uri}">
+            <div class="panel-heading">Simulation URI</div>
+            <div class="panel-body" th:text="${details.uri}"/>
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-default btn-xs pull-right"
+                    ng-click="toggleLog()">
+                <span ng-bind="toggleLogLabel"></span>
+            </button>
+        </div>
+
+        <div class="panel panel-default" th:if="${details.log}"
+             ng-show="isLogVisible">
+            <div class="panel-heading">Simulation log</div>
+            <small>
+                <textarea class="panel-body form-control" rows="80"
+                          readonly="readonly" disabled="disabled"
+                          th:text="${details.log}">
+                </textarea>
+            </small>
+        </div>
+
+    </div>
+    <!-- /.container -->
+</div>
+
+<footer th:replace="include/footer :: oxidesFooter"/>
+
+<!-- ==================================================== -->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>

@@ -1,7 +1,9 @@
 package pl.edu.icm.oxides.portal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
+import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import java.util.Optional;
@@ -11,6 +13,13 @@ import static java.util.Optional.ofNullable;
 
 @Service
 class OxidesSimulationsPage {
+    private final UnicoreJob unicoreJob;
+
+    @Autowired
+    OxidesSimulationsPage(UnicoreJob unicoreJob) {
+        this.unicoreJob = unicoreJob;
+    }
+
     ModelAndView modelSimulationsPage(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
@@ -20,8 +29,8 @@ class OxidesSimulationsPage {
     }
 
     ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession,
-                                               UUID simulationUuid,
-                                               Optional<String> path) {
+                                        UUID simulationUuid,
+                                        Optional<String> path) {
         if (isValidAuthenticationSession(authenticationSession)) {
             ModelAndView modelAndView = prepareBasicModelAndView("simulations/one", ofNullable(authenticationSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
@@ -29,6 +38,20 @@ class OxidesSimulationsPage {
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
+        return redirectToAuthentication();
+    }
+
+    public ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession,
+                                                   UUID simulationUuid) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            ModelAndView modelAndView = prepareBasicModelAndView("simulations/details", ofNullable(authenticationSession));
+            modelAndView.addObject("uuid", simulationUuid.toString());
+            modelAndView.addObject("details", unicoreJob.retrieveJobDetails(
+                    simulationUuid, authenticationSession.getSelectedTrustDelegation()
+            ));
+            return modelAndView;
+        }
+        authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s/details", simulationUuid));
         return redirectToAuthentication();
     }
 

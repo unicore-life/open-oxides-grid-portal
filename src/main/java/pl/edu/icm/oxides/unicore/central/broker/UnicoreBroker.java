@@ -1,5 +1,6 @@
 package pl.edu.icm.oxides.unicore.central.broker;
 
+import de.fzj.unicore.uas.client.StorageClient;
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
 import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
 import eu.unicore.security.etd.TrustDelegation;
@@ -21,12 +22,16 @@ import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
+import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.security.auth.x500.X500Principal;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -34,12 +39,17 @@ public class UnicoreBroker {
     private final GridConfig gridConfig;
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
+    private final GridFileUploader fileUploader;
 
     @Autowired
-    public UnicoreBroker(GridConfig gridConfig, GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
+    public UnicoreBroker(GridConfig gridConfig,
+                         GridOxidesConfig oxidesConfig,
+                         GridClientHelper clientHelper,
+                         GridFileUploader fileUploader) {
         this.gridConfig = gridConfig;
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
+        this.fileUploader = fileUploader;
     }
 
     @Cacheable(value = "unicoreSessionBrokerList", key = "#trustDelegation.custodianDN")
@@ -63,9 +73,14 @@ public class UnicoreBroker {
 //        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
 
         Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
-        EndpointReferenceType storageEpr = authenticationSession
+        StorageClient storageClient = authenticationSession
                 .getResources()
-                .getStorageClient()
+                .getStorageClient();
+
+        String inputScriptName = "input-" + UUID.randomUUID().toString();
+        prepareScriptInputOnStorage(storageClient, simulation, inputScriptName);
+
+        EndpointReferenceType storageEpr = storageClient
                 .getEPR();
 
         String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
@@ -75,6 +90,7 @@ public class UnicoreBroker {
                         oxidesConfig.getApplicationVersion(),
                         simulationName,
                         simulation,
+                        inputScriptName,
                         storageEpr);
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
@@ -105,6 +121,18 @@ public class UnicoreBroker {
                 brokerClient.get().submitWorkAssignment(waDoc);
 
         log.info("WA SUBMITTED: " + response);
+    }
+
+    private void prepareScriptInputOnStorage(StorageClient storageClient,
+                                             OxidesSimulation simulation,
+                                             String inputScriptName) {
+        InputStream source = new ByteArrayInputStream(simulation.getScript().getBytes());
+        try {
+            fileUploader.importFileToGrid(storageClient, inputScriptName, source);
+        } catch (Exception e) {
+            log.error("Could not save script input " + inputScriptName + " during submission!", e);
+            throw new InputScriptStoreException(e);
+        }
     }
 
     private List<UnicoreBrokerEntity> collectBrokerServiceList(IClientConfiguration clientConfiguration) {

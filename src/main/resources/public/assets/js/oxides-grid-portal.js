@@ -29,9 +29,9 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
             })
 //            .success(function (data, status, headers, config) {
 //            })
-            .error(function (data, status, headers, config) {
-                console.error('Failed: HTTP Status Code = ' + status);
-            });
+                .error(function (data, status, headers, config) {
+                    console.error('Failed: HTTP Status Code = ' + status);
+                });
         };
 
         oxidesSimulationsListingService.getJson()
@@ -135,6 +135,40 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
 );
 
 
+oxidesGridPortalApp.controller('oxidesSimulationDetailsController',
+    function ($scope, $http) {
+        $scope.simulationUuid = null;
+        $scope.showSpinKit = true;
+
+        $scope.isLogVisible = false;
+        $scope.toggleLogLabel = 'Show Log';
+
+        $scope.initialize = function (uuid) {
+            $scope.simulationUuid = uuid;
+        };
+
+        $scope.toggleLog = function () {
+            $scope.isLogVisible = !$scope.isLogVisible;
+            $scope.toggleLogLabel = $scope.isLogVisible ? 'Hide Log' : 'Show Log';
+        };
+
+        //$http({
+        //    method: 'GET',
+        //    url: '/oxides/unicore/jobs/' + $scope.simulationUuid + '/details',
+        //    headers: {
+        //        'Content-Type': 'application/json'
+        //    },
+        //    data: ''
+        //}).then(function (data, status, headers, config) {
+        //    $scope.showSpinKit = false;
+        //}).catch(function (data, status, headers, config) {
+        //    alert('Failed: HTTP Status Code = ' + status);
+        //    $scope.showSpinKit = false;
+        //});
+    }
+);
+
+
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
     function ($scope, oxidesSubmitSimulationService, FileUploader) {
         $scope.simulationParameters = {
@@ -167,7 +201,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             var toggledPrefix = (prefix == 'show') ? 'Hide' : 'Show';
 
             $scope.toggleAdvancedLabel = toggledPrefix + ' Advanced Parameters';
-            $scope.visibleAdvanced = ! $scope.visibleAdvanced;
+            $scope.visibleAdvanced = !$scope.visibleAdvanced;
         };
 
         $scope.isParameterRequired = function (parameterName) {
@@ -211,7 +245,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
         };
 
 
-        $scope.removeUploadFile = function(idx) {
+        $scope.removeUploadFile = function (idx) {
             $scope.simulationUploadFilesList.splice(idx, 1);
         };
 
@@ -240,8 +274,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
                 var filename = item.file.name;
                 var arrayLength = $scope.simulationUploadFilesList.length;
                 for (var i = arrayLength - 1; i >= 0; i--) {
-                    if($scope.simulationUploadFilesList[i] === filename) {
-                       $scope.simulationUploadFilesList.splice(i, 1);
+                    if ($scope.simulationUploadFilesList[i] === filename) {
+                        $scope.simulationUploadFilesList.splice(i, 1);
                     }
                 }
                 $scope.simulationUploadFilesList.push(filename);
@@ -280,11 +314,11 @@ oxidesGridPortalApp.factory('oxidesSubmitSimulationService',
  * Usage: Add attributes: ng-really-message="Are you sure"? ng-really-click="takeAction()" function
  */
 oxidesGridPortalApp.directive('ngReallyClick',
-    [ function() {
+    [function () {
         return {
             restrict: 'A',
-            link: function(scope, element, attrs) {
-                element.bind('click', function() {
+            link: function (scope, element, attrs) {
+                element.bind('click', function () {
                     var message = attrs.ngReallyMessage;
                     if (message && confirm(message)) {
                         scope.$apply(attrs.ngReallyClick);

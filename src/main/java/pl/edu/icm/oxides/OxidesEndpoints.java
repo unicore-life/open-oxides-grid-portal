@@ -76,6 +76,11 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelOneSimulationPage(authenticationSession, simulationUuid, path);
     }
 
+    @RequestMapping(value = "/simulations/{uuid}/details", method = RequestMethod.GET)
+    public ModelAndView simulationDetailsPage(@PathVariable("uuid") UUID simulationUuid) {
+        return oxidesGridPortalPages.modelSimulationDetailsPage(authenticationSession, simulationUuid);
+    }
+
     @RequestMapping(value = "/simulations/submit", method = RequestMethod.GET)
     public ModelAndView submitSimulationPage() {
         return oxidesGridPortalPages.modelSubmitSimulationPage(authenticationSession);

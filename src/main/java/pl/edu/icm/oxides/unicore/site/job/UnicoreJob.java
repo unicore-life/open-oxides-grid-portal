@@ -17,6 +17,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
+import org.unigrids.x2006.x04.services.jms.JobPropertiesDocument.JobProperties;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.portal.model.SimulationGridFile;
@@ -65,11 +66,46 @@ public class UnicoreJob {
                 .map(targetSystemEpr -> toTargetSystemJobList(targetSystemEpr, clientConfiguration))
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
-                .map(epr -> toUnicoreJobEntity(epr, trustDelegation))
+                .map(epr -> toJobProperties(epr, trustDelegation))
                 .filter(Objects::nonNull)
+                .map(jobClient::translateJobPropertiesToUnicoreJobEntity)
                 .filter(unicoreJobEntity -> unicoreJobEntity.getFullName().startsWith(oxidesConfig.getJobPrefix()))
                 .sorted((o1, o2) -> o1.getTimestamp() > o2.getTimestamp() ? -1 : 1)
                 .collect(Collectors.toList());
+    }
+
+    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
+    public void destroyJob(UUID simulationUuid, TrustDelegation trustDelegation) {
+        String uuidString = String.valueOf(simulationUuid);
+        taskExecutor.execute(() -> {
+            retrieveSiteResourceList(trustDelegation)
+                    .stream()
+                    .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(uuidString))
+                    .forEach(jobEntity -> {
+                                try {
+                                    new BaseWSRFClient(
+                                            jobEntity.getEpr(),
+                                            clientHelper.createClientConfiguration(trustDelegation)
+                                    )
+                                            .destroy();
+                                } catch (Exception e) {
+                                    log.error("Could not destroy job <" + jobEntity.getUri() + ">", e);
+                                }
+                            }
+                    );
+        });
+    }
+
+    public UnicoreJobDetailsEntity retrieveJobDetails(UUID simulationUuid, TrustDelegation trustDelegation) {
+        String uuidString = String.valueOf(simulationUuid);
+        return retrieveSiteResourceList(trustDelegation)
+                .stream()
+                .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(uuidString))
+                .findFirst()
+                .map(jobEntity -> jobClient.retrieveJobProperties(jobEntity.getUri(), trustDelegation))
+                .filter(Objects::nonNull)
+                .map(jobClient::translateJobPropertiesToUnicoreJobDetailsEntity)
+                .orElseThrow(() -> new RuntimeException("Problem while getting details!"));
     }
 
     public List<SimulationGridFile> listJobFiles(UUID simulationUuid,
@@ -119,28 +155,6 @@ public class UnicoreJob {
         } catch (IOException e) {
             log.error("problem with buffer flush", e);
         }
-    }
-
-    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
-    public void destroyJob(UUID simulationUuid, TrustDelegation trustDelegation) {
-        String uuidString = String.valueOf(simulationUuid);
-        taskExecutor.execute(() -> {
-            retrieveSiteResourceList(trustDelegation)
-                    .stream()
-                    .filter(unicoreJobEntity -> unicoreJobEntity.getUri().endsWith(uuidString))
-                    .forEach(jobEntity -> {
-                                try {
-                                    new BaseWSRFClient(
-                                            jobEntity.getEpr(),
-                                            clientHelper.createClientConfiguration(trustDelegation)
-                                    )
-                                            .destroy();
-                                } catch (Exception e) {
-                                    log.error("Could not destroy job <" + jobEntity.getUri() + ">", e);
-                                }
-                            }
-                    );
-        });
     }
 
     private Optional<StorageClient> getStorageClient(UUID simulationUuid, TrustDelegation trustDelegation) {
@@ -193,7 +207,7 @@ public class UnicoreJob {
         return null;
     }
 
-    private UnicoreJobEntity toUnicoreJobEntity(EndpointReferenceType epr, TrustDelegation trustDelegation) {
+    private JobProperties toJobProperties(EndpointReferenceType epr, TrustDelegation trustDelegation) {
         return jobClient.retrieveJobProperties(epr.getAddress().getStringValue(), trustDelegation);
     }
 

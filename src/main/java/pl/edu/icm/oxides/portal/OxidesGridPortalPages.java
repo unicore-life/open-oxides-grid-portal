@@ -38,6 +38,10 @@ public class OxidesGridPortalPages {
         return oxidesSimulationsPage.modelOneSimulationPage(authenticationSession, uuid, ofNullable(path));
     }
 
+    public ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession, UUID uuid) {
+        return oxidesSimulationsPage.modelSimulationDetailsPage(authenticationSession, uuid);
+    }
+
     public ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
         return oxidesSimulationsPage.modelSubmitSimulationPage(authenticationSession);
     }
