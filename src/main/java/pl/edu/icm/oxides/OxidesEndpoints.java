@@ -107,7 +107,7 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<Void> submitSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
-        return unicoreGridResources.submitSimulation(simulation, authenticationSession);
+        return unicoreGridResources.submitWorkAssignment(simulation, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
@@ -115,8 +115,8 @@ public class OxidesEndpoints {
             produces = MediaType.TEXT_PLAIN_VALUE
     )
     @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@RequestParam("uploadFile") MultipartFile file,
-                                                   HttpSession session) {
+    public ResponseEntity<String> uploadSimulationFile(@RequestParam("uploadFile") MultipartFile file,
+                                                       HttpSession session) {
         logSessionData("UNICORE-UPLOAD", session, authenticationSession);
         return unicoreGridResources.uploadFile(file, authenticationSession);
     }
@@ -125,17 +125,29 @@ public class OxidesEndpoints {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List> retrieveUnicoreJobs(HttpSession session) {
+    public ResponseEntity<List> listSimulations(HttpSession session) {
         logSessionData("UNICORE-JOBS", session, authenticationSession);
         return unicoreGridResources.listUserJobs(authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Void> destroyUnicoreJob(@PathVariable(value = "uuid") UUID simulationUuid,
+    public ResponseEntity<Void> destroySimulation(@PathVariable(value = "uuid") UUID simulationUuid,
                                                   HttpSession session) {
         logSessionData("DELETE-UNICORE-JOB", session, authenticationSession);
         return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
+    }
+
+    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.GET)
+    public ResponseEntity<Void> downloadSimulationFile(
+            @PathVariable(value = "uuid") UUID simulationUuid,
+            @RequestParam(value = "file", required = false) String path,
+            HttpServletResponse response,
+            HttpSession session) {
+        logSessionData("UNICORE-JOB-DOWNLOAD", session, authenticationSession);
+        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
@@ -147,47 +159,6 @@ public class OxidesEndpoints {
                                                     HttpSession session) {
         logSessionData("UNICORE-JOB-FILES", session, authenticationSession);
         return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
-    }
-
-    @RequestMapping(value = "/unicore/files/{uuid}", method = RequestMethod.GET)
-    public ResponseEntity<Void> downloadSimulationFile(
-            @PathVariable(value = "uuid") UUID simulationUuid,
-            @RequestParam(value = "path", required = false) String path,
-            HttpServletResponse response,
-            HttpSession session) {
-        logSessionData("UNICORE-JOB-DOWNLOAD", session, authenticationSession);
-        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
-    }
-
-
-    /*
-            TO BE DECIDED:
-    ==========================================================================================================
-     */
-    @RequestMapping(value = "/unicore-storages", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List> listStorages(HttpSession session) {
-        logSessionData("STORAGES", session, authenticationSession);
-        return unicoreGridResources.listUserStorages(authenticationSession);
-    }
-
-
-    /*
-            TO BE REMOVED:
-    ==========================================================================================================
-     */
-    @RequestMapping(value = "/unicore-sites", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List> listSites(HttpSession session) {
-        logSessionData("SITES", session, authenticationSession);
-        return unicoreGridResources.listUserSites(authenticationSession);
-    }
-
-    @RequestMapping(value = "/unicore-resources", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List> listResources(HttpSession session) {
-        logSessionData("RESOURCES", session, authenticationSession);
-        return unicoreGridResources.listUserResources(authenticationSession);
     }
 
 

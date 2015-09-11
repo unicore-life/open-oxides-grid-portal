@@ -20,18 +20,6 @@ public class PortalConfig {
         return new RequestContextListener();
     }
 
-//    @Bean
-//    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-//        builder.indentOutput(true);
-//        builder.featuresToDisable(
-//                SerializationFeature.WRITE_NULL_MAP_VALUES,
-//                SerializationFeature.FAIL_ON_EMPTY_BEANS
-//        );
-//        builder.failOnUnknownProperties(false);
-//        return builder;
-//    }
-
     @Bean
     public CacheManager cacheManager() {
         return new EhCacheCacheManager(ehCacheCacheManager().getObject());
@@ -48,8 +36,8 @@ public class PortalConfig {
     @Bean
     public ThreadPoolTaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(5);
-        threadPoolTaskExecutor.setMaxPoolSize(15);
+        threadPoolTaskExecutor.setCorePoolSize(4);
+        threadPoolTaskExecutor.setMaxPoolSize(32);
 //        threadPoolTaskExecutor.setQueueCapacity();
         return threadPoolTaskExecutor;
     }

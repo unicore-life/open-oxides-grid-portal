@@ -6,10 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
-import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
-import pl.edu.icm.oxides.unicore.site.resource.UnicoreResource;
-import pl.edu.icm.oxides.unicore.site.storage.UnicoreSiteStorage;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,40 +21,17 @@ import static org.springframework.http.ResponseEntity.status;
 
 @Component
 public class UnicoreGridResources {
-    private final UnicoreSite siteHandler;
-    private final UnicoreSiteStorage storageHandler;
     private final UnicoreJob jobHandler;
-    private final UnicoreResource resourceHandler;
     private final UnicoreBroker unicoreBroker;
     private final GridFileUploader fileUploader;
 
     @Autowired
-    public UnicoreGridResources(UnicoreSite siteHandler,
-                                UnicoreSiteStorage storageHandler,
-                                UnicoreJob jobHandler,
-                                UnicoreResource resourceHandler,
+    public UnicoreGridResources(UnicoreJob jobHandler,
                                 UnicoreBroker unicoreBroker,
                                 GridFileUploader fileUploader) {
-        this.siteHandler = siteHandler;
-        this.storageHandler = storageHandler;
         this.jobHandler = jobHandler;
-        this.resourceHandler = resourceHandler;
         this.unicoreBroker = unicoreBroker;
         this.fileUploader = fileUploader;
-    }
-
-    public ResponseEntity<List> listUserSites(AuthenticationSession authenticationSession) {
-        if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(siteHandler.retrieveServiceList(authenticationSession.getSelectedTrustDelegation()));
-        }
-        return unauthorizedResponse();
-    }
-
-    public ResponseEntity<List> listUserStorages(AuthenticationSession authenticationSession) {
-        if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(storageHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
-        }
-        return unauthorizedResponse();
     }
 
     public ResponseEntity<List> listUserJobs(AuthenticationSession authenticationSession) {
@@ -67,14 +41,7 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<List> listUserResources(AuthenticationSession authenticationSession) {
-        if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(resourceHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
-        }
-        return unauthorizedResponse();
-    }
-
-    public ResponseEntity<Void> submitSimulation(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
+    public ResponseEntity<Void> submitWorkAssignment(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
             return ResponseEntity.noContent().build();

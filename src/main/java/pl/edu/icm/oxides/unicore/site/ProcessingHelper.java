@@ -9,7 +9,7 @@ import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 
 import java.util.List;
 
-public abstract class ProcessingHelper {
+public final class ProcessingHelper {
     private ProcessingHelper() {
     }
 

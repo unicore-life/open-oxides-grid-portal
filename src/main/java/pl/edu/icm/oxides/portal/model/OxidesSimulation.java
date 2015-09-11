@@ -17,12 +17,9 @@ public class OxidesSimulation {
     private final String project;
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String queue;
-    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
-    private final String memory;
-    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
-    private final String nodes;
-    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
-    private final String cpus;
+    private final Integer memory;
+    private final Integer nodes;
+    private final Integer cpus;
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String reservation;
     @NotNull
@@ -34,9 +31,9 @@ public class OxidesSimulation {
     public OxidesSimulation(@JsonProperty("name") String name,
                             @JsonProperty("project") String project,
                             @JsonProperty("queue") String queue,
-                            @JsonProperty("memory") String memory,
-                            @JsonProperty("nodes") String nodes,
-                            @JsonProperty("cpus") String cpus,
+                            @JsonProperty("memory") Integer memory,
+                            @JsonProperty("nodes") Integer nodes,
+                            @JsonProperty("cpus") Integer cpus,
                             @JsonProperty("reservation") String reservation,
                             @JsonProperty("script") String script,
                             @JsonProperty("files") List<String> files) {
@@ -63,15 +60,15 @@ public class OxidesSimulation {
         return queue;
     }
 
-    public String getMemory() {
+    public Integer getMemory() {
         return memory;
     }
 
-    public String getNodes() {
+    public Integer getNodes() {
         return nodes;
     }
 
-    public String getCpus() {
+    public Integer getCpus() {
         return cpus;
     }
 
@@ -89,8 +86,8 @@ public class OxidesSimulation {
 
     @Override
     public String toString() {
-        return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', memory='%s', " +
-                        "nodes='%s', cpus='%s', reservation='%s', script='%s', files=%s}",
+        return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', memory=%d, " +
+                        "nodes=%d, cpus=%d, reservation='%s', script='%s', files=%s}",
                 name, project, queue, memory, nodes, cpus, reservation, script, files);
     }
 

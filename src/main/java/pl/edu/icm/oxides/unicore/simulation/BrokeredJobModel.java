@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationType;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.CreationFlagEnumeration;
@@ -72,21 +71,6 @@ public final class BrokeredJobModel {
         return jobDefinitionDocument;
     }
 
-    public static void main(String[] args) {
-        EndpointReferenceType endpointReferenceType = EndpointReferenceType.Factory.newInstance();
-        endpointReferenceType.addNewAddress().setStringValue("RRRRRRRRRRRRRRRR");
-        OxidesSimulation simulation = new OxidesSimulation("name", "project", null, null, null, null, null, "hostname", new ArrayList<String>());
-        System.out.println(
-                prepareJobDefinitionDocument(
-                        "AAA",
-                        null,
-                        "BBB",
-                        simulation,
-                        "inpucik",
-                        endpointReferenceType));
-    }
-
-
     private static List<DataStagingType> createDataStagingFragment(List<String> files,
                                                                    String inputScriptName,
                                                                    EndpointReferenceType epr) {
@@ -138,27 +122,15 @@ public final class BrokeredJobModel {
         if (!isNullOrBlank(simulation.getQueue())) {
             insertResourceRequest("Queue", simulation.getQueue(), resourcesDocument);
         }
-        if (!isNullOrBlank(simulation.getMemory())) {
-            try {
-                BigDecimal memory = new BigDecimal(simulation.getMemory()).multiply(new BigDecimal(1024L * 1024L));
-                resourcesType.addNewIndividualPhysicalMemory().addNewExact().setStringValue(memory.toPlainString());
-            } catch (NumberFormatException e) {
-                log.warn("Memory is not a number! Skipping resource restriction.", e);
-            }
+        if (simulation.getMemory() != null) {
+            BigDecimal memory = new BigDecimal(simulation.getMemory()).multiply(new BigDecimal(1024L * 1024L));
+            resourcesType.addNewIndividualPhysicalMemory().addNewExact().setDoubleValue(memory.doubleValue());
         }
-        if (!isNullOrBlank(simulation.getNodes())) {
-            try {
-                resourcesType.addNewTotalResourceCount().addNewExact().setStringValue(simulation.getNodes());
-            } catch (XmlValueOutOfRangeException e) {
-                log.warn("Wrong nodes number. Skipping resource restriction.", e);
-            }
+        if (simulation.getNodes() != null) {
+            resourcesType.addNewTotalResourceCount().addNewExact().setDoubleValue(simulation.getNodes());
         }
-        if (!isNullOrBlank(simulation.getCpus())) {
-            try {
-                resourcesType.addNewIndividualCPUCount().addNewExact().setStringValue(simulation.getCpus());
-            } catch (XmlValueOutOfRangeException e) {
-                log.warn("Wrong CPUs number. Skipping resource restriction.", e);
-            }
+        if (simulation.getCpus() != null) {
+            resourcesType.addNewIndividualCPUCount().addNewExact().setDoubleValue(simulation.getCpus());
         }
         if (!isNullOrBlank(simulation.getReservation())) {
             try {

@@ -39,7 +39,7 @@
                         <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="simulationFile.directory">Enter Directory</a></td>
-                        <td><a th:href="@{|/oxides/unicore/files/${uuid}?path={{ simulationFile.path }}|}"
+                        <td><a th:href="@{|/oxides/unicore/jobs/${uuid}?file={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="!simulationFile.directory"
                                target="_blank">Show File</a></td>
