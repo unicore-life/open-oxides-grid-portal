@@ -6,17 +6,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import pl.edu.icm.oxides.unicore.central.EndpointReferenceTypeCache;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 @Service
 public class CachingResourcesManager {
     private final UnicoreJob jobHandler;
+    private final EndpointReferenceTypeCache eprCache;
     private final ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
-    public CachingResourcesManager(UnicoreJob jobHandler, ThreadPoolTaskExecutor taskExecutor) {
+    public CachingResourcesManager(UnicoreJob jobHandler,
+                                   EndpointReferenceTypeCache eprCache,
+                                   ThreadPoolTaskExecutor taskExecutor) {
         this.jobHandler = jobHandler;
+        this.eprCache = eprCache;
         this.taskExecutor = taskExecutor;
     }
 
@@ -26,7 +31,11 @@ public class CachingResourcesManager {
             String custodianDN = trustDelegation.getCustodianDN();
             log.info("Staring caching resources calls for user <" + custodianDN + ">");
 
-            jobHandler.retrieveSiteResourceList(trustDelegation);
+            jobHandler.retrieveSiteResourceList(trustDelegation)
+                    .stream()
+                    .forEach(jobEntity -> {
+                        eprCache.update(jobEntity.getUuid(), jobEntity.getEpr());
+                    });
 
             log.info("Finished caching resources calls for user <" + custodianDN + ">");
         });
