@@ -19,12 +19,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-class UnicoreJobListing {
+class UnicoreJobsListing {
     private final UnicoreSite unicoreSite;
     private final GridClientHelper clientHelper;
 
     @Autowired
-    UnicoreJobListing(UnicoreSite unicoreSite, GridClientHelper clientHelper) {
+    UnicoreJobsListing(UnicoreSite unicoreSite, GridClientHelper clientHelper) {
         this.unicoreSite = unicoreSite;
         this.clientHelper = clientHelper;
     }
@@ -68,5 +68,5 @@ class UnicoreJobListing {
         return null;
     }
 
-    private Log log = LogFactory.getLog(UnicoreJobListing.class);
+    private Log log = LogFactory.getLog(UnicoreJobsListing.class);
 }

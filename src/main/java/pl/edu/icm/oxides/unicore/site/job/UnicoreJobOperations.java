@@ -1,14 +1,16 @@
 package pl.edu.icm.oxides.unicore.site.job;
 
 import de.fzj.unicore.uas.client.JobClient;
+import de.fzj.unicore.wsrflite.xmlbeans.client.BaseWSRFClient;
 import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.oasisOpen.docs.wsrf.rl2.TerminationTimeDocument.TerminationTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.unigrids.x2006.x04.services.jms.JobPropertiesDocument.JobProperties;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
@@ -19,18 +21,22 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 @Component
-@CacheConfig(cacheNames = {"unicoreSessionJobClientList"})
-class UnicoreJobProperties {
+class UnicoreJobOperations {
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
+    private final ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
-    UnicoreJobProperties(GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
+    UnicoreJobOperations(GridOxidesConfig oxidesConfig,
+                         GridClientHelper clientHelper,
+                         ThreadPoolTaskExecutor taskExecutor) {
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
+        this.taskExecutor = taskExecutor;
     }
 
     @Cacheable(
+            value = "unicoreSessionJobClientList",
             key = "#trustDelegation.custodianDN + '_' + #epr.getAddress().getStringValue()",
             unless = "#result == null"
     )
@@ -47,6 +53,18 @@ class UnicoreJobProperties {
                     + "> of <" + trustDelegation.getCustodianDN() + ">", e);
             return null;
         }
+    }
+
+    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
+    public void destroyJob(EndpointReferenceType epr, TrustDelegation trustDelegation) {
+        taskExecutor.execute(() -> {
+            try {
+                new BaseWSRFClient(epr, clientHelper.createClientConfiguration(trustDelegation))
+                        .destroy();
+            } catch (Exception e) {
+                log.error("Could not destroy job <" + epr.getAddress().getStringValue() + ">", e);
+            }
+        });
     }
 
     UnicoreJobEntity translateJobPropertiesToUnicoreJobEntity(JobProperties jobProperties) {
@@ -86,5 +104,5 @@ class UnicoreJobProperties {
                 dateFormat.format(terminationTime.getDateValue()));
     }
 
-    private Log log = LogFactory.getLog(UnicoreJobProperties.class);
+    private Log log = LogFactory.getLog(UnicoreJobOperations.class);
 }

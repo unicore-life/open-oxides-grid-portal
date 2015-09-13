@@ -31,35 +31,27 @@ public class GridFileUploader {
         log.info(String.format("Storing file with name '%s' and original filename '%s'", fileName, originalFilename));
 
         String name = originalFilename;
-        if (!file.isEmpty()) {
-            try {
-//                byte[] bytes = file.getBytes();
-//                BufferedOutputStream stream =
-//                        new BufferedOutputStream(new FileOutputStream(new File(name)));
-//                stream.write(bytes);
-//                stream.close();
-
-                importFileToGrid(
-                        userResources.getStorageClient(),
-                        name,
-                        file.getInputStream()
-                );
-
-                return "You successfully uploaded " + name + "!";
-            } catch (Exception e) {
-                return "You failed to upload " + name + " => " + e.getMessage();
-            }
-        } else {
+        if (file.isEmpty()) {
             return "You failed to upload " + name + " because the file was empty.";
+        }
+
+        try {
+            importFileToGrid(
+                    userResources.getStorageClient(),
+                    name,
+                    file.getInputStream()
+            );
+            return "You successfully uploaded " + name + "!";
+        } catch (Exception e) {
+            return "You failed to upload " + name + " => " + e.getMessage();
         }
     }
 
-    public String importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
-//        InputStream source = new ByteArrayInputStream(content.getBytes());
+
+    public void importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
         storageClient
                 .getImport(filename, BFT, RBYTEIO)
                 .writeAllData(source);
-        return BFT + ":" + storageClient.getEPR().getAddress().getStringValue() + "#" + filename;
     }
 
     private Log log = LogFactory.getLog(GridFileUploader.class);
