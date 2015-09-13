@@ -37,7 +37,6 @@ public final class BrokeredJobModel {
                                                                      OxidesSimulation simulation,
                                                                      String inputScriptName,
                                                                      EndpointReferenceType storageEpr) {
-        JobDescriptionType jobDesc = JobDescriptionType.Factory.newInstance();
         ApplicationDocument appDoc = ApplicationDocument.Factory.newInstance();
         ApplicationType app = appDoc.addNewApplication();
         app.setApplicationName(applicationName);
@@ -53,6 +52,7 @@ public final class BrokeredJobModel {
         environmentType.setStringValue(INPUT_SCRIPT_DESTINATION_NAME);
         WSUtilities.append(posixApplicationDocument, app);
 
+        JobDescriptionType jobDesc = JobDescriptionType.Factory.newInstance();
         jobDesc.setApplication(app);
 
         jobDesc.addNewJobIdentification().setJobName(simulationName);
@@ -153,6 +153,9 @@ public final class BrokeredJobModel {
         String reservationXml = "<u6rr:ReservationReference xmlns:u6rr=\"http://www.unicore.eu/unicore/xnjs\">"
                 + id + "</u6rr:ReservationReference>";
         XmlObject xmlObject = XmlObject.Factory.parse(reservationXml);
+
+//        ReservationReferenceDocument rrd = ReservationReferenceDocument.Factory.newInstance();
+//        rrd.setReservationReference(id);
         WSUtilities.append(xmlObject, resourcesDocument);
     }
 

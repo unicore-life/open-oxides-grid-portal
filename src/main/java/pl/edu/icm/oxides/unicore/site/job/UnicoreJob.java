@@ -37,7 +37,6 @@ public class UnicoreJob {
         this.oxidesConfig = oxidesConfig;
     }
 
-    // TODO: do some cache at this level
     public List<UnicoreJobEntity> retrieveSiteResourceList(TrustDelegation trustDelegation) {
         log.trace("Retrieving job list for user " + trustDelegation.getCustodianDN());
         return getJobsList(trustDelegation)

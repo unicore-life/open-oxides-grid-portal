@@ -41,7 +41,7 @@ dependencies {
 //            'org.springframework.security:spring-security-web:4.0.1.RELEASE',
 
             'eu.unicore.workflow:common:2.8.1',
-            'eu.unicore:uas-client:1.9.2'
+            'eu.unicore:uas-client:1.9.3'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-spring:1.0-groovy-2.4',

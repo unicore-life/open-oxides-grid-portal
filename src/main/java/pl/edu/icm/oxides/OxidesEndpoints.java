@@ -71,7 +71,7 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelSimulationsPage(authenticationSession);
     }
 
-    @RequestMapping(value = "/simulations/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/simulations/{uuid}/files", method = RequestMethod.GET)
     public ModelAndView oneSimulationPage(@PathVariable("uuid") UUID simulationUuid,
                                           @RequestParam(value = "path", required = false) String path) {
         return oxidesGridPortalPages.modelOneSimulationPage(authenticationSession, simulationUuid, path);

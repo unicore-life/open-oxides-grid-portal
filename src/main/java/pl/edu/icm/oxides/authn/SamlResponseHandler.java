@@ -40,10 +40,9 @@ class SamlResponseHandler {
 
     String processAuthenticationResponse(HttpServletRequest request, AuthenticationSession authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
-        String returnUrl = "/error";
+        String returnUrl = "/oxides";
         try {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
-            // TODO: when authenticationSession is null, getUuid is not a valid call
             validateSamlResponse(responseDocument, authenticationSession.getUuid());
 
             EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
@@ -51,10 +50,12 @@ class SamlResponseHandler {
                 processAuthenticationResponseData(authenticationSession, etdAssertionsWrapper);
                 returnUrl = authenticationSession.getReturnUrl();
             }
+            return String.format("redirect:%s", returnUrl);
         } catch (Exception e) {
-            log.error("Could not parse authentication response properly!", e);
+            String message = "Could not parse SAML authentication response!";
+            log.error(message, e);
+            throw new UnprocessableResponseException(message, e);
         }
-        return String.format("redirect:%s", returnUrl);
     }
 
     private void processAuthenticationResponseData(AuthenticationSession authenticationSession,
