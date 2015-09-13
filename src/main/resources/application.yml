@@ -25,5 +25,7 @@ multipart:
   maxFileSize: 16MB
   maxRequestSize: 64MB
 
-logging.level.pl.icm.edu.oxides: DEBUG
 logging.level.: INFO
+logging.level.org.apache.cxf: FATAL
+logging.level.pl.edu.icm.oxides: DEBUG
+logging.level.pl.edu.icm.oxides.unicore.site.job: TRACE

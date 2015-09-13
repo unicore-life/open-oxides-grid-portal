@@ -3,10 +3,12 @@ package pl.edu.icm.oxides.portal.model;
 public class SimulationGridFile {
     private final String path;
     private final boolean directory;
+    private final String type;
 
-    public SimulationGridFile(String path, boolean directory) {
+    public SimulationGridFile(String path, boolean directory, String type) {
         this.path = path;
         this.directory = directory;
+        this.type = type;
     }
 
     public String getPath() {
@@ -15,5 +17,9 @@ public class SimulationGridFile {
 
     public boolean isDirectory() {
         return directory;
+    }
+
+    public String getType() {
+        return type;
     }
 }

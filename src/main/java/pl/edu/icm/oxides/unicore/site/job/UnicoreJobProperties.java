@@ -20,23 +20,22 @@ import java.util.Calendar;
 
 @Component
 @CacheConfig(cacheNames = {"unicoreSessionJobClientList"})
-public class UnicoreJobClient {
+class UnicoreJobProperties {
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
 
     @Autowired
-    public UnicoreJobClient(GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
+    UnicoreJobProperties(GridOxidesConfig oxidesConfig, GridClientHelper clientHelper) {
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
     }
 
     @Cacheable(
-            key = "#trustDelegation.custodianDN + '_' + #uri",
+            key = "#trustDelegation.custodianDN + '_' + #epr.getAddress().getStringValue()",
             unless = "#result == null"
     )
-    public JobProperties retrieveJobProperties(String uri, TrustDelegation trustDelegation) {
-        EndpointReferenceType epr = EndpointReferenceType.Factory.newInstance();
-        epr.addNewAddress().setStringValue(uri);
+    public JobProperties retrieveJobProperties(EndpointReferenceType epr, TrustDelegation trustDelegation) {
+        log.trace("Retrieving properties for job: " + epr.getAddress().getStringValue());
 
         IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
         try {
@@ -44,8 +43,8 @@ public class UnicoreJobClient {
                     .getResourcePropertiesDocument()
                     .getJobProperties();
         } catch (Exception e) {
-            log.error("Error retrieving job properties for job <" + uri + "> of <"
-                    + trustDelegation.getCustodianDN() + ">", e);
+            log.error("Error retrieving job properties for job <" + epr.getAddress().getStringValue()
+                    + "> of <" + trustDelegation.getCustodianDN() + ">", e);
             return null;
         }
     }
@@ -87,5 +86,5 @@ public class UnicoreJobClient {
                 dateFormat.format(terminationTime.getDateValue()));
     }
 
-    private Log log = LogFactory.getLog(UnicoreJobClient.class);
+    private Log log = LogFactory.getLog(UnicoreJobProperties.class);
 }

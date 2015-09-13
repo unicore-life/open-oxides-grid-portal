@@ -56,6 +56,7 @@ public class OxidesEndpoints {
         this.authenticationSession = authenticationSession;
     }
 
+
     /*
         MVC ENDPOINTS:
     ==========================================================================================================
@@ -140,10 +141,10 @@ public class OxidesEndpoints {
         return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/unicore/jobs/{uuid}/file", method = RequestMethod.GET)
     public ResponseEntity<Void> downloadSimulationFile(
             @PathVariable(value = "uuid") UUID simulationUuid,
-            @RequestParam(value = "file", required = false) String path,
+            @RequestParam(value = "path", required = false) String path,
             HttpServletResponse response,
             HttpSession session) {
         logSessionData("UNICORE-JOB-DOWNLOAD", session, authenticationSession);
