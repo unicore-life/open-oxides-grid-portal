@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.portal.model.SimulationGridFile;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -23,7 +22,6 @@ public class UnicoreJob {
     private final UnicoreJobEprCache unicoreJobEprCache;
     private final UnicoreJobOperations unicoreJobOperations;
     private final UnicoreJobStorage unicoreJobStorage;
-    private final GridClientHelper clientHelper;
     private final GridOxidesConfig oxidesConfig;
 
     @Autowired
@@ -31,13 +29,11 @@ public class UnicoreJob {
                       UnicoreJobEprCache unicoreJobEprCache,
                       UnicoreJobOperations unicoreJobOperations,
                       UnicoreJobStorage unicoreJobStorage,
-                      GridClientHelper clientHelper,
                       GridOxidesConfig oxidesConfig) {
         this.unicoreJobsListing = unicoreJobsListing;
         this.unicoreJobEprCache = unicoreJobEprCache;
         this.unicoreJobOperations = unicoreJobOperations;
         this.unicoreJobStorage = unicoreJobStorage;
-        this.clientHelper = clientHelper;
         this.oxidesConfig = oxidesConfig;
     }
 
@@ -55,11 +51,51 @@ public class UnicoreJob {
     }
 
     public void destroySiteResource(UUID simulationUuid, TrustDelegation trustDelegation) {
-        getEpr(simulationUuid, trustDelegation)
+        Optional<EndpointReferenceType> resourceEpr = getResourceEpr(simulationUuid, trustDelegation);
+        if (!resourceEpr.isPresent()) {
+            // TODO: think about exception
+            log.warn("Could not found simulation: " + simulationUuid);
+        }
+        resourceEpr
                 .ifPresent(epr -> unicoreJobOperations.destroyJob(epr, trustDelegation));
     }
 
-    private Optional<EndpointReferenceType> getEpr(UUID uuid, TrustDelegation trustDelegation) {
+    public UnicoreJobDetailsEntity retrieveJobDetails(UUID simulationUuid, TrustDelegation trustDelegation) {
+        Optional<EndpointReferenceType> resourceEpr = getResourceEpr(simulationUuid, trustDelegation);
+        return resourceEpr
+                .map(epr -> unicoreJobOperations.retrieveJobProperties(epr, trustDelegation))
+                .map(unicoreJobOperations::translateJobPropertiesToUnicoreJobDetailsEntity)
+                .orElseThrow(() ->
+                        new RuntimeException("Problem while getting details of simulation: " + simulationUuid));
+    }
+
+    public List<SimulationGridFile> retrieveJobFilesListing(UUID simulationUuid,
+                                                            Optional<String> path,
+                                                            TrustDelegation trustDelegation) {
+        Optional<EndpointReferenceType> epr = getResourceEpr(simulationUuid, trustDelegation);
+        return unicoreJobStorage.listFiles(epr, path, trustDelegation);
+    }
+
+    public void downloadJobFile(UUID simulationUuid,
+                                Optional<String> path,
+                                HttpServletResponse response,
+                                TrustDelegation trustDelegation) {
+        Optional<EndpointReferenceType> epr = getResourceEpr(simulationUuid, trustDelegation);
+        unicoreJobStorage.downloadFile(epr, path, response, trustDelegation);
+    }
+
+    private List<EndpointReferenceType> getJobsList(TrustDelegation trustDelegation) {
+        List<EndpointReferenceType> jobsListing = unicoreJobsListing.retrieveSiteResourceList(trustDelegation);
+        jobsListing.forEach(epr -> {
+                    String uriString = epr.getAddress().getStringValue();
+                    UUID uuid = UUID.fromString(uriString.substring(uriString.length() - UUID_STRING_LENGTH));
+                    unicoreJobEprCache.put(String.valueOf(uuid), epr);
+                }
+        );
+        return jobsListing;
+    }
+
+    private Optional<EndpointReferenceType> getResourceEpr(UUID uuid, TrustDelegation trustDelegation) {
         String uuidString = String.valueOf(uuid);
         EndpointReferenceType uuidEpr = unicoreJobEprCache.get(uuidString);
         if (uuidEpr == null) {
@@ -71,38 +107,7 @@ public class UnicoreJob {
                 .findFirst();
     }
 
-    private List<EndpointReferenceType> getJobsList(TrustDelegation trustDelegation) {
-        List<EndpointReferenceType> jobsListing = unicoreJobsListing.retrieveSiteResourceList(trustDelegation);
-        jobsListing.forEach(epr -> {
-                    String uriString = epr.getAddress().getStringValue();
-                    UUID uuid = UUID.fromString(uriString.substring(uriString.length() - 36));
-                    unicoreJobEprCache.put(String.valueOf(uuid), epr);
-                }
-        );
-        return jobsListing;
-    }
-
-    public UnicoreJobDetailsEntity retrieveJobDetails(UUID simulationUuid, TrustDelegation trustDelegation) {
-        return getEpr(simulationUuid, trustDelegation)
-                .map(epr -> unicoreJobOperations.retrieveJobProperties(epr, trustDelegation))
-                .map(unicoreJobOperations::translateJobPropertiesToUnicoreJobDetailsEntity)
-                .orElseThrow(() -> new RuntimeException("Problem while getting details!"));
-    }
-
-    public List<SimulationGridFile> listJobFiles(UUID simulationUuid,
-                                                 Optional<String> path,
-                                                 TrustDelegation trustDelegation) {
-        Optional<EndpointReferenceType> epr = getEpr(simulationUuid, trustDelegation);
-        return unicoreJobStorage.listFiles(epr, path, trustDelegation);
-    }
-
-    public void downloadJobFile(UUID simulationUuid,
-                                Optional<String> path,
-                                HttpServletResponse response,
-                                TrustDelegation trustDelegation) {
-        Optional<EndpointReferenceType> epr = getEpr(simulationUuid, trustDelegation);
-        unicoreJobStorage.downloadFile(epr, path, response, trustDelegation);
-    }
-
     private Log log = LogFactory.getLog(UnicoreJob.class);
+
+    private static final int UUID_STRING_LENGTH = 36;
 }

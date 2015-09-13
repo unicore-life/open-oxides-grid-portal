@@ -51,7 +51,7 @@ public class UnicoreGridResources {
 
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            return ok(jobHandler.listJobFiles(simulationUuid,
+            return ok(jobHandler.retrieveJobFilesListing(simulationUuid,
                     ofNullable(path),
                     authenticationSession.getSelectedTrustDelegation()));
         }

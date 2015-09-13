@@ -21,7 +21,8 @@ public class SamlAuthenticationHandler {
 
     public void performAuthenticationRequest(HttpServletResponse response,
                                              AuthenticationSession authenticationSession) {
-        samlRequestHandler.performAuthenticationRequest(response, authenticationSession);
+        String authenticationRequestId = authenticationSession.getUuid();
+        samlRequestHandler.performAuthenticationRequest(response, authenticationRequestId);
     }
 
     public String processAuthenticationResponse(HttpServletRequest request,

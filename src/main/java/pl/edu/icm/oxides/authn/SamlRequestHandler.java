@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridIdentityProvider;
-import pl.edu.icm.oxides.user.AuthenticationSession;
 import xmlbeans.org.oasis.saml2.protocol.AuthnRequestDocument;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,12 +31,12 @@ class SamlRequestHandler {
         this.idProvider = idProvider;
     }
 
-    void performAuthenticationRequest(HttpServletResponse response, AuthenticationSession authenticationSession) {
+    void performAuthenticationRequest(HttpServletResponse response, String authenticationRequestId) {
         String idpUrl = gridConfig.getIdpUrl();
         String targetUrl = gridConfig.getTargetUrl();
         try {
             AuthnRequest authnRequest = createRequest(idpUrl, targetUrl,
-                    idProvider.getGridCredential(), authenticationSession.getUuid());
+                    idProvider.getGridCredential(), authenticationRequestId);
             AuthnRequestDocument authnRequestDocument = AuthnRequestDocument.Factory.parse(
                     authnRequest.getXMLBeanDoc().xmlText());
 

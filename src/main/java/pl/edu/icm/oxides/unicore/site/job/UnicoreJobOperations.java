@@ -38,7 +38,12 @@ class UnicoreJobOperations {
     @Cacheable(
             value = "unicoreSessionJobClientList",
             key = "#trustDelegation.custodianDN + '_' + #epr.getAddress().getStringValue()",
-            unless = "#result == null"
+            unless = "#result == null || "
+                    + "("
+                    + "  #result.getStatusInfo().getStatus().toString().compareTo('SUCCESSFUL') != 0"
+                    + " &&"
+                    + "  #result.getStatusInfo().getStatus().toString().compareTo('FAILED') != 0"
+                    + ")"
     )
     public JobProperties retrieveJobProperties(EndpointReferenceType epr, TrustDelegation trustDelegation) {
         log.trace("Retrieving properties for job: " + epr.getAddress().getStringValue());
