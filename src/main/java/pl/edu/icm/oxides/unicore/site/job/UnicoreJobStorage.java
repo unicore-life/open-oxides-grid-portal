@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Component
 class UnicoreJobStorage {
     private final UnicoreJobOperations unicoreJobOperations;
@@ -35,15 +38,16 @@ class UnicoreJobStorage {
         this.clientHelper = clientHelper;
     }
 
-
     public List<SimulationGridFile> listFiles(Optional<EndpointReferenceType> epr,
-                                              Optional<String> path, TrustDelegation trustDelegation) {
+                                              Optional<String> path,
+                                              TrustDelegation trustDelegation) {
         Optional<StorageClient> storageClient = getStorageClient(epr, trustDelegation);
 
         List<SimulationGridFile> listing = new ArrayList<>();
         storageClient.ifPresent(client -> {
             try {
-                GridFileType[] gridFileTypes = client.listDirectory(path.orElse("/"));
+                String unescapedPath = HtmlUtils.htmlUnescape(path.orElse("/"));
+                GridFileType[] gridFileTypes = client.listDirectory(unescapedPath);
 
                 listing.addAll(
                         Arrays.stream(gridFileTypes)
@@ -65,42 +69,6 @@ class UnicoreJobStorage {
                 .sorted(simulationGridFileComparator)
                 .collect(Collectors.toList());
     }
-
-    private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {
-        String filePath = gridFileType.getPath();
-        if (gridFileType.getIsDirectory()) {
-            filePath += "/";
-        }
-
-        String filename = Paths.get(filePath)
-                .getFileName()
-                .toString();
-        int indexOf = filename.lastIndexOf('.');
-        String extension = indexOf > 0 ? filename.substring(indexOf) : null;
-
-        return new SimulationGridFile(
-                filePath,
-                gridFileType.getIsDirectory(),
-                extension);
-    }
-
-    private Optional<StorageClient> getStorageClient(Optional<EndpointReferenceType> simulationEpr, TrustDelegation trustDelegation) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
-        return simulationEpr
-                .map(epr -> unicoreJobOperations.retrieveJobProperties(epr, trustDelegation))
-                .map(jobProperties -> jobProperties.getWorkingDirectoryReference())
-                .map(endpointReferenceType -> {
-                    try {
-                        return new StorageClient(endpointReferenceType, clientConfiguration);
-                    } catch (Exception e) {
-                        log.error("Could not create storage client for simulation "
-                                + simulationEpr, e);
-                        return null;
-                    }
-                });
-    }
-
-    private Log log = LogFactory.getLog(UnicoreJobStorage.class);
 
     public void downloadFile(Optional<EndpointReferenceType> epr,
                              Optional<String> path,
@@ -125,4 +93,53 @@ class UnicoreJobStorage {
             log.error("problem with buffer flush", e);
         }
     }
+
+    public static void main(String[] args) {
+        String x = HtmlUtils.htmlEscape("/test-dir/<script>alert('X');</");
+        System.out.println(x);
+        System.out.println(HtmlUtils.htmlUnescape(x));
+    }
+
+
+    private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {
+        String filePath = HtmlUtils.htmlEscape(gridFileType.getPath(), UTF_8.name());
+//        String filePath = gridFileType.getPath();
+        boolean isDirectory = gridFileType.getIsDirectory();
+        if (isDirectory) {
+            filePath += "/";
+        }
+
+        String extension = null;
+        if (!isDirectory) {
+            String filename = Paths.get(filePath)
+                    .getFileName()
+                    .toString();
+            int indexOf = filename.lastIndexOf('.');
+            if (indexOf > 0) {
+                extension = filename.substring(indexOf);
+            }
+        }
+        return new SimulationGridFile(
+                filePath,
+                isDirectory,
+                extension);
+    }
+
+    private Optional<StorageClient> getStorageClient(Optional<EndpointReferenceType> simulationEpr, TrustDelegation trustDelegation) {
+        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
+        return simulationEpr
+                .map(epr -> unicoreJobOperations.retrieveJobProperties(epr, trustDelegation))
+                .map(jobProperties -> jobProperties.getWorkingDirectoryReference())
+                .map(endpointReferenceType -> {
+                    try {
+                        return new StorageClient(endpointReferenceType, clientConfiguration);
+                    } catch (Exception e) {
+                        log.error("Could not create storage client for simulation "
+                                + simulationEpr, e);
+                        return null;
+                    }
+                });
+    }
+
+    private Log log = LogFactory.getLog(UnicoreJobStorage.class);
 }
