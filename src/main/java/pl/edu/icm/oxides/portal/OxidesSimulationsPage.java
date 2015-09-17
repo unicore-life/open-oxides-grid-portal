@@ -55,6 +55,19 @@ class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
+    public ModelAndView modelJsmolViewerPage(AuthenticationSession authenticationSession,
+                                             UUID simulationUuid,
+                                             Optional<String> path) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            ModelAndView modelAndView = prepareBasicModelAndView("viewers/jsmol", ofNullable(authenticationSession));
+            modelAndView.addObject("uuid", simulationUuid.toString());
+            modelAndView.addObject("path", path.orElse(""));
+            return modelAndView;
+        }
+        authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
+        return redirectToAuthentication();
+    }
+
     ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));

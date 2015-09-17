@@ -64,11 +64,15 @@ oxidesGridPortalApp.value('modelSimulationsListing', []);
 
 oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
     function ($scope, $location, oxidesSimulationFilesListingService) {
+        $scope.simulationUuid = null;
         $scope.simulationFiles = [];
         $scope.breadCrumbElements = [];
         $scope.showSpinKit = true;
 
-        $scope.initializeBreadCrumb = function (filePath) {
+        $scope.initializeBreadCrumb = function (uuid, filePath) {
+            $scope.simulationUuid = uuid;
+            console.info($scope.simulationUuid);
+
             var locationUrl = $location.absUrl();
             var i = locationUrl.indexOf('?');
             if (i >= 0) {
@@ -91,38 +95,33 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                 }
             }
             //console.info($scope.breadCrumbElements);
-        };
 
-        oxidesSimulationFilesListingService.getSimulationFilesList($location.absUrl())
-            .success(function (data, status, headers, config) {
-                angular.copy(data, $scope.simulationFiles);
-                $scope.showSpinKit = false;
-            })
-            .error(function (data, status, headers, config) {
-                alert('Failed: HTTP Status Code = ' + status);
-                $scope.showSpinKit = false;
-            });
+            oxidesSimulationFilesListingService.getSimulationFilesList($scope.simulationUuid, $location.absUrl())
+                .success(function (data, status, headers, config) {
+                    angular.copy(data, $scope.simulationFiles);
+                    $scope.showSpinKit = false;
+                })
+                .error(function (data, status, headers, config) {
+                    alert('Failed: HTTP Status Code = ' + status);
+                    $scope.showSpinKit = false;
+                });
+        };
     }
 );
 
 oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
     ['$http', function ($http) {
         return {
-            getSimulationFilesList: function (absoluteUrl) {
-                var uuid = "", query = "";
+            getSimulationFilesList: function (simulationUuid, absoluteUrl) {
+                var query = "";
                 var queryIndex = absoluteUrl.indexOf("?");
-
                 if (queryIndex >= 0) {
-                    uuid = absoluteUrl.substr(0, queryIndex).substr(-36);
                     query = absoluteUrl.substr(queryIndex);
-                }
-                else {
-                    uuid = absoluteUrl.substr(-36);
                 }
 
                 var request = {
                     method: 'GET',
-                    url: '/oxides/unicore/jobs/' + uuid + '/files' + query,
+                    url: '/oxides/unicore/jobs/' + simulationUuid + '/files' + query,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -165,6 +164,45 @@ oxidesGridPortalApp.controller('oxidesSimulationDetailsController',
         //    alert('Failed: HTTP Status Code = ' + status);
         //    $scope.showSpinKit = false;
         //});
+    }
+);
+
+
+oxidesGridPortalApp.controller('oxidesMoleculeViewerController',
+    function ($scope) {
+        $scope.simulationUuid = null;
+        $scope.showSpinKit = true;
+
+        $scope.jsmolInfo = {
+            width: 500,
+            height: 500,
+            debug: false,
+            color: "0xC0C0C0",
+            addSelectionOptions: false,
+            serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+            use: "HTML5",
+            readyFunction: null,
+            src: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+            //src: "https://localhost:8443/oxides/mol",
+            //defaultModel: ":dopamine", // PubChem -- use $ for NCI
+            bondWidth: 4,
+            zoomScaling: 1.5,
+            pinchScaling: 2.0,
+            mouseDragFactor: 0.5,
+            touchDragFactor: 0.15,
+            multipleBondSpacing: 4,
+            spinRateX: 0.2,
+            spinRateY: 0.5,
+            spinFPS: 20,
+            spin: true,
+            debug: false,
+            shadeAtoms: true
+        };
+
+        $scope.initialize = function (uuid, path) {
+            $scope.simulationUuid = uuid;
+            console.warn(path);
+        };
     }
 );
 

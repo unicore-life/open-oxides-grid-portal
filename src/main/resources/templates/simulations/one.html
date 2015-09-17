@@ -9,7 +9,7 @@
 <div id="wrap">
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationFilesListingController"
-         th:attr="ng-init='initializeBreadCrumb(\''+${path}+'\')'">
+         th:attr="ng-init='initializeBreadCrumb(\'' + ${uuid} + '\', \'' + ${path} + '\')'">
 
         <h3>Simulation: <span th:text="${uuid}"></span></h3>
 
@@ -36,13 +36,21 @@
                     <tbody>
                     <tr ng-repeat="simulationFile in simulationFiles">
                         <td>{{ simulationFile.path }}</td>
-                        <td><a th:href="@{|/oxides/simulations/${uuid}?path={{ simulationFile.path }}|}"
+                        <td>
+                            <a th:href="@{|/oxides/simulations/${uuid}/files?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
-                               ng-show="simulationFile.directory">Enter Directory</a></td>
-                        <td><a th:href="@{|/oxides/unicore/jobs/${uuid}/file?path={{ simulationFile.path }}|}"
+                               ng-show="simulationFile.directory">
+                                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Enter
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{|/oxides/unicore/jobs/${uuid}/file?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="!simulationFile.directory"
-                               target="_blank">Show File</a></td>
+                               target="_blank">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Show
+                            </a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

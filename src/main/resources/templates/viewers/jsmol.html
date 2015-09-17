@@ -1,0 +1,58 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="oxidesGridPortal">
+<head th:replace="include/header :: oxidesHeader"/>
+
+<body>
+<nav th:replace="include/navbar :: oxidesNavigationBar"/>
+
+<!-- Wrap all page content here -->
+<div id="wrap">
+    <!-- Begin page content -->
+    <div class="container" ng-controller="oxidesMoleculeViewerController"
+         th:attr="ng-init='initialize(\'' + ${uuid} + '\', \'' + ${path} + '\')'">
+
+        <script type="text/javascript"
+                src="/assets/js/JSmol.lite.nojq.js">
+        </script>
+
+        <script>
+            var Info = {
+                width: 500,
+                height: 500,
+                debug: false,
+                color: "0xC0C0C0",
+                addSelectionOptions: false,
+                serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+                use: "HTML5",
+                readyFunction: null,
+//                src: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+                src: "/test.mol",
+//                src: "https://localhost:8443/oxides/mol",
+                //defaultModel: ":dopamine", // PubChem -- use $ for NCI
+                bondWidth: 4,
+                zoomScaling: 1.5,
+                pinchScaling: 2.0,
+                mouseDragFactor: 0.5,
+                touchDragFactor: 0.15,
+                multipleBondSpacing: 4,
+                spinRateX: 0.2,
+                spinRateY: 0.5,
+                spinFPS: 20,
+                spin: true,
+                debug: false,
+                shadeAtoms: true
+            };
+
+            Jmol.getTMApplet("jmol", Info);
+        </script>
+    </div>
+    <!-- /.container -->
+</div>
+
+<footer th:replace="include/footer :: oxidesFooter"/>
+
+<!-- ==================================================== -->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,19 +18,23 @@ import java.io.InputStreamReader;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 @Service
 public class OpenOxidesResources {
     private final OpenOxidesConfig openOxidesConfig;
     private final FileResourceLoader fileResourceLoader;
+    private final HttpHeaders okResponseHeaders;
 
     @Autowired
     public OpenOxidesResources(OpenOxidesConfig openOxidesConfig, FileResourceLoader fileResourceLoader) {
         this.openOxidesConfig = openOxidesConfig;
         this.fileResourceLoader = fileResourceLoader;
+
+        okResponseHeaders = new HttpHeaders();
+        okResponseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "http://openoxides.icm.edu.pl/");
     }
 
     public ResponseEntity<String> getParticleParameters(String name, AuthenticationSession authenticationSession) {
@@ -40,7 +45,9 @@ public class OpenOxidesResources {
             }
 
             try {
-                return ok(getJsonString(resource));
+                return ResponseEntity.status(OK)
+                        .headers(okResponseHeaders)
+                        .body(getJsonString(resource));
             } catch (IOException e) {
                 log.error("Could not get particle parameters data", e);
                 return serviceResponse(INTERNAL_SERVER_ERROR);
@@ -72,4 +79,6 @@ public class OpenOxidesResources {
     }
 
     private Log log = LogFactory.getLog(OpenOxidesResources.class);
+
+    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 }

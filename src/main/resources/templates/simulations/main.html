@@ -41,19 +41,23 @@
                         <!--<td>{{ simulation.queue }}</td>-->
                         <td>
                             <a class="btn btn-default btn-xs" role="button"
-                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/files">Show Files</a>
+                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/files">
+                                <span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> Files
+                            </a>
 
                             &nbsp;
 
                             <a class="btn btn-default btn-xs" role="button"
-                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/details">Details</a>
+                               ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/details">
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Details
+                            </a>
 
                             &nbsp;
 
                             <a class="btn btn-default btn-xs" role="button"
                                ng-really-message="Are you sure?"
                                ng-really-click="destroyJob(simulation.uuid, $index)">
-                                Destroy <span aria-hidden="true">&times;</span>
+                                Destroy <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>
                         </td>
                     </tr>
