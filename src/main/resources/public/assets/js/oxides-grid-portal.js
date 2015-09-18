@@ -34,6 +34,22 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                 });
         };
 
+        $scope.refreshSimulationList = function () {
+            $scope.showSpinKit = true;
+
+            oxidesSimulationsListingService.getJson()
+                .success(function (data, status, headers, config) {
+                    angular.copy(data, modelSimulationsListing);
+                    $scope.showSpinKit = false;
+                })
+                .error(function (data, status, headers, config) {
+                    alert('Failed: HTTP Status Code = ' + status);
+                    $scope.showSpinKit = false;
+                });
+        };
+
+        // TODO: remove redundant service call
+
         oxidesSimulationsListingService.getJson()
             .success(function (data, status, headers, config) {
                 angular.copy(data, modelSimulationsListing);
@@ -291,6 +307,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             url: '/oxides/unicore/upload',
             alias: 'uploadFile',
             queueLimit: 1,
+            autoUpload: true,
             //        formData: [{
             //            destinationUri: $scope.destinationUri
             //        }],
@@ -309,6 +326,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             onCompleteItem: function (item, response, status, headers) {
                 this.clearQueue();
 
+                // TODO: do not add if upload canceled
+
                 var filename = item.file.name;
                 var arrayLength = $scope.simulationUploadFilesList.length;
                 for (var i = arrayLength - 1; i >= 0; i--) {
@@ -321,7 +340,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
                 // Workaround for re-upload:
                 $scope.uploader._directives.select[0].element[0].value = '';
                 console.log('STATUS: ' + status);
-            },
+            }
         });
     }
 );
