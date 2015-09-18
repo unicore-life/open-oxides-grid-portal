@@ -69,7 +69,7 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
         $scope.breadCrumbElements = [];
         $scope.showSpinKit = true;
 
-        $scope.initializeBreadCrumb = function (uuid, filePath) {
+        $scope.initializeBreadCrumb = function (uuid, path) {
             $scope.simulationUuid = uuid;
             console.info($scope.simulationUuid);
 
@@ -83,7 +83,7 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                 href: locationUrl
             });
 
-            var pathElements = filePath.split('/');
+            var pathElements = unescape(path).split('/');
             var pathSoFar = '/';
             for (var i = 0; i < pathElements.length; i++) {
                 if (pathElements[i] != '') {

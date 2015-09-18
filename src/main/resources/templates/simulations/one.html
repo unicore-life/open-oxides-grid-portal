@@ -9,7 +9,7 @@
 <div id="wrap">
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationFilesListingController"
-         th:attr="ng-init='initializeBreadCrumb(\'' + ${uuid} + '\', \'' + ${path} + '\')'">
+         th:attr="ng-init='initializeBreadCrumb(\'' + ${uuid} + '\', \'' + ${encodedPath} + '\')'">
 
         <h3>Simulation: <span th:text="${uuid}"></span></h3>
 

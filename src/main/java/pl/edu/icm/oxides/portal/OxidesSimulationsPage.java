@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript;
 
 @Service
 class OxidesSimulationsPage {
@@ -35,6 +36,7 @@ class OxidesSimulationsPage {
             ModelAndView modelAndView = prepareBasicModelAndView("simulations/one", ofNullable(authenticationSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
             modelAndView.addObject("path", path.orElse("/"));
+            modelAndView.addObject("encodedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));

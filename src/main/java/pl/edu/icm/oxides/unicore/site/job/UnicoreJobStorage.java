@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
 import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
@@ -24,8 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 class UnicoreJobStorage {
@@ -46,8 +43,7 @@ class UnicoreJobStorage {
         List<SimulationGridFile> listing = new ArrayList<>();
         storageClient.ifPresent(client -> {
             try {
-                String unescapedPath = HtmlUtils.htmlUnescape(path.orElse("/"));
-                GridFileType[] gridFileTypes = client.listDirectory(unescapedPath);
+                GridFileType[] gridFileTypes = client.listDirectory(path.orElse("/"));
 
                 listing.addAll(
                         Arrays.stream(gridFileTypes)
@@ -94,16 +90,8 @@ class UnicoreJobStorage {
         }
     }
 
-    public static void main(String[] args) {
-        String x = HtmlUtils.htmlEscape("/test-dir/<script>alert('X');</");
-        System.out.println(x);
-        System.out.println(HtmlUtils.htmlUnescape(x));
-    }
-
-
     private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {
-        String filePath = HtmlUtils.htmlEscape(gridFileType.getPath(), UTF_8.name());
-//        String filePath = gridFileType.getPath();
+        String filePath = gridFileType.getPath();
         boolean isDirectory = gridFileType.getIsDirectory();
         if (isDirectory) {
             filePath += "/";
@@ -116,13 +104,10 @@ class UnicoreJobStorage {
                     .toString();
             int indexOf = filename.lastIndexOf('.');
             if (indexOf > 0) {
-                extension = filename.substring(indexOf);
+                extension = filename.substring(indexOf + 1);
             }
         }
-        return new SimulationGridFile(
-                filePath,
-                isDirectory,
-                extension);
+        return new SimulationGridFile(filePath, isDirectory, extension);
     }
 
     private Optional<StorageClient> getStorageClient(Optional<EndpointReferenceType> simulationEpr, TrustDelegation trustDelegation) {

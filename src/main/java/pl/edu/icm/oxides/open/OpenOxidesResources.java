@@ -34,7 +34,7 @@ public class OpenOxidesResources {
         this.fileResourceLoader = fileResourceLoader;
 
         okResponseHeaders = new HttpHeaders();
-        okResponseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "http://openoxides.icm.edu.pl/");
+        okResponseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     }
 
     public ResponseEntity<String> getParticleParameters(String name, AuthenticationSession authenticationSession) {
