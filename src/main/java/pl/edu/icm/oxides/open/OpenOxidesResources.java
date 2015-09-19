@@ -26,15 +26,15 @@ import static org.springframework.http.ResponseEntity.status;
 public class OpenOxidesResources {
     private final OpenOxidesConfig openOxidesConfig;
     private final FileResourceLoader fileResourceLoader;
-    private final HttpHeaders okResponseHeaders;
+    private final HttpHeaders responseHeaders;
 
     @Autowired
     public OpenOxidesResources(OpenOxidesConfig openOxidesConfig, FileResourceLoader fileResourceLoader) {
         this.openOxidesConfig = openOxidesConfig;
         this.fileResourceLoader = fileResourceLoader;
 
-        okResponseHeaders = new HttpHeaders();
-        okResponseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        responseHeaders = new HttpHeaders();
+        responseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     }
 
     public ResponseEntity<String> getParticleParameters(String name, AuthenticationSession authenticationSession) {
@@ -46,7 +46,7 @@ public class OpenOxidesResources {
 
             try {
                 return ResponseEntity.status(OK)
-                        .headers(okResponseHeaders)
+                        .headers(responseHeaders)
                         .body(getJsonString(resource));
             } catch (IOException e) {
                 log.error("Could not get particle parameters data", e);
@@ -70,7 +70,7 @@ public class OpenOxidesResources {
     }
 
     private <T> ResponseEntity<T> serviceResponse(HttpStatus httpStatus) {
-        return status(httpStatus).body(null);
+        return status(httpStatus).headers(responseHeaders).body(null);
     }
 
     private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
