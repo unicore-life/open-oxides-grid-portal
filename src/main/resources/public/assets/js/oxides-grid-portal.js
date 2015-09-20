@@ -226,8 +226,8 @@ oxidesGridPortalApp.controller('oxidesMoleculeViewerController',
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
     function ($scope, oxidesSubmitSimulationService, FileUploader) {
         $scope.simulationParameters = {
-            simulationName: 'nazwa jako taka',
-            simulationProject: 'grancik',
+            simulationName: '',
+            simulationProject: '',
             simulationQueue: '',
             simulationMemory: '',
             simulationNodes: '',
@@ -245,9 +245,10 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
             {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'},
             {'id': 'simulationReservation', 'label': 'Reservation', 'placeholder': 'Reservation ID'},
-            {'id': 'simulationProperty', 'label': 'Nodes Property', 'placeholder': 'Nodes Property String'}
+            {'id': 'simulationProperty', 'label': 'Nodes Property', 'placeholder': 'Nodes property string'}
         ];
 
+        $scope.isSubmitting = undefined;
         $scope.visibleAdvanced = false;
         $scope.toggleAdvancedLabel = 'Show Advanced Parameters';
 
@@ -276,6 +277,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
         };
 
         $scope.submitForm = function () {
+            $scope.isSubmitting = true;
+
             // Creating JSON with simulation description:
             var oxidesSimulation = {};
             var offset = 'simulation'.length;
@@ -294,9 +297,11 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             oxidesSubmitSimulationService.submitSimulation(oxidesSimulationJson)
                 .success(function (data, status, headers, config) {
                     console.info('Submitted: HTTP Status Code = ' + status);
+                    $scope.isSubmitting = false;
                 })
                 .error(function (data, status, headers, config) {
                     console.error('Failed: HTTP Status Code = ' + status);
+                    $scope.isSubmitting = false;
                 });
         };
 
