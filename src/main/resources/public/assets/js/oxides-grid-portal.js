@@ -232,7 +232,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             simulationMemory: '',
             simulationNodes: '',
             simulationCPUs: '',
-            simulationReservation: ''
+            simulationReservation: '',
+            simulationProperty: ''
         };
         $scope.simulationScriptText = '';
         $scope.simulationUploadFilesList = [];
@@ -243,7 +244,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             {'id': 'simulationMemory', 'label': 'Memory', 'placeholder': 'Memory [MB]'},
             {'id': 'simulationNodes', 'label': 'Nodes Count', 'placeholder': 'Number of nodes'},
             {'id': 'simulationCPUs', 'label': 'CPUs / Node', 'placeholder': 'CPUs per node'},
-            {'id': 'simulationReservation', 'label': 'Reservation', 'placeholder': 'Reservation ID'}
+            {'id': 'simulationReservation', 'label': 'Reservation', 'placeholder': 'Reservation ID'},
+            {'id': 'simulationProperty', 'label': 'Nodes Property', 'placeholder': 'Nodes Property String'}
         ];
 
         $scope.visibleAdvanced = false;
@@ -320,14 +322,6 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
 //            },
 
             onSuccessItem: function (item, response, status, headers) {
-                console.info('SUCCESS');
-            },
-
-            onCompleteItem: function (item, response, status, headers) {
-                this.clearQueue();
-
-                // TODO: do not add if upload canceled
-
                 var filename = item.file.name;
                 var arrayLength = $scope.simulationUploadFilesList.length;
                 for (var i = arrayLength - 1; i >= 0; i--) {
@@ -336,10 +330,13 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
                     }
                 }
                 $scope.simulationUploadFilesList.push(filename);
+            },
+
+            onCompleteItem: function (item, response, status, headers) {
+                this.clearQueue();
 
                 // Workaround for re-upload:
                 $scope.uploader._directives.select[0].element[0].value = '';
-                console.log('STATUS: ' + status);
             }
         });
     }

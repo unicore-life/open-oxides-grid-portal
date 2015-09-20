@@ -1,6 +1,7 @@
 package pl.edu.icm.oxides.portal.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OxidesSimulation {
     @NotNull
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
@@ -22,6 +24,8 @@ public class OxidesSimulation {
     private final Integer cpus;
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String reservation;
+    @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
+    private final String property;
     @NotNull
     @Size(max = SIMULATION_SCRIPT_MAX_LENGTH)
     private final String script;
@@ -35,6 +39,7 @@ public class OxidesSimulation {
                             @JsonProperty("nodes") Integer nodes,
                             @JsonProperty("cpus") Integer cpus,
                             @JsonProperty("reservation") String reservation,
+                            @JsonProperty("property") String property,
                             @JsonProperty("script") String script,
                             @JsonProperty("files") List<String> files) {
         this.name = name;
@@ -44,6 +49,7 @@ public class OxidesSimulation {
         this.nodes = nodes;
         this.cpus = cpus;
         this.reservation = reservation;
+        this.property = property;
         this.script = script;
         this.files = files == null ? Collections.emptyList() : Collections.unmodifiableList(files);
     }
@@ -76,6 +82,10 @@ public class OxidesSimulation {
         return reservation;
     }
 
+    public String getProperty() {
+        return property;
+    }
+
     public String getScript() {
         return script;
     }
@@ -87,8 +97,8 @@ public class OxidesSimulation {
     @Override
     public String toString() {
         return String.format("OxidesSimulation{name='%s', project='%s', queue='%s', memory=%d, " +
-                        "nodes=%d, cpus=%d, reservation='%s', script='%s', files=%s}",
-                name, project, queue, memory, nodes, cpus, reservation, script, files);
+                        "nodes=%d, cpus=%d, reservation='%s', property='%s', script='%s', files=%s}",
+                name, project, queue, memory, nodes, cpus, reservation, property, script, files);
     }
 
     private static final int SIMULATION_RESOURCE_MAX_LENGTH = 32;

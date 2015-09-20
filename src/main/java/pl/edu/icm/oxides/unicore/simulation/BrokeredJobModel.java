@@ -139,6 +139,9 @@ public final class BrokeredJobModel {
                 log.warn("Could not add reservation resource! Skipping it.", e);
             }
         }
+        if (!isNullOrBlank(simulation.getProperty())) {
+            // TODO
+        }
         return resourcesType;
     }
 
@@ -154,8 +157,8 @@ public final class BrokeredJobModel {
                 + id + "</u6rr:ReservationReference>";
         XmlObject xmlObject = XmlObject.Factory.parse(reservationXml);
 
-//        ReservationReferenceDocument rrd = ReservationReferenceDocument.Factory.newInstance();
-//        rrd.setReservationReference(id);
+        //ReservationReferenceDocument rrd = ReservationReferenceDocument.Factory.newInstance();
+        //rrd.setReservationReference(id);
         WSUtilities.append(xmlObject, resourcesDocument);
     }
 

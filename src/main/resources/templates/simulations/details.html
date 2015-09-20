@@ -11,6 +11,20 @@
     <div class="container" ng-controller="oxidesSimulationDetailsController"
          th:attr="ng-init='initialize(\''+${uuid}+'\')'">
 
+        <h3>Simulation details: <span th:text="${uuid}"></span></h3>
+
+        <div class="panel">
+            <div class="panel-body">
+                <div class="btn-group pull-right" role="group" aria-label="Actions">
+                    <button type="button" class="btn btn-default btn-xs"
+                            ng-click="toggleLog()">
+                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                        <span ng-bind="toggleLogLabel"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="panel panel-default" th:if="${details.name}">
             <div class="panel-heading">Simulation name</div>
             <div class="panel-body" th:text="${details.name}"/>
@@ -29,13 +43,6 @@
         <div class="panel panel-default" th:if="${details.uri}">
             <div class="panel-heading">Simulation URI</div>
             <div class="panel-body" th:text="${details.uri}"/>
-        </div>
-
-        <div class="btn-group pull-right" role="group" aria-label="XXX">
-            <button type="button" class="btn btn-default btn-xs"
-                    ng-click="toggleLog()">
-                <span ng-bind="toggleLogLabel"></span>
-            </button>
         </div>
 
         <div class="panel panel-default" th:if="${details.log}"

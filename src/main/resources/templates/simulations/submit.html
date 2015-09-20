@@ -16,6 +16,7 @@
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="button" class="btn btn-default btn-xs pull-right"
                             ng-click="toggleAdvanced()">
+                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                         <span ng-bind="toggleAdvancedLabel"></span>
                     </button>
                 </div>
@@ -60,7 +61,7 @@
                             <a class="btn btn-default btn-xs" role="button"
                                ng-really-message="Are you sure?"
                                ng-really-click="removeUploadFile($index)">
-                                <span aria-hidden="true">&times;</span>
+                                <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Remove
                             </a>
                         </li>
                     </ul>
@@ -71,8 +72,8 @@
                     </div>
 
                     <input id="simulationFiles" type="file"
-                           nv-file-select="nv-file-select"
-                           uploader="uploader"/>
+                           nv-file-select="nv-file-select" uploader="uploader"
+                           ng-disabled="uploader.isUploading"/>
 
                     <p>
                     <ul>
@@ -110,7 +111,7 @@
                     </button>
 
                     <button type="submit" class="btn btn-primary"
-                            ng-disabled="!simulationSubmitForm.$valid"
+                            ng-disabled="!simulationSubmitForm.$valid || uploader.isUploading"
                             ng-click="submitForm()">
                         Submit Simulation
                     </button>
