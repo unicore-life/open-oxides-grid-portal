@@ -30,6 +30,7 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
 //            .success(function (data, status, headers, config) {
 //            })
                 .error(function (data, status, headers, config) {
+                    // TODO: handling errors
                     console.error('Failed: HTTP Status Code = ' + status);
                 });
         };
@@ -43,6 +44,7 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                     $scope.showSpinKit = false;
                 })
                 .error(function (data, status, headers, config) {
+                    // TODO: handling errors
                     alert('Failed: HTTP Status Code = ' + status);
                     $scope.showSpinKit = false;
                 });
@@ -56,6 +58,7 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                 $scope.showSpinKit = false;
             })
             .error(function (data, status, headers, config) {
+                // TODO: handling errors
                 alert('Failed: HTTP Status Code = ' + status);
                 $scope.showSpinKit = false;
             });
@@ -87,7 +90,6 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
 
         $scope.initializeBreadCrumb = function (uuid, path) {
             $scope.simulationUuid = uuid;
-            console.info($scope.simulationUuid);
 
             var locationUrl = $location.absUrl();
             var i = locationUrl.indexOf('?');
@@ -99,6 +101,7 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                 href: locationUrl
             });
 
+            // TODO: fix deprecated
             var pathElements = unescape(path).split('/');
             var pathSoFar = '/';
             for (var i = 0; i < pathElements.length; i++) {
@@ -110,7 +113,6 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                     });
                 }
             }
-            //console.info($scope.breadCrumbElements);
 
             oxidesSimulationFilesListingService.getSimulationFilesList($scope.simulationUuid, $location.absUrl())
                 .success(function (data, status, headers, config) {
@@ -118,6 +120,7 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                     $scope.showSpinKit = false;
                 })
                 .error(function (data, status, headers, config) {
+                    // TODO: handling errors
                     alert('Failed: HTTP Status Code = ' + status);
                     $scope.showSpinKit = false;
                 });
@@ -296,10 +299,14 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             // Submitting simulation:
             oxidesSubmitSimulationService.submitSimulation(oxidesSimulationJson)
                 .success(function (data, status, headers, config) {
+                    // TODO: handling successddd
+
                     console.info('Submitted: HTTP Status Code = ' + status);
                     $scope.isSubmitting = false;
                 })
                 .error(function (data, status, headers, config) {
+                    // TODO: handling errors
+
                     console.error('Failed: HTTP Status Code = ' + status);
                     $scope.isSubmitting = false;
                 });
