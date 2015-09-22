@@ -9,7 +9,7 @@
 <div id="wrap">
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesSimulationFilesListingController"
-         th:attr="ng-init='initializeBreadCrumb(\'' + ${uuid} + '\', \'' + ${encodedPath} + '\')'">
+         th:attr="ng-init='initializeBreadCrumb(\'' + ${uuid} + '\', \'' + ${escapedPath} + '\')'">
 
         <h3>Simulation: <span th:text="${uuid}"></span></h3>
 
@@ -37,6 +37,13 @@
                     <tr ng-repeat="simulationFile in simulationFiles">
                         <td>{{ simulationFile.path }}</td>
                         <td>
+                            <a th:href="@{|/oxides/simulations/${uuid}/jsmol?path={{ simulationFile.path }}|}"
+                               class="btn btn-default btn-xs" role="button"
+                               ng-show="hasJsMolExtension(simulationFile)">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View
+                            </a>
+                        </td>
+                        <td>
                             <a th:href="@{|/oxides/simulations/${uuid}/files?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="simulationFile.directory">
@@ -48,7 +55,7 @@
                                class="btn btn-default btn-xs" role="button"
                                ng-show="!simulationFile.directory"
                                target="_blank">
-                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Show
+                                <span class="glyphicon glyphicon-open-file" aria-hidden="true"></span> Show
                             </a>
                         </td>
                     </tr>

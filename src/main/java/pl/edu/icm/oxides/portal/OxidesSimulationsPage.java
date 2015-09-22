@@ -36,7 +36,7 @@ class OxidesSimulationsPage {
             ModelAndView modelAndView = prepareBasicModelAndView("simulations/one", ofNullable(authenticationSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
             modelAndView.addObject("path", path.orElse("/"));
-            modelAndView.addObject("encodedPath", escapeEcmaScript(path.orElse("/")));
+            modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
@@ -63,7 +63,8 @@ class OxidesSimulationsPage {
         if (isValidAuthenticationSession(authenticationSession)) {
             ModelAndView modelAndView = prepareBasicModelAndView("viewers/jsmol", ofNullable(authenticationSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
-            modelAndView.addObject("path", path.orElse(""));
+            modelAndView.addObject("path", path.orElse("/"));
+            modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
         authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));

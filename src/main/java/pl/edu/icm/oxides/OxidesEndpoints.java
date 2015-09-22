@@ -168,6 +168,15 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
     }
 
+    @RequestMapping(value = "/unicore/jobs/{uuid}/jsmol", method = RequestMethod.GET)
+    public ResponseEntity<Void> downloadSimulationJsmolFile(
+            @PathVariable(value = "uuid") UUID simulationUuid,
+            @RequestParam(value = "path", required = false) String path,
+            HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Content-Type", "text/plain");
+        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
+    }
 
     /*
             OPEN OXIDES PORTAL ENDPOINTS:
@@ -179,35 +188,6 @@ public class OxidesEndpoints {
                                                         HttpSession session) {
         logSessionData("OPEN-OXIDES", session, authenticationSession);
         return openOxidesResources.getParticleParameters(name, authenticationSession);
-    }
-
-    @RequestMapping(value = "/mol", method = RequestMethod.GET)
-    @ResponseBody
-    public String mol(HttpServletResponse response) {
-        // TODO: remove after implementation
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Content-Type", "text/plain");
-
-        String nl = "\n";
-        String mol = "../xyz/MnO2_C12-M1.xyz" + nl +
-                " OpenBabel06181523243D" + nl +
-                "" + nl +
-                "  9  4  0  0  0  0  0  0  0  0999 V2000" + nl +
-                "    0.0000    0.0000    0.0000 Mn  0  0  0  0  0" + nl +
-                "    8.9316    1.7683    2.5465 Mn  0  0  0  0  0" + nl +
-                "    4.7894    0.9380    2.7718 Mn  0  0  0  0  0" + nl +
-                "    5.9667    1.1638    4.1068 O   0  0  0  0  0" + nl +
-                "    7.7543    1.5425    1.2115 O   0  0  0  0  0" + nl +
-                "   12.3580    2.4573    2.0730 O   0  0  0  0  0" + nl +
-                "    1.3630    0.2491    3.2453 O   0  0  0  0  0" + nl +
-                "   10.4767    2.0684    3.7868 O   0  0  0  0  0" + nl +
-                "    3.2443    0.6379    1.5315 O   0  0  0  0  0" + nl +
-                "  5  2  1  0  0  0" + nl +
-                "  2  8  1  0  0  0" + nl +
-                "  9  3  1  0  0  0" + nl +
-                "  3  4  1  0  0  0" + nl +
-                "M  END";
-        return mol;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

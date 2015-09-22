@@ -5,46 +5,58 @@
 <body>
 <nav th:replace="include/navbar :: oxidesNavigationBar"/>
 
+<script type="text/javascript"
+        src="/assets/js/JSmol.lite.nojq.js">
+</script>
+
 <!-- Wrap all page content here -->
 <div id="wrap">
     <!-- Begin page content -->
     <div class="container" ng-controller="oxidesMoleculeViewerController"
-         th:attr="ng-init='initialize(\'' + ${uuid} + '\', \'' + ${path} + '\')'">
+         th:attr="ng-init='initialize(\'' + ${uuid} + '\', \'' + ${escapedPath} + '\')'">
 
-        <script type="text/javascript"
-                src="/assets/js/JSmol.lite.nojq.js">
-        </script>
+        <h3>Simulation: <span th:text="${uuid}"></span></h3>
 
-        <script>
+        <ol class="breadcrumb">
+            <li ng-repeat="element in breadCrumbElements" ng-class="{'active': $last}">
+                <span ng-if="$first &amp;&amp; $last">{{ element.label }}</span>
+                <a href="{{ element.href }}" ng-if="$first &amp;&amp; !$last">{{ element.label }}</a>
+                <a href="{{ element.href }}" ng-if="$middle">{{ element.label }}</a>
+                <span ng-if="!$first &amp;&amp; $last">{{ element.label }}</span>
+            </li>
+        </ol>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            var uuid = /*[[${uuid}]]*/ '';
+            var path = /*[[${path}]]*/ '';
             var Info = {
-                width: 500,
+                src: '/oxides/unicore/jobs/' + uuid + '/jsmol?path=' + path,
+                width: '100%',
                 height: 500,
-                debug: false,
-                color: "0xC0C0C0",
+                color: "0xF0F0F0",
                 addSelectionOptions: false,
-                serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-                use: "HTML5",
-                readyFunction: null,
-//                src: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-                src: "/test.mol",
-//                src: "https://localhost:8443/oxides/mol",
-                //defaultModel: ":dopamine", // PubChem -- use $ for NCI
                 bondWidth: 4,
-                zoomScaling: 1.5,
-                pinchScaling: 2.0,
+                debug: false,
                 mouseDragFactor: 0.5,
-                touchDragFactor: 0.15,
                 multipleBondSpacing: 4,
+                pinchScaling: 2.0,
+                readyFunction: null,
                 spinRateX: 0.2,
                 spinRateY: 0.5,
                 spinFPS: 20,
                 spin: true,
-                debug: false,
-                shadeAtoms: true
+                shadeAtoms: true,
+                touchDragFactor: 0.15,
+                use: "HTML5",
+                zoomScaling: 1.5
             };
 
             Jmol.getTMApplet("jmol", Info);
+            /*]]>*/
         </script>
+
+        <p>&nbsp;</p>
     </div>
     <!-- /.container -->
 </div>

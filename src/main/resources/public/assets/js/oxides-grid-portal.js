@@ -19,6 +19,19 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
         $scope.simulations = modelSimulationsListing;
         $scope.showSpinKit = true;
 
+        $scope.initialize = function () {
+            oxidesSimulationsListingService.getJson()
+                .then(function (response) {
+                    angular.copy(response.data, modelSimulationsListing);
+                    $scope.showSpinKit = false;
+                })
+                .catch(function (response) {
+                    // TODO: handling errors
+                    alert('Failed: HTTP Status Code = ' + response.status);
+                    $scope.showSpinKit = false;
+                });
+        };
+
         $scope.destroyJob = function (uuid, idx) {
             console.warn('Deleting job: ' + uuid + ' (' + idx + ')');
             $scope.simulations.splice(idx, 1);
@@ -27,41 +40,16 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                 headers: {'Content-Type': 'application/json'},
                 data: ''
             })
-//            .success(function (data, status, headers, config) {
-//            })
-                .error(function (data, status, headers, config) {
+                .catch(function (response) {
                     // TODO: handling errors
-                    console.error('Failed: HTTP Status Code = ' + status);
+                    console.error('Failed: HTTP Status Code = ' + response.status);
                 });
         };
 
         $scope.refreshSimulationList = function () {
             $scope.showSpinKit = true;
-
-            oxidesSimulationsListingService.getJson()
-                .success(function (data, status, headers, config) {
-                    angular.copy(data, modelSimulationsListing);
-                    $scope.showSpinKit = false;
-                })
-                .error(function (data, status, headers, config) {
-                    // TODO: handling errors
-                    alert('Failed: HTTP Status Code = ' + status);
-                    $scope.showSpinKit = false;
-                });
+            $scope.initialize();
         };
-
-        // TODO: remove redundant service call
-
-        oxidesSimulationsListingService.getJson()
-            .success(function (data, status, headers, config) {
-                angular.copy(data, modelSimulationsListing);
-                $scope.showSpinKit = false;
-            })
-            .error(function (data, status, headers, config) {
-                // TODO: handling errors
-                alert('Failed: HTTP Status Code = ' + status);
-                $scope.showSpinKit = false;
-            });
     }
 );
 
@@ -81,8 +69,36 @@ oxidesGridPortalApp.factory('oxidesSimulationsListingService',
 oxidesGridPortalApp.value('modelSimulationsListing', []);
 
 
+oxidesGridPortalApp.factory('oxidesSimulationFilePathBreadCrumbService',
+    function () {
+        return {
+            getBreadCrumbElementsList: function (path, locationUrl) {
+                var breadCrumbElements = [];
+
+                breadCrumbElements.push({
+                    label: 'Simulation Directory',
+                    href: locationUrl
+                });
+
+                var pathElements = decodeURIComponent(path).split('/');
+                var pathSoFar = '/';
+                for (var i = 0; i < pathElements.length; i++) {
+                    if (pathElements[i] != '') {
+                        pathSoFar += (pathElements[i] + '/');
+                        breadCrumbElements.push({
+                            label: pathElements[i],
+                            href: locationUrl + '?path=' + pathSoFar
+                        });
+                    }
+                }
+                return breadCrumbElements;
+            }
+        };
+    }
+);
+
 oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
-    function ($scope, $location, oxidesSimulationFilesListingService) {
+    function ($scope, $location, oxidesSimulationFilesListingService, oxidesSimulationFilePathBreadCrumbService) {
         $scope.simulationUuid = null;
         $scope.simulationFiles = [];
         $scope.breadCrumbElements = [];
@@ -96,34 +112,28 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
             if (i >= 0) {
                 locationUrl = locationUrl.substr(0, i);
             }
-            $scope.breadCrumbElements.push({
-                label: 'Simulation Directory',
-                href: locationUrl
-            });
+            angular.copy(
+                oxidesSimulationFilePathBreadCrumbService
+                    .getBreadCrumbElementsList(path, locationUrl),
+                $scope.breadCrumbElements);
 
-            // TODO: fix deprecated
-            var pathElements = unescape(path).split('/');
-            var pathSoFar = '/';
-            for (var i = 0; i < pathElements.length; i++) {
-                if (pathElements[i] != '') {
-                    pathSoFar += (pathElements[i] + '/');
-                    $scope.breadCrumbElements.push({
-                        label: pathElements[i],
-                        href: locationUrl + '?path=' + pathSoFar
-                    });
-                }
-            }
-
-            oxidesSimulationFilesListingService.getSimulationFilesList($scope.simulationUuid, $location.absUrl())
-                .success(function (data, status, headers, config) {
-                    angular.copy(data, $scope.simulationFiles);
+            oxidesSimulationFilesListingService
+                .getSimulationFilesList($scope.simulationUuid, $location.absUrl())
+                .then(function (response) {
+                    angular.copy(response.data, $scope.simulationFiles);
                     $scope.showSpinKit = false;
                 })
-                .error(function (data, status, headers, config) {
+                .catch(function (response) {
                     // TODO: handling errors
-                    alert('Failed: HTTP Status Code = ' + status);
+                    alert('Failed: HTTP Status Code = ' + response.status);
                     $scope.showSpinKit = false;
                 });
+        };
+
+        $scope.hasJsMolExtension = function (simulationFile) {
+            return simulationFile.type == 'jsmol'
+                || simulationFile.type == 'jmol'
+                || simulationFile.type == 'mol';
         };
     }
 );
@@ -169,58 +179,20 @@ oxidesGridPortalApp.controller('oxidesSimulationDetailsController',
             $scope.isLogVisible = !$scope.isLogVisible;
             $scope.toggleLogLabel = $scope.isLogVisible ? 'Hide Log' : 'Show Log';
         };
-
-        //$http({
-        //    method: 'GET',
-        //    url: '/oxides/unicore/jobs/' + $scope.simulationUuid + '/details',
-        //    headers: {
-        //        'Content-Type': 'application/json'
-        //    },
-        //    data: ''
-        //}).then(function (data, status, headers, config) {
-        //    $scope.showSpinKit = false;
-        //}).catch(function (data, status, headers, config) {
-        //    alert('Failed: HTTP Status Code = ' + status);
-        //    $scope.showSpinKit = false;
-        //});
     }
 );
 
 
 oxidesGridPortalApp.controller('oxidesMoleculeViewerController',
-    function ($scope) {
-        $scope.simulationUuid = null;
-        $scope.showSpinKit = true;
-
-        $scope.jsmolInfo = {
-            width: 500,
-            height: 500,
-            debug: false,
-            color: "0xC0C0C0",
-            addSelectionOptions: false,
-            serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-            use: "HTML5",
-            readyFunction: null,
-            src: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-            //src: "https://localhost:8443/oxides/mol",
-            //defaultModel: ":dopamine", // PubChem -- use $ for NCI
-            bondWidth: 4,
-            zoomScaling: 1.5,
-            pinchScaling: 2.0,
-            mouseDragFactor: 0.5,
-            touchDragFactor: 0.15,
-            multipleBondSpacing: 4,
-            spinRateX: 0.2,
-            spinRateY: 0.5,
-            spinFPS: 20,
-            spin: true,
-            debug: false,
-            shadeAtoms: true
-        };
+    function ($scope, $location, oxidesSimulationFilePathBreadCrumbService) {
+        $scope.breadCrumbElements = [];
 
         $scope.initialize = function (uuid, path) {
-            $scope.simulationUuid = uuid;
-            console.warn(path);
+            var locationUrl = '/oxides/simulations/' + uuid + '/files';
+            angular.copy(
+                oxidesSimulationFilePathBreadCrumbService
+                    .getBreadCrumbElementsList(path, locationUrl),
+                $scope.breadCrumbElements);
         };
     }
 );
@@ -297,17 +269,18 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             var oxidesSimulationJson = JSON.stringify(oxidesSimulation);
 
             // Submitting simulation:
-            oxidesSubmitSimulationService.submitSimulation(oxidesSimulationJson)
-                .success(function (data, status, headers, config) {
-                    // TODO: handling successddd
+            oxidesSubmitSimulationService
+                .submitSimulation(oxidesSimulationJson)
+                .then(function (response) {
+                    // TODO: handling success
 
-                    console.info('Submitted: HTTP Status Code = ' + status);
+                    console.info('Submitted: HTTP Status Code = ' + response.status);
                     $scope.isSubmitting = false;
                 })
-                .error(function (data, status, headers, config) {
+                .catch(function (response) {
                     // TODO: handling errors
 
-                    console.error('Failed: HTTP Status Code = ' + status);
+                    console.error('Failed: HTTP Status Code = ' + response.status);
                     $scope.isSubmitting = false;
                 });
         };
