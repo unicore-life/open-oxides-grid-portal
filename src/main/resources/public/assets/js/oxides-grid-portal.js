@@ -1,7 +1,9 @@
 var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
         'feeds',
+        'toaster',
         'angular-spinkit',
         'angularFileUpload',
+        'ngAnimate',
         'ngRoute',
         'ui.bootstrap'
     ]
@@ -15,7 +17,7 @@ var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
 
 
 oxidesGridPortalApp.controller('oxidesSimulationsListingController',
-    function ($scope, $location, $http, oxidesSimulationsListingService, modelSimulationsListing) {
+    function ($scope, $location, $http, toaster, oxidesSimulationsListingService, modelSimulationsListing) {
         $scope.simulations = modelSimulationsListing;
         $scope.showSpinKit = true;
 
@@ -27,7 +29,14 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                 })
                 .catch(function (response) {
                     // TODO: handling errors
-                    alert('Failed: HTTP Status Code = ' + response.status);
+                    toaster.pop({
+                        type: 'error',
+                        title: 'Connection failed',
+                        body: 'Failed: HTTP Status Code = ' + response.status,
+                        showCloseButton: true
+                    });
+
+                    //alert('Failed: HTTP Status Code = ' + response.status);
                     $scope.showSpinKit = false;
                 });
         };

@@ -7,6 +7,7 @@ import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 @Component
 class UnicoreJobsListing {
     private final UnicoreSite unicoreSite;
+    private final CacheManager cacheManager;
     private final GridClientHelper clientHelper;
 
     @Autowired
-    UnicoreJobsListing(UnicoreSite unicoreSite, GridClientHelper clientHelper) {
+    UnicoreJobsListing(UnicoreSite unicoreSite, CacheManager cacheManager, GridClientHelper clientHelper) {
         this.unicoreSite = unicoreSite;
+        this.cacheManager = cacheManager;
         this.clientHelper = clientHelper;
     }
 
@@ -41,6 +44,12 @@ class UnicoreJobsListing {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    public void updateSiteResourcesList(TrustDelegation trustDelegation, List<EndpointReferenceType> eprs) {
+        cacheManager
+                .getCache("unicoreSessionJobList")
+                .put(trustDelegation.getCustodianDN(), eprs);
     }
 
     private List<EndpointReferenceType> toAccessibleTargetSystems(UnicoreSiteEntity unicoreSiteEntity,

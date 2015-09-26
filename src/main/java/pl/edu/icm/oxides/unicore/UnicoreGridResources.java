@@ -24,14 +24,17 @@ public class UnicoreGridResources {
     private final UnicoreJob jobHandler;
     private final UnicoreBroker unicoreBroker;
     private final GridFileUploader fileUploader;
+    private final CachingResourcesManager cachingResourcesManager;
 
     @Autowired
     public UnicoreGridResources(UnicoreJob jobHandler,
                                 UnicoreBroker unicoreBroker,
-                                GridFileUploader fileUploader) {
+                                GridFileUploader fileUploader,
+                                CachingResourcesManager cachingResourcesManager) {
         this.jobHandler = jobHandler;
         this.unicoreBroker = unicoreBroker;
         this.fileUploader = fileUploader;
+        this.cachingResourcesManager = cachingResourcesManager;
     }
 
     public ResponseEntity<List> listUserJobs(AuthenticationSession authenticationSession) {
@@ -41,15 +44,19 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<Void> submitWorkAssignment(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
+    public ResponseEntity<Void> submitWorkAssignment(OxidesSimulation simulation,
+                                                     AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
+            cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
             return ResponseEntity.noContent().build();
         }
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<List> listUserJobFiles(UUID simulationUuid, String path, AuthenticationSession authenticationSession) {
+    public ResponseEntity<List> listUserJobFiles(UUID simulationUuid,
+                                                 String path,
+                                                 AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return ok(jobHandler.retrieveJobFilesListing(simulationUuid,
                     ofNullable(path),

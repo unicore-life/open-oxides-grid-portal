@@ -168,15 +168,6 @@ public class OxidesEndpoints {
         return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore/jobs/{uuid}/jsmol", method = RequestMethod.GET)
-    public ResponseEntity<Void> downloadSimulationJsmolFile(
-            @PathVariable(value = "uuid") UUID simulationUuid,
-            @RequestParam(value = "path", required = false) String path,
-            HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Content-Type", "text/plain");
-        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
-    }
 
     /*
             OPEN OXIDES PORTAL ENDPOINTS:

@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.oasisOpen.docs.wsrf.rl2.TerminationTimeDocument.TerminationTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -60,7 +59,8 @@ class UnicoreJobOperations {
         }
     }
 
-    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
+    // TODO: clean it up
+    //    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
     public void destroyJob(EndpointReferenceType epr, TrustDelegation trustDelegation) {
         taskExecutor.execute(() -> {
             try {

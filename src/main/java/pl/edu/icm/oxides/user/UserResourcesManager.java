@@ -19,6 +19,8 @@ public class UserResourcesManager {
 
     public void initializeAfterSuccessfulSignIn(AuthenticationSession authenticationSession) {
         sessionResourcesManager.prepareStorageClient(authenticationSession);
-        cachingResourcesManager.initializeSignedInUserResources(authenticationSession);
+        cachingResourcesManager.initializeSignedInUserResources(
+                authenticationSession.getSelectedTrustDelegation()
+        );
     }
 }

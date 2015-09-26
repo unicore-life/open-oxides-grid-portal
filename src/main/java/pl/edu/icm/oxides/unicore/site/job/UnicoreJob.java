@@ -10,6 +10,7 @@ import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.portal.model.SimulationGridFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,7 +57,22 @@ public class UnicoreJob {
             log.warn("Could not found simulation: " + simulationUuid);
         }
         resourceEpr
-                .ifPresent(epr -> unicoreJobOperations.destroyJob(epr, trustDelegation));
+                .ifPresent(epr -> {
+                    // TODO: clean it up
+                    List<EndpointReferenceType> eprList = unicoreJobsListing.retrieveSiteResourceList(trustDelegation);
+                    List<EndpointReferenceType> result = new ArrayList<>();
+                    for (EndpointReferenceType cachedEpr : eprList) {
+                        String eprString = epr.getAddress().getStringValue();
+                        String cachedEprString = cachedEpr.getAddress().getStringValue();
+
+                        if (!cachedEprString.equalsIgnoreCase(eprString)) {
+                            result.add(cachedEpr);
+                        }
+                    }
+                    unicoreJobsListing.updateSiteResourcesList(trustDelegation, result);
+
+                    unicoreJobOperations.destroyJob(epr, trustDelegation);
+                });
     }
 
     public UnicoreJobDetailsEntity retrieveJobDetails(UUID simulationUuid, TrustDelegation trustDelegation) {
