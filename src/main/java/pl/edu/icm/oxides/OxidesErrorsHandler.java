@@ -1,5 +1,6 @@
 package pl.edu.icm.oxides;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -29,31 +30,22 @@ public class OxidesErrorsHandler {
     }
 
     private ResponseEntity createErrorResponse(HttpStatus httpStatus, Exception ex) {
-        ErrorMessage errorMessage = new ErrorMessage(ex.getClass().getSimpleName(), ex.getMessage());
+        ErrorMessage errorMessage = new ErrorMessage(ex);
         return ResponseEntity.status(httpStatus).body(errorMessage);
     }
 
     private static final class ErrorMessage {
+        @JsonProperty("code")
         private final String code;
+        @JsonProperty("message")
         private final String message;
+        @JsonProperty("timestamp")
         private final String timestamp;
 
-        private ErrorMessage(String code, String message) {
-            this.code = code;
-            this.message = message;
+        private ErrorMessage(Exception ex) {
+            this.code = ex.getClass().getSimpleName();
+            this.message = ex.getMessage();
             this.timestamp = String.valueOf(System.currentTimeMillis());
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getTimestamp() {
-            return timestamp;
         }
     }
 
