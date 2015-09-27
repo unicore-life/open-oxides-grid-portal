@@ -37,38 +37,43 @@ public final class BrokeredJobModel {
                                                                      OxidesSimulation simulation,
                                                                      String inputScriptName,
                                                                      EndpointReferenceType storageEpr) {
-        ApplicationDocument appDoc = ApplicationDocument.Factory.newInstance();
-        ApplicationType app = appDoc.addNewApplication();
-        app.setApplicationName(applicationName);
-        if (applicationVersion != null) {
-            app.setApplicationVersion(applicationVersion);
-        }
-
-        // TODO:
-        POSIXApplicationDocument posixApplicationDocument = POSIXApplicationDocument.Factory.newInstance();
-        POSIXApplicationType posixApplicationType = posixApplicationDocument.addNewPOSIXApplication();
-        EnvironmentType environmentType = posixApplicationType.addNewEnvironment();
-        environmentType.setName("SOURCE");
-        environmentType.setStringValue(INPUT_SCRIPT_DESTINATION_NAME);
-        WSUtilities.append(posixApplicationDocument, app);
-
-        JobDescriptionType jobDesc = JobDescriptionType.Factory.newInstance();
-        jobDesc.setApplication(app);
-
-        jobDesc.addNewJobIdentification().setJobName(simulationName);
+        JobDescriptionType jobDescription = JobDescriptionType.Factory.newInstance();
+        jobDescription.setApplication(
+                createApplicationDescription(applicationName, applicationVersion));
+        jobDescription.addNewJobIdentification().setJobName(simulationName);
 
         List<DataStagingType> dataStaging = createDataStagingFragment(
                 simulation.getFiles(),
                 inputScriptName,
                 storageEpr);
-        jobDesc.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
+        jobDescription.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
 
-        jobDesc.setResources(prepareResourceFragment(simulation));
+        jobDescription.setResources(prepareResourceFragment(simulation));
 
         JobDefinitionDocument jobDefinitionDocument = JobDefinitionDocument.Factory.newInstance();
-        jobDefinitionDocument.addNewJobDefinition().setJobDescription(jobDesc);
+        jobDefinitionDocument.addNewJobDefinition().setJobDescription(jobDescription);
 
         return jobDefinitionDocument;
+    }
+
+    private static ApplicationType createApplicationDescription(String applicationName, String applicationVersion) {
+        ApplicationDocument applicationDocument = ApplicationDocument.Factory.newInstance();
+        ApplicationType applicationType = applicationDocument.addNewApplication();
+        applicationType.setApplicationName(applicationName);
+        if (applicationVersion != null) {
+            applicationType.setApplicationVersion(applicationVersion);
+        }
+        WSUtilities.append(createBashScriptPosixDescription(), applicationType);
+        return applicationType;
+    }
+
+    private static POSIXApplicationDocument createBashScriptPosixDescription() {
+        POSIXApplicationDocument posixApplicationDocument = POSIXApplicationDocument.Factory.newInstance();
+        POSIXApplicationType posixApplicationType = posixApplicationDocument.addNewPOSIXApplication();
+        EnvironmentType environmentType = posixApplicationType.addNewEnvironment();
+        environmentType.setName("SOURCE");
+        environmentType.setStringValue(INPUT_SCRIPT_DESTINATION_NAME);
+        return posixApplicationDocument;
     }
 
     private static List<DataStagingType> createDataStagingFragment(List<String> files,
@@ -140,7 +145,7 @@ public final class BrokeredJobModel {
             }
         }
         if (!isNullOrBlank(simulation.getProperty())) {
-            // TODO
+            insertResourceRequest("NodesFilter", simulation.getProperty(), resourcesDocument);
         }
         return resourcesType;
     }
@@ -156,10 +161,10 @@ public final class BrokeredJobModel {
         String reservationXml = "<u6rr:ReservationReference xmlns:u6rr=\"http://www.unicore.eu/unicore/xnjs\">"
                 + id + "</u6rr:ReservationReference>";
         XmlObject xmlObject = XmlObject.Factory.parse(reservationXml);
-
-        //ReservationReferenceDocument rrd = ReservationReferenceDocument.Factory.newInstance();
-        //rrd.setReservationReference(id);
         WSUtilities.append(xmlObject, resourcesDocument);
+//        ReservationReferenceDocument rrd = ReservationReferenceDocument.Factory.newInstance();
+//        rrd.setReservationReference(id);
+//        WSUtilities.append(rrd, resourcesDocument);
     }
 
     private static boolean isNullOrBlank(String param) {
