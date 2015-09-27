@@ -13,22 +13,13 @@
 
         <h3>Simulation: <span th:text="${uuid}"></span></h3>
 
-        <ol class="breadcrumb">
-            <li ng-repeat="element in breadCrumbElements" ng-class="{'active': $last}">
-                <span ng-if="$first &amp;&amp; $last">{{ element.label }}</span>
-                <a href="{{ element.href }}" ng-if="$first &amp;&amp; !$last">{{ element.label }}</a>
-                <a href="{{ element.href }}" ng-if="$middle">{{ element.label }}</a>
-                <span ng-if="!$first &amp;&amp; $last">{{ element.label }}</span>
-            </li>
-        </ol>
+        <ol th:replace="include/path-breadcrumb :: oxidesPathBreadcrumb"/>
 
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading">Files of <span th:text="${path}"></span></div>
 
-            <div ng-show="showSpinKit">
-                <chasing-dots-spinner></chasing-dots-spinner>
-            </div>
+            <chasing-dots-spinner ng-show="showSpinKit"></chasing-dots-spinner>
 
             <div class="table-responsive" ng-show="!showSpinKit">
                 <!-- Table -->

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head/>
+
+<body>
+
+<ol th:fragment="oxidesPathBreadcrumb" class="breadcrumb">
+    <li ng-repeat="element in breadCrumbElements" ng-class="{'active': $last}">
+        <span ng-if="$first &amp;&amp; $last">{{ element.label }}</span>
+        <a href="{{ element.href }}" ng-if="$first &amp;&amp; !$last">{{ element.label }}</a>
+        <a href="{{ element.href }}" ng-if="$middle">{{ element.label }}</a>
+        <span ng-if="!$first &amp;&amp; $last">{{ element.label }}</span>
+    </li>
+</ol>
+
+</body>
+</html>

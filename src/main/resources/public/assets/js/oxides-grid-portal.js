@@ -16,8 +16,46 @@ var oxidesGridPortalApp = angular.module('oxidesGridPortal', [
 //    });
 
 
+oxidesGridPortalApp.factory('oxidesPopMessageHandlingService',
+    function (toaster) {
+        return {
+            handleError: function (response) {
+                var toasterMessage = response.statusText;
+                if (response.status == 0 && toasterMessage == '') {
+                    toasterMessage = 'No connection or timeout/cancel occurred.'
+                }
+                if (response.data) {
+                    toasterMessage += '. ' + (response.data.message || '');
+                }
+
+                toaster.pop('error', 'Request failed (' + response.status + ')', toasterMessage);
+
+                console.error('Failed: HTTP Status Code = ' + response.status);
+                //console.log(response);
+                //alert('Failed: HTTP Status Code = ' + response.status);
+            },
+
+            handleDeletionSuccess: function (response, uuid, idx) {
+                console.info('Deleting simulation ' + uuid + ' (' + idx + ') accepted.');
+            },
+
+            handleSubmissionSuccess: function (response, oxidesSimulation) {
+                toaster.pop('info', 'Simulation submitted (' + response.status + ')',
+                    'Simulation "' + oxidesSimulation['name'] + '" sent to UNICORE broker.');
+
+                console.info('Submitted: HTTP Status Code = ' + response.status);
+                //console.log(response);
+            }
+        };
+    }
+);
+
+
 oxidesGridPortalApp.controller('oxidesSimulationsListingController',
-    function ($scope, $location, $http, toaster, oxidesSimulationsListingService, modelSimulationsListing) {
+    function ($scope, $location, $http,
+              oxidesSimulationsListingService,
+              modelSimulationsListing,
+              oxidesPopMessageHandlingService) {
         $scope.simulations = modelSimulationsListing;
         $scope.showSpinKit = true;
 
@@ -28,30 +66,22 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
                     $scope.showSpinKit = false;
                 })
                 .catch(function (response) {
-                    // TODO: handling errors
-                    toaster.pop({
-                        type: 'error',
-                        title: 'Connection failed',
-                        body: 'Failed: HTTP Status Code = ' + response.status,
-                        showCloseButton: true
-                    });
-
-                    //alert('Failed: HTTP Status Code = ' + response.status);
+                    oxidesPopMessageHandlingService.handleError(response);
                     $scope.showSpinKit = false;
                 });
         };
 
         $scope.destroyJob = function (uuid, idx) {
-            console.warn('Deleting job: ' + uuid + ' (' + idx + ')');
-            $scope.simulations.splice(idx, 1);
-
             $http.delete('/oxides/unicore/jobs/' + uuid, {
                 headers: {'Content-Type': 'application/json'},
                 data: ''
             })
+                .then(function (response) {
+                    oxidesPopMessageHandlingService.handleDeletionSuccess(response, uuid, idx);
+                    $scope.simulations.splice(idx, 1);
+                })
                 .catch(function (response) {
-                    // TODO: handling errors
-                    console.error('Failed: HTTP Status Code = ' + response.status);
+                    oxidesPopMessageHandlingService.handleError(response);
                 });
         };
 
@@ -107,7 +137,10 @@ oxidesGridPortalApp.factory('oxidesSimulationFilePathBreadCrumbService',
 );
 
 oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
-    function ($scope, $location, oxidesSimulationFilesListingService, oxidesSimulationFilePathBreadCrumbService) {
+    function ($scope, $location,
+              oxidesSimulationFilesListingService,
+              oxidesSimulationFilePathBreadCrumbService,
+              oxidesPopMessageHandlingService) {
         $scope.simulationUuid = null;
         $scope.simulationFiles = [];
         $scope.breadCrumbElements = [];
@@ -133,8 +166,7 @@ oxidesGridPortalApp.controller('oxidesSimulationFilesListingController',
                     $scope.showSpinKit = false;
                 })
                 .catch(function (response) {
-                    // TODO: handling errors
-                    alert('Failed: HTTP Status Code = ' + response.status);
+                    oxidesPopMessageHandlingService.handleError(response);
                     $scope.showSpinKit = false;
                 });
         };
@@ -208,7 +240,7 @@ oxidesGridPortalApp.controller('oxidesMoleculeViewerController',
 
 
 oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
-    function ($scope, oxidesSubmitSimulationService, FileUploader) {
+    function ($scope, oxidesSubmitSimulationService, FileUploader, oxidesPopMessageHandlingService) {
         $scope.simulationParameters = {
             simulationName: '',
             simulationProject: '',
@@ -281,15 +313,11 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
             oxidesSubmitSimulationService
                 .submitSimulation(oxidesSimulationJson)
                 .then(function (response) {
-                    // TODO: handling success
-
-                    console.info('Submitted: HTTP Status Code = ' + response.status);
+                    oxidesPopMessageHandlingService.handleSubmissionSuccess(response, oxidesSimulation);
                     $scope.isSubmitting = false;
                 })
                 .catch(function (response) {
-                    // TODO: handling errors
-
-                    console.error('Failed: HTTP Status Code = ' + response.status);
+                    oxidesPopMessageHandlingService.handleError(response);
                     $scope.isSubmitting = false;
                 });
         };
@@ -340,8 +368,6 @@ oxidesGridPortalApp.factory('oxidesSubmitSimulationService',
     ['$http', function ($http) {
         return {
             submitSimulation: function (oxidesSimulationJson) {
-                console.info(oxidesSimulationJson);
-
                 var request = {
                     method: 'POST',
                     url: '/oxides/unicore/submit',

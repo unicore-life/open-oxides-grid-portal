@@ -27,9 +27,7 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Simulations</div>
 
-            <div ng-show="showSpinKit">
-                <chasing-dots-spinner></chasing-dots-spinner>
-            </div>
+            <chasing-dots-spinner ng-show="showSpinKit"></chasing-dots-spinner>
 
             <div class="table-responsive" ng-show="!showSpinKit">
                 <!-- Table -->
@@ -39,7 +37,6 @@
                         <th>Name</th>
                         <th>Status</th>
                         <th>Submission Time</th>
-                        <!--<th>Queue</th>-->
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -49,7 +46,6 @@
                         <td ng-attr-title="{{ simulation.uri }}">{{ simulation.name }}</td>
                         <td>{{ simulation.status }}</td>
                         <td>{{ simulation.submissionTime }}</td>
-                        <!--<td>{{ simulation.queue }}</td>-->
                         <td>
                             <a class="btn btn-default btn-xs" role="button"
                                ng-attr-href="/oxides/simulations/{{ simulation.uuid }}/files">
