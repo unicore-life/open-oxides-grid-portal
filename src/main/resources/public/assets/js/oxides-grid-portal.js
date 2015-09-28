@@ -72,7 +72,7 @@ oxidesGridPortalApp.controller('oxidesSimulationsListingController',
         };
 
         $scope.destroyJob = function (uuid, idx) {
-            $http.delete('/oxides/unicore/jobs/' + uuid, {
+            $http.delete('/unicore/jobs/' + uuid, {
                 headers: {'Content-Type': 'application/json'},
                 data: ''
             })
@@ -96,7 +96,7 @@ oxidesGridPortalApp.factory('oxidesSimulationsListingService',
     ['$http', function ($http) {
         return {
             getJson: function () {
-                return $http.get('/oxides/unicore/jobs', {
+                return $http.get('/unicore/jobs', {
                     headers: {'Content-Type': 'application/json'},
                     data: ''
                 });
@@ -191,7 +191,7 @@ oxidesGridPortalApp.factory('oxidesSimulationFilesListingService',
 
                 var request = {
                     method: 'GET',
-                    url: '/oxides/unicore/jobs/' + simulationUuid + '/files' + query,
+                    url: '/unicore/jobs/' + simulationUuid + '/files' + query,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -229,7 +229,7 @@ oxidesGridPortalApp.controller('oxidesMoleculeViewerController',
         $scope.breadCrumbElements = [];
 
         $scope.initialize = function (uuid, path) {
-            var locationUrl = '/oxides/simulations/' + uuid + '/files';
+            var locationUrl = '/simulations/' + uuid + '/files';
             angular.copy(
                 oxidesSimulationFilePathBreadCrumbService
                     .getBreadCrumbElementsList(path, locationUrl),
@@ -278,12 +278,15 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
         };
 
         $scope.isParameterRequired = function (parameterName) {
-            if (parameterName == 'simulationName' || parameterName == 'simulationProject') {
+            if (parameterName == 'simulationName') {
                 return true;
             }
             return false;
         };
         $scope.isAdvancedVisible = function (parameterName) {
+            if (parameterName == 'simulationProject') {
+                return true;
+            }
             return $scope.isParameterRequired(parameterName) || $scope.visibleAdvanced;
         };
 
@@ -328,7 +331,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationController',
         };
 
         $scope.uploader = new FileUploader({
-            url: '/oxides/unicore/upload',
+            url: '/unicore/upload',
             alias: 'uploadFile',
             queueLimit: 1,
             autoUpload: true,
@@ -370,7 +373,7 @@ oxidesGridPortalApp.factory('oxidesSubmitSimulationService',
             submitSimulation: function (oxidesSimulationJson) {
                 var request = {
                     method: 'POST',
-                    url: '/oxides/unicore/submit',
+                    url: '/unicore/submit',
                     headers: {
                         'Content-Type': 'application/json'
                     },

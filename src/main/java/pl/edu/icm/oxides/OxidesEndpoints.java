@@ -32,7 +32,6 @@ import java.util.UUID;
 
 @Controller
 @SessionAttributes("authenticationSession")
-@RequestMapping(value = "/oxides")
 public class OxidesEndpoints {
     private final OxidesGridPortalPages oxidesGridPortalPages;
     private final UnicoreGridResources unicoreGridResources;
@@ -173,7 +172,7 @@ public class OxidesEndpoints {
             OPEN OXIDES PORTAL ENDPOINTS:
     ==========================================================================================================
      */
-    @RequestMapping(value = "/data", method = RequestMethod.GET)
+    @RequestMapping(value = "/oxides/data", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> retrieveStructureData(@RequestParam(value = "name") String name,
                                                         HttpSession session) {
@@ -181,7 +180,7 @@ public class OxidesEndpoints {
         return openOxidesResources.getParticleParameters(name, authenticationSession);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/oxides/login", method = RequestMethod.GET)
     public void performAuthenticationRequest(HttpServletResponse response) {
         authenticationSession.setReturnUrl("http://openoxides.icm.edu.pl");
         samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
@@ -192,7 +191,7 @@ public class OxidesEndpoints {
             AUTHENTICATION ENDPOINTS:
     ==========================================================================================================
      */
-    @RequestMapping(value = "/authn", method = RequestMethod.GET)
+    @RequestMapping(value = "/oxides/authn", method = RequestMethod.GET)
     public void performAuthenticationRequest(@RequestParam(value = "returnUrl", required = false) String returnUrl,
                                              HttpSession session,
                                              HttpServletResponse response) {
@@ -203,7 +202,7 @@ public class OxidesEndpoints {
         samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
     }
 
-    @RequestMapping(value = "/authn", method = RequestMethod.POST)
+    @RequestMapping(value = "/oxides/authn", method = RequestMethod.POST)
     public String processAuthenticationResponse(HttpServletRequest request) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
         return processResponseAndUserSessionInitialization(request, authenticationSession);

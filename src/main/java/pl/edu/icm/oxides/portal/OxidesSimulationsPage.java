@@ -25,7 +25,7 @@ class OxidesSimulationsPage {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/simulations");
+        authenticationSession.setReturnUrl("/simulations");
         return redirectToAuthentication();
     }
 
@@ -39,7 +39,7 @@ class OxidesSimulationsPage {
             modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
-        authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
+        authenticationSession.setReturnUrl(String.format("/simulations/%s", simulationUuid));
         return redirectToAuthentication();
     }
 
@@ -53,7 +53,7 @@ class OxidesSimulationsPage {
             ));
             return modelAndView;
         }
-        authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s/details", simulationUuid));
+        authenticationSession.setReturnUrl(String.format("/simulations/%s/details", simulationUuid));
         return redirectToAuthentication();
     }
 
@@ -67,7 +67,7 @@ class OxidesSimulationsPage {
             modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
-        authenticationSession.setReturnUrl(String.format("/oxides/simulations/%s", simulationUuid));
+        authenticationSession.setReturnUrl(String.format("/simulations/%s", simulationUuid));
         return redirectToAuthentication();
     }
 
@@ -75,7 +75,7 @@ class OxidesSimulationsPage {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/oxides/simulations/submit");
+        authenticationSession.setReturnUrl("/simulations/submit");
         return redirectToAuthentication();
     }
 

@@ -28,21 +28,21 @@
                     <tr ng-repeat="simulationFile in simulationFiles">
                         <td>{{ simulationFile.path }}</td>
                         <td>
-                            <a th:href="@{|/oxides/simulations/${uuid}/jsmol?path={{ simulationFile.path }}|}"
+                            <a th:href="@{|/simulations/${uuid}/jsmol?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="hasJsMolExtension(simulationFile)">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View
                             </a>
                         </td>
                         <td>
-                            <a th:href="@{|/oxides/simulations/${uuid}/files?path={{ simulationFile.path }}|}"
+                            <a th:href="@{|/simulations/${uuid}/files?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="simulationFile.directory">
                                 <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Enter
                             </a>
                         </td>
                         <td>
-                            <a th:href="@{|/oxides/unicore/jobs/${uuid}/file?path={{ simulationFile.path }}|}"
+                            <a th:href="@{|/unicore/jobs/${uuid}/file?path={{ simulationFile.path }}|}"
                                class="btn btn-default btn-xs" role="button"
                                ng-show="!simulationFile.directory"
                                target="_blank">

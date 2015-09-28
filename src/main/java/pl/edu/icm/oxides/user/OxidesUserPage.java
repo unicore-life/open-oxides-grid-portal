@@ -45,7 +45,7 @@ public class OxidesUserPage {
     public String signOutAndRedirect(HttpSession session) {
         log.info(String.format("Invalidating session: %s", session.getId()));
         session.invalidate();
-        return "redirect:/oxides";
+        return "redirect:/";
     }
 
     private Log log = LogFactory.getLog(OxidesUserPage.class);

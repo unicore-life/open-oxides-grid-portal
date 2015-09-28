@@ -14,7 +14,6 @@ public class OxidesSimulation {
     @NotNull
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String name;
-    @NotNull
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)
     private final String project;
     @Size(max = SIMULATION_RESOURCE_MAX_LENGTH)

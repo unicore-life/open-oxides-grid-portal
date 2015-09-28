@@ -40,7 +40,7 @@ class SamlResponseHandler {
 
     String processAuthenticationResponse(HttpServletRequest request, AuthenticationSession authenticationSession) {
         String samlResponse = request.getParameter("SAMLResponse");
-        String returnUrl = "/oxides";
+        String returnUrl = "/";
         try {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
             validateSamlResponse(responseDocument, authenticationSession.getUuid());
