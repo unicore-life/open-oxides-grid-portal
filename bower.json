@@ -1,0 +1,30 @@
+{
+  "name": "open-oxides-grid-portal",
+  "version": "0.0.1",
+  "homepage": "https://github.com/unicore-life/open-oxides-grid-portal",
+  "authors": [
+    "Rafal Kluszczynski"
+  ],
+  "description": "Open Oxides PLGrid Portal",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-bootstrap": "~0.14.0",
+    "angular-feeds": "~0.0.4",
+    "angular-file-upload": "~2.1.4",
+    "angular-spinkit": "~0.3.3",
+    "angularjs-toaster": "~0.4.15",
+    "bootstrap": "~3.3.5"
+  },
+  "resolutions": {
+    "angular": "1.4.7",
+    "bootstrap": "3.3.5"
+  }
+}

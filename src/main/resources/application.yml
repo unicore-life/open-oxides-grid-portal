@@ -9,9 +9,11 @@ grid:
   targetUrl: https://localhost:8443/oxides/authn
 
 gridOxides:
+  accessGroup: /vo.plgrid.pl/main/groups/plggoxides
   applicationName: Bash shell
 #  applicationVersion: 4.1.2
   jobPrefix: _OpenOxides__
+  resultsUrl: http://openoxides.icm.edu.pl/data/results.json
 
 server:
   port: 8443

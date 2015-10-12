@@ -1,0 +1,7 @@
+# Fonts copied from Bootstrap during build:
+#
+public/fonts/
+
+# CSS and JavaScript resources generated during build:
+#
+public/assets/open-oxides-grid-portal.*

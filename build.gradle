@@ -12,6 +12,7 @@ plugins {
     id 'java'
     id 'groovy'
     id 'checkstyle'
+    id 'com.moowork.grunt' version '0.11'
 }
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
@@ -68,6 +69,24 @@ targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
+
+node {
+    version = '4.1.2'
+    download = true
+}
+
+grunt {
+    workDir = file("${project.projectDir}")
+    colors = false
+    bufferOutput = true
+}
+
+project.tasks.grunt_install.dependsOn npmInstall
+project.tasks.grunt_build.dependsOn grunt_install
+project.tasks.processResources.dependsOn grunt_build
+
+project.tasks.grunt_check.dependsOn grunt_install
+project.tasks.check.dependsOn grunt_check
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'

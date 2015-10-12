@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
@@ -38,6 +39,7 @@ public class OxidesEndpoints {
     private final OpenOxidesResources openOxidesResources;
     private final SamlAuthenticationHandler samlAuthenticationHandler;
     private final UserResourcesManager userResourcesManager;
+    private final RestTemplate restTemplate;
     private AuthenticationSession authenticationSession;
 
     @Autowired
@@ -46,14 +48,32 @@ public class OxidesEndpoints {
                            OpenOxidesResources openOxidesResources,
                            SamlAuthenticationHandler samlAuthenticationHandler,
                            UserResourcesManager userResourcesManager,
+                           RestTemplate restTemplate,
                            AuthenticationSession authenticationSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
         this.openOxidesResources = openOxidesResources;
         this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.userResourcesManager = userResourcesManager;
+        this.restTemplate = restTemplate;
         this.authenticationSession = authenticationSession;
     }
+
+
+    // TODO:
+//    @RequestMapping(value = "/testing", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseBody
+//    public List<Oxide> testing() throws IOException {
+//        String uri = "http://openoxides.icm.edu.pl/data/results.json";
+//
+//        String response = restTemplate.getForObject(uri, String.class);
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        Oxide[] oxides = mapper.readValue(response, Oxide[].class);
+//        log.info(oxides);
+//
+//        return Arrays.asList(oxides);
+//    }
 
 
     /*
