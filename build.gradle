@@ -28,21 +28,6 @@ dependencies {
             'org.springframework:spring-context-support:4.1.7.RELEASE',
             'net.sf.ehcache:ehcache:2.10.0',
 
-            'org.webjars:bootstrap:3.3.5',
-            'org.webjars:angularjs:1.4.4',
-            'org.webjars:angularjs-toaster:0.4.8',
-            'org.webjars:angular-feeds:0.0.3',
-            'org.webjars:angular-ui-bootstrap:0.13.3',
-            'org.webjars:nervgh-angular-file-upload:2.1.1',
-//            'org.webjars.bower:spinkit:1.0.1',
-
-            // for testing:
-            'org.webjars.bower:mobile-angular-ui:1.2.0-beta.11',
-
-//            'de.infinit:spring-boot-autoconfigure-wro4j:0.0.6',
-//            'org.springframework.session:spring-session:1.0.1.RELEASE',
-//            'org.springframework.security:spring-security-web:4.0.1.RELEASE',
-
             'eu.unicore.workflow:common:2.8.1',
             'eu.unicore:uas-client:1.9.3'
 
