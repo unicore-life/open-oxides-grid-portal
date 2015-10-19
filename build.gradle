@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE',
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE',
                 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
     }
 }
@@ -25,7 +25,7 @@ dependencies {
 //            'org.springframework.boot:spring-boot-starter-security',
 
             'org.apache.commons:commons-lang3:3.4',
-            'org.springframework:spring-context-support:4.1.7.RELEASE',
+            'org.springframework:spring-context-support:4.1.8.RELEASE',
             'net.sf.ehcache:ehcache:2.10.0',
 
             'eu.unicore.workflow:common:2.8.1',
