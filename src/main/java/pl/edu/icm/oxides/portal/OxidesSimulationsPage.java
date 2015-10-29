@@ -79,6 +79,14 @@ class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
+    ModelAndView modelSubmitSimulationPageQE(AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            return prepareBasicModelAndView("simulations/submit-qe", ofNullable(authenticationSession));
+        }
+        authenticationSession.setReturnUrl("/simulations/submit-qe");
+        return redirectToAuthentication();
+    }
+
     private ModelAndView prepareBasicModelAndView(String htmlTemplateName,
                                                   Optional<AuthenticationSession> authenticationSession) {
         ModelAndView modelAndView = new ModelAndView(htmlTemplateName);

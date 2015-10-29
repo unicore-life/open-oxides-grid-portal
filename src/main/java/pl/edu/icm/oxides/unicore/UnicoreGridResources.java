@@ -54,6 +54,16 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
+    public ResponseEntity<Void> submitQEWorkAssignment(OxidesSimulation simulation,
+                                                       AuthenticationSession authenticationSession) {
+        if (isValidAuthenticationSession(authenticationSession)) {
+            unicoreBroker.submitBrokeredQuantumEspressoJob(simulation, authenticationSession);
+            cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
+            return ResponseEntity.noContent().build();
+        }
+        return unauthorizedResponse();
+    }
+
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid,
                                                  String path,
                                                  AuthenticationSession authenticationSession) {

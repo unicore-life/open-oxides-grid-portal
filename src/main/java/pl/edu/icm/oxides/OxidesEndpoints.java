@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
 import pl.edu.icm.oxides.open.OpenOxidesResources;
+import pl.edu.icm.oxides.open.model.Oxide;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
@@ -39,7 +39,6 @@ public class OxidesEndpoints {
     private final OpenOxidesResources openOxidesResources;
     private final SamlAuthenticationHandler samlAuthenticationHandler;
     private final UserResourcesManager userResourcesManager;
-    private final RestTemplate restTemplate;
     private AuthenticationSession authenticationSession;
 
     @Autowired
@@ -48,32 +47,14 @@ public class OxidesEndpoints {
                            OpenOxidesResources openOxidesResources,
                            SamlAuthenticationHandler samlAuthenticationHandler,
                            UserResourcesManager userResourcesManager,
-                           RestTemplate restTemplate,
                            AuthenticationSession authenticationSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
         this.openOxidesResources = openOxidesResources;
         this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.userResourcesManager = userResourcesManager;
-        this.restTemplate = restTemplate;
         this.authenticationSession = authenticationSession;
     }
-
-
-    // TODO:
-//    @RequestMapping(value = "/testing", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseBody
-//    public List<Oxide> testing() throws IOException {
-//        String uri = "http://openoxides.icm.edu.pl/data/results.json";
-//
-//        String response = restTemplate.getForObject(uri, String.class);
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        Oxide[] oxides = mapper.readValue(response, Oxide[].class);
-//        log.info(oxides);
-//
-//        return Arrays.asList(oxides);
-//    }
 
 
     /*
@@ -112,6 +93,11 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelSubmitSimulationPage(authenticationSession);
     }
 
+    @RequestMapping(value = "/simulations/submit-qe", method = RequestMethod.GET)
+    public ModelAndView submitSimulationPageQE() {
+        return oxidesGridPortalPages.modelSubmitSimulationPageQE(authenticationSession);
+    }
+
     @RequestMapping(value = "/preferences", method = RequestMethod.GET)
     public ModelAndView preferencesPage() {
         return oxidesGridPortalPages.modelPreferencesPage(authenticationSession);
@@ -134,6 +120,15 @@ public class OxidesEndpoints {
     public ResponseEntity<Void> submitSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
         return unicoreGridResources.submitWorkAssignment(simulation, authenticationSession);
+    }
+
+    @RequestMapping(value = "/unicore/submit-qe", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Void> submitQuantumEspressoSimulation(@RequestBody @Valid OxidesSimulation simulation) {
+        log.info("Submitted UNICORE Job: " + simulation);
+        return unicoreGridResources.submitQEWorkAssignment(simulation, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
@@ -204,6 +199,12 @@ public class OxidesEndpoints {
     public void performAuthenticationRequest(HttpServletResponse response) {
         authenticationSession.setReturnUrl("http://openoxides.icm.edu.pl");
         samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
+    }
+
+    @RequestMapping(value = "/oxides/results", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Oxide> retrieveOpenOxidesResults() {
+        return openOxidesResources.getOpenOxidesResults();
     }
 
 

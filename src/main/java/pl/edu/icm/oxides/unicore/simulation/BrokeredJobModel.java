@@ -56,6 +56,33 @@ public final class BrokeredJobModel {
         return jobDefinitionDocument;
     }
 
+    public static JobDefinitionDocument prepareJobDefinitionDocumentQE(String applicationName,
+                                                                       String applicationVersion,
+                                                                       String simulationName,
+                                                                       OxidesSimulation simulation,
+                                                                       String simulationScriptName,
+                                                                       String inputName,
+                                                                       EndpointReferenceType storageEpr) {
+        JobDescriptionType jobDescription = JobDescriptionType.Factory.newInstance();
+        jobDescription.setApplication(
+                createApplicationDescription(applicationName, applicationVersion));
+        jobDescription.addNewJobIdentification().setJobName(simulationName);
+
+        List<DataStagingType> dataStaging = createDataStagingFragmentQE(
+                simulation.getFiles(),
+                simulationScriptName,
+                inputName,
+                storageEpr);
+        jobDescription.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
+
+        jobDescription.setResources(prepareResourceFragment(simulation));
+
+        JobDefinitionDocument jobDefinitionDocument = JobDefinitionDocument.Factory.newInstance();
+        jobDefinitionDocument.addNewJobDefinition().setJobDescription(jobDescription);
+
+        return jobDefinitionDocument;
+    }
+
     private static ApplicationType createApplicationDescription(String applicationName, String applicationVersion) {
         ApplicationDocument applicationDocument = ApplicationDocument.Factory.newInstance();
         ApplicationType applicationType = applicationDocument.addNewApplication();
@@ -109,6 +136,58 @@ public final class BrokeredJobModel {
         WSUtilities.append(ifd, dataStagingDocument);
 
         dataStagingList.add(dataStagingType);
+
+        return dataStagingList;
+    }
+
+    private static List<DataStagingType> createDataStagingFragmentQE(List<String> files,
+                                                                     String simulationScriptName,
+                                                                     String inputScriptName,
+                                                                     EndpointReferenceType epr) {
+        List<DataStagingType> dataStagingList = new ArrayList<>();
+
+        files.forEach((filename) -> {
+            DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
+            DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
+            dataStagingType.setFileName(filename);
+            dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
+
+            dataStagingType.addNewSource().setURI(filenameToStorageUri(filename, epr));
+
+            IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
+            ifd.setIgnoreFailure(false);
+
+            WSUtilities.append(ifd, dataStagingDocument);
+            dataStagingList.add(dataStagingType);
+        });
+
+        // Workaround for script input:
+        //
+        DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
+        DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
+        dataStagingType.setFileName(INPUT_SCRIPT_DESTINATION_NAME);
+        dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
+        dataStagingType.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
+
+        IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
+        ifd.setIgnoreFailure(false);
+        WSUtilities.append(ifd, dataStagingDocument);
+
+        dataStagingList.add(dataStagingType);
+
+        // Workaround for QE input:
+        //
+        DataStagingDocument dataStagingDocumentIn = DataStagingDocument.Factory.newInstance();
+        DataStagingType dataStagingTypeIn = dataStagingDocumentIn.addNewDataStaging();
+        dataStagingTypeIn.setFileName("simulation.in");
+        dataStagingTypeIn.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
+        dataStagingTypeIn.addNewSource().setURI(filenameToStorageUri(simulationScriptName, epr));
+
+        IgnoreFailureDocument ifdIn = IgnoreFailureDocument.Factory.newInstance();
+        ifdIn.setIgnoreFailure(false);
+        WSUtilities.append(ifdIn, dataStagingDocumentIn);
+
+        dataStagingList.add(dataStagingTypeIn);
 
         return dataStagingList;
     }

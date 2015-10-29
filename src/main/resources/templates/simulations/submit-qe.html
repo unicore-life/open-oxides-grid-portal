@@ -1,0 +1,139 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="oxidesGridPortal">
+<head th:replace="include/header :: oxidesHeader"/>
+
+<body>
+<nav th:replace="include/navbar :: oxidesNavigationBar"/>
+
+<!-- Wrap all page content here -->
+<div id="wrap">
+    <!-- Begin page content -->
+    <div class="container">
+
+        <form name="simulationSubmitForm" class="form-horizontal"
+              ng-controller="oxidesSubmitSimulationControllerQE">
+
+            <h3 class="form-signin-heading">Simulation Description</h3>
+
+            <fieldset ng-disabled="isSubmitting">
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-default btn-xs pull-right"
+                                ng-click="toggleAdvanced()">
+                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                            <span ng-bind="toggleAdvancedLabel"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-repeat="simulationField in simulationFormFields"
+                     ng-show="isAdvancedVisible(simulationField.id)">
+                    <label ng-attr-for="{{ simulationField.id }}" class="col-sm-2 control-label">
+                        {{ simulationField.label }}
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" ng-attr-id="{{ simulationField.id }}"
+                               ng-attr-placeholder="{{ simulationField.placeholder }}"
+                               ng-model="simulationParameters[simulationField.id]"
+                               ng-required="isParameterRequired(simulationField.id)"
+                               ng-maxlength="32"
+                               class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="simulationScript" class="col-sm-2 control-label">QE Input</label>
+
+                    <div class="col-sm-10">
+                    <textarea id="simulationScript" class="form-control"
+                              rows="11" placeholder="Script" required="required"
+                              ng-model="simulationScriptText" ng-maxlength="1048576" ng-trim="true">
+                    </textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="simulationFiles" class="col-sm-2 control-label">Files</label>
+
+                    <div class="col-sm-10">
+                        <p ng-show="simulationUploadFilesList.length > 0">
+                        <ul>
+                            <li ng-repeat="simulationUploadFile in simulationUploadFilesList">
+                                {{ simulationUploadFile }}
+                                &nbsp;
+                                <a class="btn btn-default btn-xs" role="button"
+                                   ng-really-message="Are you sure?"
+                                   ng-really-click="removeUploadFile($index)">
+                                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Remove
+                                </a>
+                            </li>
+                        </ul>
+                        </p>
+
+                        <div ng-show="simulationUploadFilesList.length == 0">
+                            <p class="text-muted">( none )</p>
+                        </div>
+
+                        <input id="simulationFiles" type="file"
+                               nv-file-select="nv-file-select" uploader="uploader"
+                               ng-disabled="uploader.isUploading"/>
+
+                        <p>
+                        <ul>
+                            <li ng-repeat="item in uploader.queue">
+                                Name: <span ng-bind="item.file.name"></span>
+                                (<span nowrap="nowrap">{{ item.file.size/1024/1024|number:2 }} MB</span>)
+
+                                <div class="progress" style="margin-bottom: 0;">
+                                    <div class="progress-bar" role="progressbar"
+                                         ng-style="{ 'width': item.progress + '%' }"></div>
+                                </div>
+
+                                <div nowrap="nowrap">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"
+                                            ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                        <span class="glyphicon glyphicon-upload"></span> Upload
+                                    </button>
+
+                                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
+                                            ng-disabled="!item.isUploading">
+                                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="reset" class="btn btn-default"
+                                ng-click="resetForm()">
+                            Reset
+                        </button>
+
+                        <button type="submit" class="btn btn-primary"
+                                ng-disabled="!simulationSubmitForm.$valid || uploader.isUploading"
+                                ng-click="submitForm()">
+                            Submit Simulation
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+
+        </form>
+
+    </div>
+    <!-- /.container -->
+</div>
+
+<footer th:replace="include/footer :: oxidesFooter"/>
+
+<!-- ==================================================== -->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>
