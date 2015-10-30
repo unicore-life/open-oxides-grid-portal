@@ -74,5 +74,5 @@ project.tasks.grunt_check.dependsOn grunt_install
 project.tasks.check.dependsOn grunt_check
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+    gradleVersion = '2.8'
 }

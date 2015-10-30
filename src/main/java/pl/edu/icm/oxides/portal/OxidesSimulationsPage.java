@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript;
+import static pl.edu.icm.oxides.config.PortalConfig.QUANTUM_ESPRESSO_SUBMISSION_MAPPING;
 
 @Service
 class OxidesSimulationsPage {
@@ -79,11 +80,11 @@ class OxidesSimulationsPage {
         return redirectToAuthentication();
     }
 
-    ModelAndView modelSubmitSimulationPageQE(AuthenticationSession authenticationSession) {
+    ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             return prepareBasicModelAndView("simulations/submit-qe", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl("/simulations/submit-qe");
+        authenticationSession.setReturnUrl(QUANTUM_ESPRESSO_SUBMISSION_MAPPING);
         return redirectToAuthentication();
     }
 

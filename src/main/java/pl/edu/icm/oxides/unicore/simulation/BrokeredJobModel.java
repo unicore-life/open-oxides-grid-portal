@@ -167,7 +167,7 @@ public final class BrokeredJobModel {
         DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
         dataStagingType.setFileName(INPUT_SCRIPT_DESTINATION_NAME);
         dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-        dataStagingType.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
+        dataStagingType.addNewSource().setURI(filenameToStorageUri(simulationScriptName, epr));
 
         IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
         ifd.setIgnoreFailure(false);
@@ -181,7 +181,7 @@ public final class BrokeredJobModel {
         DataStagingType dataStagingTypeIn = dataStagingDocumentIn.addNewDataStaging();
         dataStagingTypeIn.setFileName("simulation.in");
         dataStagingTypeIn.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-        dataStagingTypeIn.addNewSource().setURI(filenameToStorageUri(simulationScriptName, epr));
+        dataStagingTypeIn.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
 
         IgnoreFailureDocument ifdIn = IgnoreFailureDocument.Factory.newInstance();
         ifdIn.setIgnoreFailure(false);

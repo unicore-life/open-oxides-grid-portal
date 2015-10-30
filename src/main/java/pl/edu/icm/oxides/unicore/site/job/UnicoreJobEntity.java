@@ -12,16 +12,19 @@ public class UnicoreJobEntity implements Serializable {
     private final String fullName;
     private final String status;
     private final Calendar submissionTime;
+    private final Calendar terminationTime;
     private final String queue;
 
     public UnicoreJobEntity(EndpointReferenceType uri,
                             String name,
                             String status,
                             Calendar submissionTime,
+                            Calendar terminationTime,
                             String queue) {
         this.fullName = name;
         this.status = status;
         this.submissionTime = submissionTime;
+        this.terminationTime = terminationTime;
         this.queue = queue;
         this.uri = uri.getAddress().getStringValue();
     }
@@ -47,6 +50,12 @@ public class UnicoreJobEntity implements Serializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormat.setTimeZone(submissionTime.getTimeZone());
         return dateFormat.format(submissionTime.getTime());
+    }
+
+    public String getTerminationTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(terminationTime.getTimeZone());
+        return dateFormat.format(terminationTime.getTime());
     }
 
     public String getQueue() {

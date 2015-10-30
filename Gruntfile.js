@@ -35,14 +35,14 @@ module.exports = function (grunt) {
                     'src/web/js/oxides-grid-portal.js',
                     'src/web/js/*/**/*.js'
                 ],
-                dest: 'src/main/resources/public/assets/open-oxides-grid-portal.js'
+                dest: 'src/main/resources/public/assets/oxides-grid-portal.js'
             }
         },
         uglify: {
             js: {
                 files: {
-                    'src/main/resources/public/assets/open-oxides-grid-portal.min.js': [
-                        'src/main/resources/public/assets/open-oxides-grid-portal.js'
+                    'src/main/resources/public/assets/oxides-grid-portal.min.js': [
+                        'src/main/resources/public/assets/oxides-grid-portal.js'
                     ]
                 },
                 options: {
@@ -71,17 +71,17 @@ module.exports = function (grunt) {
                     paths: 'src/web/less/'
                 },
                 files: {
-                    'src/main/resources/public/assets/open-oxides-grid-portal.css': 'src/web/less/open-oxides-grid-portal.less'
+                    'src/main/resources/public/assets/oxides-grid-portal.css': 'src/web/less/oxides-grid-portal.less'
                 }
             }
         },
         clean: {
             'bootstrap-fonts': ['src/main/resources/public/fonts/'],
             'build': [
-                'src/main/resources/public/assets/open-oxides-grid-portal.css',
-                'src/main/resources/public/assets/open-oxides-grid-portal.js',
-                'src/main/resources/public/assets/open-oxides-grid-portal.min.js',
-                'src/main/resources/public/assets/open-oxides-grid-portal.min.js.map'
+                'src/main/resources/public/assets/oxides-grid-portal.css',
+                'src/main/resources/public/assets/oxides-grid-portal.js',
+                'src/main/resources/public/assets/oxides-grid-portal.min.js',
+                'src/main/resources/public/assets/oxides-grid-portal.min.js.map'
             ]
         }
     });

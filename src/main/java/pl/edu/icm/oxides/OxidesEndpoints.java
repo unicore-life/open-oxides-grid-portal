@@ -31,6 +31,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+import static pl.edu.icm.oxides.config.PortalConfig.QUANTUM_ESPRESSO_SUBMISSION_MAPPING;
+
 @Controller
 @SessionAttributes("authenticationSession")
 public class OxidesEndpoints {
@@ -93,9 +95,9 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelSubmitSimulationPage(authenticationSession);
     }
 
-    @RequestMapping(value = "/simulations/submit-qe", method = RequestMethod.GET)
-    public ModelAndView submitSimulationPageQE() {
-        return oxidesGridPortalPages.modelSubmitSimulationPageQE(authenticationSession);
+    @RequestMapping(value = QUANTUM_ESPRESSO_SUBMISSION_MAPPING, method = RequestMethod.GET)
+    public ModelAndView submitQuantumEspressoSimulationPage() {
+        return oxidesGridPortalPages.modelSubmitQuantumEspressoSimulationPage(authenticationSession);
     }
 
     @RequestMapping(value = "/preferences", method = RequestMethod.GET)
@@ -122,12 +124,12 @@ public class OxidesEndpoints {
         return unicoreGridResources.submitWorkAssignment(simulation, authenticationSession);
     }
 
-    @RequestMapping(value = "/unicore/submit-qe", method = RequestMethod.POST,
+    @RequestMapping(value = "/unicore/submit/qe", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Void> submitQuantumEspressoSimulation(@RequestBody @Valid OxidesSimulation simulation) {
-        log.info("Submitted UNICORE Job: " + simulation);
+        log.info("Submitted QE Job: " + simulation);
         return unicoreGridResources.submitQEWorkAssignment(simulation, authenticationSession);
     }
 

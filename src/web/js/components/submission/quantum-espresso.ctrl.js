@@ -1,9 +1,9 @@
-var oxidesGridPortalApp = angular.module('oxidesGridPortal');
+angular
+    .module('oxidesGridPortal')
+    .controller('oxidesSubmitQuantumEspressoSimulationController',
 
-
-oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
-    ['$scope', 'oxidesSubmitSimulationServiceQE', 'FileUploader', 'oxidesPopMessageHandlingService',
-        function ($scope, oxidesSubmitSimulationService, FileUploader, oxidesPopMessageHandlingService) {
+    ['$scope', 'FileUploader', 'oxidesSubmitQuantumEspressoSimulationService', 'oxidesPopMessageHandlingService',
+        function ($scope, FileUploader, oxidesSubmitQuantumEspressoSimulationService, oxidesPopMessageHandlingService) {
             $scope.simulationParameters = {
                 simulationName: '',
                 simulationProject: '',
@@ -16,6 +16,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
             };
             $scope.simulationScriptText = '';
             $scope.simulationUploadFilesList = [];
+
             $scope.simulationFormFields = [
                 {'id': 'simulationName', 'label': 'Name', 'placeholder': 'Simulation Name'},
                 {'id': 'simulationProject', 'label': 'Project', 'placeholder': 'Grant ID'},
@@ -28,7 +29,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
             ];
 
             $scope.isSubmitting = undefined;
-            $scope.visibleAdvanced = false;
+            $scope.toggleAdvancedValue = false;
             $scope.toggleAdvancedLabel = 'Show Advanced Parameters';
 
 
@@ -37,22 +38,18 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
                 var toggledPrefix = (prefix === 'show') ? 'Hide' : 'Show';
 
                 $scope.toggleAdvancedLabel = toggledPrefix + ' Advanced Parameters';
-                $scope.visibleAdvanced = !$scope.visibleAdvanced;
+                $scope.toggleAdvancedValue = !$scope.toggleAdvancedValue;
             };
 
             $scope.isParameterRequired = function (parameterName) {
-                if (parameterName === 'simulationName') {
-                    return true;
-                }
-                return false;
-            };
-            $scope.isAdvancedVisible = function (parameterName) {
-                if (parameterName === 'simulationProject') {
-                    return true;
-                }
-                return $scope.isParameterRequired(parameterName) || $scope.visibleAdvanced;
+                return parameterName === 'simulationName';
             };
 
+            $scope.isAdvancedVisible = function (parameterName) {
+                return (parameterName === 'simulationProject')
+                    || $scope.isParameterRequired(parameterName)
+                    || $scope.toggleAdvancedValue;
+            };
 
             $scope.resetForm = function () {
                 $scope.simulationSubmitForm.$setPristine();
@@ -61,7 +58,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
             $scope.submitForm = function () {
                 $scope.isSubmitting = true;
 
-                // Creating JSON with simulation description:
+                // Creates JSON with simulation description:
                 var oxidesSimulation = {};
                 var offset = 'simulation'.length;
                 $scope.simulationFormFields.map(function (it) {
@@ -75,8 +72,8 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
                 oxidesSimulation.files = $scope.simulationUploadFilesList;
                 var oxidesSimulationJson = JSON.stringify(oxidesSimulation);
 
-                // Submitting simulation:
-                oxidesSubmitSimulationService
+                // Submits simulation:
+                oxidesSubmitQuantumEspressoSimulationService
                     .submitSimulation(oxidesSimulationJson)
                     .then(function (response) {
                         oxidesPopMessageHandlingService.handleSubmissionSuccess(response, oxidesSimulation);
@@ -88,7 +85,6 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
                     });
             };
 
-
             $scope.removeUploadFile = function (idx) {
                 $scope.simulationUploadFilesList.splice(idx, 1);
             };
@@ -98,16 +94,7 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
                 alias: 'uploadFile',
                 queueLimit: 1,
                 autoUpload: true,
-                //        formData: [{
-                //            destinationUri: $scope.destinationUri
-                //        }],
                 removeAfterUpload: true,
-
-//            onBeforeUploadItem: function (item) {
-//                Array.prototype.push.apply(item.formData, [{
-//                    destinationUri: $scope.destinationUri,
-//                }]);
-//            },
 
                 onSuccessItem: function (item, response, status, headers) {
                     var filename = item.file.name;
@@ -129,22 +116,4 @@ oxidesGridPortalApp.controller('oxidesSubmitSimulationControllerQE',
             });
         }
     ]
-);
-
-oxidesGridPortalApp.factory('oxidesSubmitSimulationServiceQE',
-    ['$http', function ($http) {
-        return {
-            submitSimulation: function (oxidesSimulationJson) {
-                var request = {
-                    method: 'POST',
-                    url: '/unicore/submit-qe',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: oxidesSimulationJson
-                };
-                return $http(request);
-            }
-        };
-    }]
 );

@@ -82,9 +82,11 @@ class UnicoreJobOperations {
                 .getStatus()
                 .toString();
         Calendar submissionTime = jobProperties.getSubmissionTime();
+        Calendar terminationTime = jobProperties.getTerminationTime()
+                .getCalendarValue();
         String queue = jobProperties.getQueue();
 
-        return new UnicoreJobEntity(epr, name, status, submissionTime, queue);
+        return new UnicoreJobEntity(epr, name, status, submissionTime, terminationTime, queue);
     }
 
     UnicoreJobDetailsEntity translateJobPropertiesToUnicoreJobDetailsEntity(JobProperties jobProperties) {

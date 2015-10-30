@@ -41,4 +41,6 @@ public class PortalConfig {
 //        threadPoolTaskExecutor.setQueueCapacity();
         return threadPoolTaskExecutor;
     }
+
+    public static final String QUANTUM_ESPRESSO_SUBMISSION_MAPPING = "/simulations/submit/qe";
 }

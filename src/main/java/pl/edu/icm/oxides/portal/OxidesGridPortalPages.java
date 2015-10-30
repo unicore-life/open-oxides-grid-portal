@@ -50,8 +50,8 @@ public class OxidesGridPortalPages {
         return oxidesSimulationsPage.modelSubmitSimulationPage(authenticationSession);
     }
 
-    public ModelAndView modelSubmitSimulationPageQE(AuthenticationSession authenticationSession) {
-        return oxidesSimulationsPage.modelSubmitSimulationPageQE(authenticationSession);
+    public ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
+        return oxidesSimulationsPage.modelSubmitQuantumEspressoSimulationPage(authenticationSession);
     }
 
     public ModelAndView modelPreferencesPage(AuthenticationSession authenticationSession) {
