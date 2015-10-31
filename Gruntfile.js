@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         jshint: {
             all: [
                 'Gruntfile.js',
-                'src/web/js/**/*.js',
+                'src/web/javascript/**/*.js',
                 'src/web/spec/**/*.js'
             ],
             options: {
@@ -32,8 +32,8 @@ module.exports = function (grunt) {
                     'bower_components/angular-bootstrap/ui-bootstrap.js',
                     'bower_components/angular-file-upload/dist/angular-file-upload.min.js',
                     'bower_components/angular-spinkit/build/angular-spinkit.js',
-                    'src/web/js/oxides-grid-portal.js',
-                    'src/web/js/*/**/*.js'
+                    'src/web/javascript/oxides-grid-portal.js',
+                    'src/web/javascript/*/**/*.js'
                 ],
                 dest: 'src/main/resources/public/assets/oxides-grid-portal.js'
             }
