@@ -31,7 +31,7 @@ import pl.edu.icm.oxides.user.AuthenticationSession;
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +43,10 @@ public class UnicoreBroker {
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
     private final GridFileUploader fileUploader;
+
+    public enum BrokerJobType {
+        SCRIPT, QUANTUM_ESPRESSO
+    }
 
     @Autowired
     public UnicoreBroker(GridConfig gridConfig,
@@ -62,7 +66,9 @@ public class UnicoreBroker {
         return collectBrokerServiceList(clientConfiguration);
     }
 
-    public void submitBrokeredJob(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
+    public void submitBrokeredJob(BrokerJobType brokerJobType,
+                                  OxidesSimulation simulation,
+                                  AuthenticationSession authenticationSession) {
         UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
@@ -80,14 +86,32 @@ public class UnicoreBroker {
                 .getResources()
                 .getStorageClient();
 
-        String inputScriptName = "input-" + UUID.randomUUID().toString();
-        prepareScriptInputOnStorage(storageClient, simulation.getScript(), inputScriptName);
+        List<WorkAssignmentFile> workAssignmentFiles = new ArrayList<>();
+        switch (brokerJobType) {
+            case QUANTUM_ESPRESSO:
+                String simulationScriptName = "script-" + UUID.randomUUID().toString();
+                String simulationScript = "module load plgrid/apps/espresso\n " +
+                        "mpirun pw.x -nband 1 -ntg 1 < simulation.in > simulation.out";
+                prepareScriptInputOnStorage(storageClient, simulationScript, simulationScriptName);
+
+                workAssignmentFiles.add(new WorkAssignmentFile(simulationScriptName, "input"));
+
+            case SCRIPT:
+                String inputScriptName = "input-" + UUID.randomUUID().toString();
+                prepareScriptInputOnStorage(storageClient, simulation.getScript(), inputScriptName);
+
+                workAssignmentFiles.add(new WorkAssignmentFile(inputScriptName, "simulation.in"));
+                break;
+
+            default:
+                throw new RuntimeException("Wrong broker job type!");
+        }
 
         String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
         WorkAssignmentDescription workAssignmentDescription = toWorkAssignment(
                 simulationName,
                 simulation,
-                new WorkAssignmentFile(inputScriptName, "input")
+                workAssignmentFiles
         );
 
         EndpointReferenceType storageEpr = storageClient
@@ -131,11 +155,11 @@ public class UnicoreBroker {
 
     private WorkAssignmentDescription toWorkAssignment(String simulationName,
                                                        OxidesSimulation simulation,
-                                                       WorkAssignmentFile... waFiles) {
+                                                       List<WorkAssignmentFile> waFiles) {
         List<WorkAssignmentFile> files = simulation.getFiles().stream()
                 .map(filename -> new WorkAssignmentFile(filename, filename))
                 .collect(Collectors.toList());
-        files.addAll(Arrays.asList(waFiles));
+        files.addAll(waFiles);
 
         return new WorkAssignmentDescription(
                 simulationName,
@@ -148,74 +172,6 @@ public class UnicoreBroker {
                 simulation.getProperty(),
                 files
         );
-    }
-
-    public void submitBrokeredQuantumEspressoJob(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
-        UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
-                .stream()
-                .findAny()
-                .orElseThrow(() -> new UnavailableBrokerException(new Exception("NO BROKER AT ALL!")));
-
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
-        // Extending ETD with broker's DN:
-        clientConfiguration.getETDSettings().setReceiver(
-                new X500Principal(
-                        WSUtilities.extractServerIDFromEPR(brokerEntity.getEpr())));
-//        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
-
-        Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
-        StorageClient storageClient = authenticationSession
-                .getResources()
-                .getStorageClient();
-
-        String inputName = "input-" + UUID.randomUUID().toString();
-        prepareScriptInputOnStorage(storageClient, simulation.getScript(), inputName);
-
-        String simulationScriptName = "script-" + UUID.randomUUID().toString();
-        String simulationScript = "module load plgrid/apps/espresso\n " +
-                "mpirun pw.x -nband 1 -ntg 1 < simulation.in > simulation.out";
-        prepareScriptInputOnStorage(storageClient, simulationScript, simulationScriptName);
-
-        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
-        WorkAssignmentDescription workAssignmentDescription = toWorkAssignment(
-                simulationName,
-                simulation,
-                new WorkAssignmentFile(simulationScriptName, "input"),
-                new WorkAssignmentFile(inputName, "simulation.in")
-        );
-
-        EndpointReferenceType storageEpr = storageClient
-                .getEPR();
-        JobDefinitionDocument jobDefinitionDocument =
-                BrokeredJobModel.prepareJobDefinitionDocument(
-                        oxidesConfig.getApplicationName(),
-                        oxidesConfig.getApplicationVersion(),
-                        workAssignmentDescription,
-                        storageEpr);
-        log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
-
-
-        SubmitWorkAssignmentRequestDocument waDoc = SubmitWorkAssignmentRequestDocument.Factory
-                .newInstance();
-        WorkAssignmentType workAssignment = waDoc
-                .addNewSubmitWorkAssignmentRequest()
-                .addNewWorkAssignment();
-
-        WorkDocument.Work work = workAssignment.addNewWork();
-        JobDefinitionType jobDef = jobDefinitionDocument.getJobDefinition();
-        work.setJobDefinition(jobDef);
-
-        workAssignment.setParent("OpenOxidesGridJob");
-        String workAssignmentID = WSUtilities.newUniqueID();
-        workAssignment.setId(workAssignmentID);
-
-        workAssignment.setStorageEPR(storageEpr);
-
-        log.info("BROKER WORK ASSIGNMENT: " + workAssignment.toString());
-        SubmitWorkAssignmentResponseDocument response =
-                brokerClient.get().submitWorkAssignment(waDoc);
-
-        log.info("WA SUBMITTED: " + response);
     }
 
     private void prepareScriptInputOnStorage(StorageClient storageClient,

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
+import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker.BrokerJobType;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
@@ -47,7 +48,7 @@ public class UnicoreGridResources {
     public ResponseEntity<Void> submitScriptWorkAssignment(OxidesSimulation simulation,
                                                            AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
+            unicoreBroker.submitBrokeredJob(BrokerJobType.SCRIPT, simulation, authenticationSession);
             cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
             return ResponseEntity.noContent().build();
         }
@@ -57,7 +58,7 @@ public class UnicoreGridResources {
     public ResponseEntity<Void> submitQuantumEspressoWorkAssignment(OxidesSimulation simulation,
                                                                     AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
-            unicoreBroker.submitBrokeredQuantumEspressoJob(simulation, authenticationSession);
+            unicoreBroker.submitBrokeredJob(BrokerJobType.QUANTUM_ESPRESSO, simulation, authenticationSession);
             cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
             return ResponseEntity.noContent().build();
         }
