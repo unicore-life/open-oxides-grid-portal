@@ -44,8 +44,8 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<Void> submitWorkAssignment(OxidesSimulation simulation,
-                                                     AuthenticationSession authenticationSession) {
+    public ResponseEntity<Void> submitScriptWorkAssignment(OxidesSimulation simulation,
+                                                           AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredJob(simulation, authenticationSession);
             cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
@@ -54,8 +54,8 @@ public class UnicoreGridResources {
         return unauthorizedResponse();
     }
 
-    public ResponseEntity<Void> submitQEWorkAssignment(OxidesSimulation simulation,
-                                                       AuthenticationSession authenticationSession) {
+    public ResponseEntity<Void> submitQuantumEspressoWorkAssignment(OxidesSimulation simulation,
+                                                                    AuthenticationSession authenticationSession) {
         if (isValidAuthenticationSession(authenticationSession)) {
             unicoreBroker.submitBrokeredQuantumEspressoJob(simulation, authenticationSession);
             cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());

@@ -115,13 +115,13 @@ public class OxidesEndpoints {
             JSON ENDPOINTS:
     ==========================================================================================================
      */
-    @RequestMapping(value = "/unicore/submit", method = RequestMethod.POST,
+    @RequestMapping(value = "/unicore/submit/script", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Void> submitSimulation(@RequestBody @Valid OxidesSimulation simulation) {
+    public ResponseEntity<Void> submitScriptSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
-        return unicoreGridResources.submitWorkAssignment(simulation, authenticationSession);
+        return unicoreGridResources.submitScriptWorkAssignment(simulation, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/submit/qe", method = RequestMethod.POST,
@@ -130,7 +130,7 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<Void> submitQuantumEspressoSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted QE Job: " + simulation);
-        return unicoreGridResources.submitQEWorkAssignment(simulation, authenticationSession);
+        return unicoreGridResources.submitQuantumEspressoWorkAssignment(simulation, authenticationSession);
     }
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.edu.icm.oxides.authn.UnprocessableResponseException;
 
+import java.time.Instant;
+
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -45,7 +48,7 @@ public class OxidesErrorsHandler {
         private ErrorMessage(Exception ex) {
             this.code = ex.getClass().getSimpleName();
             this.message = ex.getMessage();
-            this.timestamp = String.valueOf(System.currentTimeMillis());
+            this.timestamp = ISO_INSTANT.format(Instant.now());
         }
     }
 

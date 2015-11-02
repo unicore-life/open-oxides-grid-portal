@@ -21,11 +21,10 @@ import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.POSIXApplicationDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.POSIXApplicationType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class BrokeredJobModel {
     private BrokeredJobModel() {
@@ -33,49 +32,17 @@ public final class BrokeredJobModel {
 
     public static JobDefinitionDocument prepareJobDefinitionDocument(String applicationName,
                                                                      String applicationVersion,
-                                                                     String simulationName,
-                                                                     OxidesSimulation simulation,
-                                                                     String inputScriptName,
+                                                                     WorkAssignmentDescription waDescription,
                                                                      EndpointReferenceType storageEpr) {
         JobDescriptionType jobDescription = JobDescriptionType.Factory.newInstance();
         jobDescription.setApplication(
                 createApplicationDescription(applicationName, applicationVersion));
-        jobDescription.addNewJobIdentification().setJobName(simulationName);
+        jobDescription.addNewJobIdentification().setJobName(waDescription.getName());
 
-        List<DataStagingType> dataStaging = createDataStagingFragment(
-                simulation.getFiles(),
-                inputScriptName,
-                storageEpr);
+        List<DataStagingType> dataStaging = createDataStagingFragment(waDescription.getFiles(), storageEpr);
         jobDescription.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
 
-        jobDescription.setResources(prepareResourceFragment(simulation));
-
-        JobDefinitionDocument jobDefinitionDocument = JobDefinitionDocument.Factory.newInstance();
-        jobDefinitionDocument.addNewJobDefinition().setJobDescription(jobDescription);
-
-        return jobDefinitionDocument;
-    }
-
-    public static JobDefinitionDocument prepareJobDefinitionDocumentQE(String applicationName,
-                                                                       String applicationVersion,
-                                                                       String simulationName,
-                                                                       OxidesSimulation simulation,
-                                                                       String simulationScriptName,
-                                                                       String inputName,
-                                                                       EndpointReferenceType storageEpr) {
-        JobDescriptionType jobDescription = JobDescriptionType.Factory.newInstance();
-        jobDescription.setApplication(
-                createApplicationDescription(applicationName, applicationVersion));
-        jobDescription.addNewJobIdentification().setJobName(simulationName);
-
-        List<DataStagingType> dataStaging = createDataStagingFragmentQE(
-                simulation.getFiles(),
-                simulationScriptName,
-                inputName,
-                storageEpr);
-        jobDescription.setDataStagingArray(dataStaging.toArray(new DataStagingType[dataStaging.size()]));
-
-        jobDescription.setResources(prepareResourceFragment(simulation));
+        jobDescription.setResources(prepareResourceFragment(waDescription));
 
         JobDefinitionDocument jobDefinitionDocument = JobDefinitionDocument.Factory.newInstance();
         jobDefinitionDocument.addNewJobDefinition().setJobDescription(jobDescription);
@@ -103,128 +70,66 @@ public final class BrokeredJobModel {
         return posixApplicationDocument;
     }
 
-    private static List<DataStagingType> createDataStagingFragment(List<String> files,
-                                                                   String inputScriptName,
+    private static List<DataStagingType> createDataStagingFragment(List<WorkAssignmentFile> files,
                                                                    EndpointReferenceType epr) {
-        List<DataStagingType> dataStagingList = new ArrayList<>();
-
-        files.forEach((filename) -> {
-            DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
-            DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-            dataStagingType.setFileName(filename);
-            dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-
-            dataStagingType.addNewSource().setURI(filenameToStorageUri(filename, epr));
-
-            IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
-            ifd.setIgnoreFailure(false);
-
-            WSUtilities.append(ifd, dataStagingDocument);
-            dataStagingList.add(dataStagingType);
-        });
-
-        // Workaround for script input:
-        //
-        DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
-        DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-        dataStagingType.setFileName(INPUT_SCRIPT_DESTINATION_NAME);
-        dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-        dataStagingType.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
-
-        IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
-        ifd.setIgnoreFailure(false);
-        WSUtilities.append(ifd, dataStagingDocument);
-
-        dataStagingList.add(dataStagingType);
-
-        return dataStagingList;
+        return files.stream()
+                .map(fileEntry -> createDataStagingEntry(
+                        fileEntry.getSourceName(),
+                        fileEntry.getDestinationName(),
+                        epr))
+                .collect(Collectors.toList());
     }
 
-    private static List<DataStagingType> createDataStagingFragmentQE(List<String> files,
-                                                                     String simulationScriptName,
-                                                                     String inputScriptName,
-                                                                     EndpointReferenceType epr) {
-        List<DataStagingType> dataStagingList = new ArrayList<>();
-
-        files.forEach((filename) -> {
-            DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
-            DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-            dataStagingType.setFileName(filename);
-            dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-
-            dataStagingType.addNewSource().setURI(filenameToStorageUri(filename, epr));
-
-            IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
-            ifd.setIgnoreFailure(false);
-
-            WSUtilities.append(ifd, dataStagingDocument);
-            dataStagingList.add(dataStagingType);
-        });
-
-        // Workaround for script input:
-        //
+    private static DataStagingType createDataStagingEntry(String sourceFilename,
+                                                          String destinationFilename,
+                                                          EndpointReferenceType epr) {
         DataStagingDocument dataStagingDocument = DataStagingDocument.Factory.newInstance();
         DataStagingType dataStagingType = dataStagingDocument.addNewDataStaging();
-        dataStagingType.setFileName(INPUT_SCRIPT_DESTINATION_NAME);
+        dataStagingType.setFileName(destinationFilename);
         dataStagingType.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-        dataStagingType.addNewSource().setURI(filenameToStorageUri(simulationScriptName, epr));
+
+        dataStagingType.addNewSource().setURI(filenameToStorageUri(sourceFilename, epr));
 
         IgnoreFailureDocument ifd = IgnoreFailureDocument.Factory.newInstance();
         ifd.setIgnoreFailure(false);
         WSUtilities.append(ifd, dataStagingDocument);
 
-        dataStagingList.add(dataStagingType);
-
-        // Workaround for QE input:
-        //
-        DataStagingDocument dataStagingDocumentIn = DataStagingDocument.Factory.newInstance();
-        DataStagingType dataStagingTypeIn = dataStagingDocumentIn.addNewDataStaging();
-        dataStagingTypeIn.setFileName("simulation.in");
-        dataStagingTypeIn.setCreationFlag(CreationFlagEnumeration.OVERWRITE);
-        dataStagingTypeIn.addNewSource().setURI(filenameToStorageUri(inputScriptName, epr));
-
-        IgnoreFailureDocument ifdIn = IgnoreFailureDocument.Factory.newInstance();
-        ifdIn.setIgnoreFailure(false);
-        WSUtilities.append(ifdIn, dataStagingDocumentIn);
-
-        dataStagingList.add(dataStagingTypeIn);
-
-        return dataStagingList;
+        return dataStagingType;
     }
 
     private static String filenameToStorageUri(String filename, EndpointReferenceType storageEpr) {
         return ProtocolType.BFT + ":" + storageEpr.getAddress().getStringValue() + "#" + filename;
     }
 
-    private static ResourcesType prepareResourceFragment(OxidesSimulation simulation) {
+    private static ResourcesType prepareResourceFragment(WorkAssignmentDescription description) {
         ResourcesDocument resourcesDocument = ResourcesDocument.Factory.newInstance();
         ResourcesType resourcesType = resourcesDocument.addNewResources();
 
-        if (!isNullOrBlank(simulation.getProject())) {
-            insertResourceRequest("Project", simulation.getProject(), resourcesDocument);
+        if (!isNullOrBlank(description.getProject())) {
+            insertResourceRequest("Project", description.getProject(), resourcesDocument);
         }
-        if (!isNullOrBlank(simulation.getQueue())) {
-            insertResourceRequest("Queue", simulation.getQueue(), resourcesDocument);
+        if (!isNullOrBlank(description.getQueue())) {
+            insertResourceRequest("Queue", description.getQueue(), resourcesDocument);
         }
-        if (simulation.getMemory() != null) {
-            BigDecimal memory = new BigDecimal(simulation.getMemory()).multiply(new BigDecimal(1024L * 1024L));
+        if (description.getMemory() != null) {
+            BigDecimal memory = new BigDecimal(description.getMemory()).multiply(ONE_MEGA_BIG_DECIMAL);
             resourcesType.addNewIndividualPhysicalMemory().addNewExact().setDoubleValue(memory.doubleValue());
         }
-        if (simulation.getNodes() != null) {
-            resourcesType.addNewTotalResourceCount().addNewExact().setDoubleValue(simulation.getNodes());
+        if (description.getNodes() != null) {
+            resourcesType.addNewTotalResourceCount().addNewExact().setDoubleValue(description.getNodes());
         }
-        if (simulation.getCpus() != null) {
-            resourcesType.addNewIndividualCPUCount().addNewExact().setDoubleValue(simulation.getCpus());
+        if (description.getCpus() != null) {
+            resourcesType.addNewIndividualCPUCount().addNewExact().setDoubleValue(description.getCpus());
         }
-        if (!isNullOrBlank(simulation.getReservation())) {
+        if (!isNullOrBlank(description.getReservation())) {
             try {
-                insertReservation(simulation.getReservation(), resourcesDocument);
+                insertReservation(description.getReservation(), resourcesDocument);
             } catch (XmlException e) {
                 log.warn("Could not add reservation resource! Skipping it.", e);
             }
         }
-        if (!isNullOrBlank(simulation.getProperty())) {
-            insertResourceRequest("NodesFilter", simulation.getProperty(), resourcesDocument);
+        if (!isNullOrBlank(description.getProperty())) {
+            insertResourceRequest("NodesFilter", description.getProperty(), resourcesDocument);
         }
         return resourcesType;
     }
@@ -253,4 +158,5 @@ public final class BrokeredJobModel {
     private static Log log = LogFactory.getLog(BrokeredJobModel.class);
 
     private static final String INPUT_SCRIPT_DESTINATION_NAME = "input";
+    private static final BigDecimal ONE_MEGA_BIG_DECIMAL = new BigDecimal(1024L * 1024L);
 }

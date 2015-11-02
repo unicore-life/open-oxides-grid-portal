@@ -24,12 +24,14 @@ import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
+import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentDescription;
+import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,17 +83,20 @@ public class UnicoreBroker {
         String inputScriptName = "input-" + UUID.randomUUID().toString();
         prepareScriptInputOnStorage(storageClient, simulation.getScript(), inputScriptName);
 
+        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
+        WorkAssignmentDescription workAssignmentDescription = toWorkAssignment(
+                simulationName,
+                simulation,
+                new WorkAssignmentFile(inputScriptName, "input")
+        );
+
         EndpointReferenceType storageEpr = storageClient
                 .getEPR();
-
-        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
         JobDefinitionDocument jobDefinitionDocument =
                 BrokeredJobModel.prepareJobDefinitionDocument(
                         oxidesConfig.getApplicationName(),
                         oxidesConfig.getApplicationVersion(),
-                        simulationName,
-                        simulation,
-                        inputScriptName,
+                        workAssignmentDescription,
                         storageEpr);
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
@@ -124,7 +129,28 @@ public class UnicoreBroker {
         log.info("WA SUBMITTED: " + response);
     }
 
-    public void submitBrokeredQuantumEspressoJob(OxidesSimulation simulationQE, AuthenticationSession authenticationSession) {
+    private WorkAssignmentDescription toWorkAssignment(String simulationName,
+                                                       OxidesSimulation simulation,
+                                                       WorkAssignmentFile... waFiles) {
+        List<WorkAssignmentFile> files = simulation.getFiles().stream()
+                .map(filename -> new WorkAssignmentFile(filename, filename))
+                .collect(Collectors.toList());
+        files.addAll(Arrays.asList(waFiles));
+
+        return new WorkAssignmentDescription(
+                simulationName,
+                simulation.getProject(),
+                simulation.getQueue(),
+                simulation.getMemory(),
+                simulation.getNodes(),
+                simulation.getCpus(),
+                simulation.getReservation(),
+                simulation.getProperty(),
+                files
+        );
+    }
+
+    public void submitBrokeredQuantumEspressoJob(OxidesSimulation simulation, AuthenticationSession authenticationSession) {
         UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
@@ -143,27 +169,28 @@ public class UnicoreBroker {
                 .getStorageClient();
 
         String inputName = "input-" + UUID.randomUUID().toString();
-        prepareScriptInputOnStorage(storageClient, simulationQE.getScript(), inputName);
+        prepareScriptInputOnStorage(storageClient, simulation.getScript(), inputName);
 
         String simulationScriptName = "script-" + UUID.randomUUID().toString();
         String simulationScript = "module load plgrid/apps/espresso\n " +
                 "mpirun pw.x -nband 1 -ntg 1 < simulation.in > simulation.out";
         prepareScriptInputOnStorage(storageClient, simulationScript, simulationScriptName);
 
-        OxidesSimulation simulation = toSimulation(simulationQE, inputName);
+        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
+        WorkAssignmentDescription workAssignmentDescription = toWorkAssignment(
+                simulationName,
+                simulation,
+                new WorkAssignmentFile(simulationScriptName, "input"),
+                new WorkAssignmentFile(inputName, "simulation.in")
+        );
 
         EndpointReferenceType storageEpr = storageClient
                 .getEPR();
-
-        String simulationName = oxidesConfig.getJobPrefix() + simulation.getName();
         JobDefinitionDocument jobDefinitionDocument =
-                BrokeredJobModel.prepareJobDefinitionDocumentQE(
+                BrokeredJobModel.prepareJobDefinitionDocument(
                         oxidesConfig.getApplicationName(),
                         oxidesConfig.getApplicationVersion(),
-                        simulationName,
-                        simulation,
-                        simulationScriptName,
-                        inputName,
+                        workAssignmentDescription,
                         storageEpr);
         log.info("BROKER JOB DEFINITION: " + jobDefinitionDocument.toString());
 
@@ -189,26 +216,6 @@ public class UnicoreBroker {
                 brokerClient.get().submitWorkAssignment(waDoc);
 
         log.info("WA SUBMITTED: " + response);
-    }
-
-    private OxidesSimulation toSimulation(OxidesSimulation simulationQE, String inputName) {
-        List<String> simulationQEFiles = new ArrayList<>(
-                simulationQE.getFiles()
-        );
-        simulationQEFiles.add(inputName);
-
-        return new OxidesSimulation(
-                simulationQE.getName(),
-                simulationQE.getProject(),
-                simulationQE.getQueue(),
-                simulationQE.getMemory(),
-                simulationQE.getNodes(),
-                simulationQE.getCpus(),
-                simulationQE.getReservation(),
-                simulationQE.getProperty(),
-                simulationQE.getScript(),
-                simulationQEFiles
-        );
     }
 
     private void prepareScriptInputOnStorage(StorageClient storageClient,
