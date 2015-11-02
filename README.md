@@ -6,5 +6,4 @@ Build automatically tested on Travis CI:
 
 ## links which may come handy:
  
- * [webjars](http://svene.github.io/adocblog/html/2015_05_09_webjars_in_webapplications.html)
  * [websockets](http://g00glen00b.be/spring-websockets-config/)
