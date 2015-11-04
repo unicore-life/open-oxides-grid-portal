@@ -5,3 +5,7 @@ grid:
 
 server:
   port: 443
+  ssl:
+    keyStore: /opt/plgrid/certificates/oxides-grid-portal.jks
+    keyStorePassword: the!oxides
+    keyPassword: the!oxides
