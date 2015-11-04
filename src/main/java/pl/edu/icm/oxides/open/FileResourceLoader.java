@@ -29,7 +29,7 @@ public class FileResourceLoader implements ResourceLoaderAware {
 
         String line;
         while ((line = br.readLine()) != null) {
-            output += line;
+            output += (line + '\n');
         }
         br.close();
         return output;
