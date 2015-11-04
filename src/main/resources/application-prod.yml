@@ -9,3 +9,5 @@ server:
     keyStore: /opt/plgrid/certificates/oxides-grid-portal.jks
     keyStorePassword: the!oxides
     keyPassword: the!oxides
+
+logging.file: /tmp/oxides-grid-portal.log
