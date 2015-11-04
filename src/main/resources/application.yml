@@ -2,10 +2,11 @@ openOxides:
   groupName: /vo.plgrid.pl
 
 grid:
+  identityConfig: grid.properties
+  idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
 #  registry: https://hyx.grid.icm.edu.pl:8080/ICM-HYDRA/services/Registry?res=default_registry
   registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
 #  registry: https://unicore.grid.icm.edu.pl:8080/PLGRID/services/Registry?res=default_registry
-  idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
   targetUrl: https://localhost:8443/oxides/authn
 
 gridOxides:

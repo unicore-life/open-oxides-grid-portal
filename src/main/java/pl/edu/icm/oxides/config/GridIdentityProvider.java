@@ -4,6 +4,7 @@ import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
 import eu.unicore.security.canl.TrustedIssuersProperties;
 import eu.unicore.util.httpclient.ClientProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -18,8 +19,9 @@ public class GridIdentityProvider {
     private final X509CertChainValidatorExt gridValidator;
     private final X509CertChainValidatorExt idpValidator;
 
-    public GridIdentityProvider() throws IOException {
-        Resource resource = new ClassPathResource("grid.properties");
+    @Autowired
+    public GridIdentityProvider(GridConfig gridConfig) throws IOException {
+        Resource resource = new ClassPathResource(gridConfig.getIdentityConfig());
         Properties gridIdentityProperties = PropertiesLoaderUtils.loadProperties(resource);
 
         ClientProperties clientProperties = new ClientProperties(gridIdentityProperties);

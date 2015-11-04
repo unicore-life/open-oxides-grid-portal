@@ -6,9 +6,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "grid")
 public class GridConfig {
+    private String identityConfig;
     private String registry;
     private String idpUrl;
     private String targetUrl;
+
+    public String getIdentityConfig() {
+        return identityConfig;
+    }
+
+    public void setIdentityConfig(String identityConfig) {
+        this.identityConfig = identityConfig;
+    }
 
     public String getRegistry() {
         return registry;

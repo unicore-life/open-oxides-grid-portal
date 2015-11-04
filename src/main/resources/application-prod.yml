@@ -1,4 +1,5 @@
 grid:
+  identityConfig: grid-prod.properties
   idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web
   targetUrl: https://oxides.grid.icm.edu.pl/oxides/authn
 
