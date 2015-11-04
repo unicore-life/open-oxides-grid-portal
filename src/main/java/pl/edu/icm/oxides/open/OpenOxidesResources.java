@@ -12,10 +12,7 @@ import pl.edu.icm.oxides.config.OpenOxidesConfig;
 import pl.edu.icm.oxides.open.model.Oxide;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -23,6 +20,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
+import static pl.edu.icm.oxides.open.FileResourceLoader.getResourceString;
 
 @Service
 public class OpenOxidesResources {
@@ -57,26 +55,13 @@ public class OpenOxidesResources {
             try {
                 return ResponseEntity.status(OK)
                         .headers(responseHeaders)
-                        .body(getJsonString(resource));
+                        .body(getResourceString(resource));
             } catch (IOException e) {
                 log.error("Could not get particle parameters data", e);
                 return serviceResponse(INTERNAL_SERVER_ERROR);
             }
         }
         return serviceResponse(UNAUTHORIZED);
-    }
-
-    private String getJsonString(Resource resource) throws IOException {
-        String output = "";
-        InputStream is = resource.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        String line;
-        while ((line = br.readLine()) != null) {
-            output += line;
-        }
-        br.close();
-        return output;
     }
 
     private <T> ResponseEntity<T> serviceResponse(HttpStatus httpStatus) {

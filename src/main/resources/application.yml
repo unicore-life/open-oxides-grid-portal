@@ -30,6 +30,8 @@ multipart:
 
 #spring.resources.add-mappings: false
 
+logging.file: oxides-grid-portal.log
+
 logging.level.: INFO
 logging.level.org.apache.cxf: FATAL
 logging.level.pl.edu.icm.oxides: DEBUG

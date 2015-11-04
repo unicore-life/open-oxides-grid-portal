@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
+import pl.edu.icm.oxides.open.FileResourceLoader;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.GridFileUploader;
@@ -30,6 +31,7 @@ import pl.edu.icm.oxides.user.AuthenticationSession;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,7 @@ public class UnicoreBroker {
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
     private final GridFileUploader fileUploader;
+    private final FileResourceLoader resourceLoader;
 
     public enum BrokerJobType {
         SCRIPT, QUANTUM_ESPRESSO
@@ -52,11 +55,13 @@ public class UnicoreBroker {
     public UnicoreBroker(GridConfig gridConfig,
                          GridOxidesConfig oxidesConfig,
                          GridClientHelper clientHelper,
-                         GridFileUploader fileUploader) {
+                         GridFileUploader fileUploader,
+                         FileResourceLoader resourceLoader) {
         this.gridConfig = gridConfig;
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
         this.fileUploader = fileUploader;
+        this.resourceLoader = resourceLoader;
     }
 
     @Cacheable(value = "unicoreSessionBrokerList", key = "#trustDelegation.custodianDN")
@@ -90,8 +95,16 @@ public class UnicoreBroker {
         switch (brokerJobType) {
             case QUANTUM_ESPRESSO:
                 String simulationScriptName = "script-" + UUID.randomUUID().toString();
-                String simulationScript = "module load plgrid/apps/espresso\n " +
-                        "mpirun pw.x -nband 1 -ntg 1 < simulation.in > simulation.out";
+                String simulationScript = null;
+                try {
+                    simulationScript = FileResourceLoader.getResourceString(
+                            resourceLoader.getResource("classpath:templates/quantum-espresso-script.sh")
+                    );
+                } catch (IOException e) {
+                    log.error("Problem with getting resource!", e);
+
+//                    TODO: handle this with exception?
+                }
                 prepareScriptInputOnStorage(storageClient, simulationScript, simulationScriptName);
 
                 workAssignmentFiles.add(new WorkAssignmentFile(simulationScriptName, "input"));
