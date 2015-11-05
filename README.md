@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/unicore-life/open-oxides-grid-portal.png?label=ready&title=Ready)](https://waffle.io/unicore-life/open-oxides-grid-portal)
 # open-oxides-grid-portal
 
 Build automatically tested on Travis CI: 
