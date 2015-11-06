@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @ControllerAdvice
-public class OxidesErrorsHandler {
+public class ErrorsHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
@@ -52,5 +52,5 @@ public class OxidesErrorsHandler {
         }
     }
 
-    private Log log = LogFactory.getLog(OxidesErrorsHandler.class);
+    private Log log = LogFactory.getLog(ErrorsHandler.class);
 }

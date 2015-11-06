@@ -16,14 +16,17 @@ public class OxidesGridPortalPages {
     private final OxidesWelcomePage oxidesWelcomePage;
     private final OxidesSimulationsPage oxidesSimulationsPage;
     private final OxidesUserPage oxidesUserPage;
+    private final OxidesErrorsPage oxidesErrorsPage;
 
     @Autowired
     public OxidesGridPortalPages(OxidesWelcomePage oxidesWelcomePage,
                                  OxidesSimulationsPage oxidesSimulationsPage,
-                                 OxidesUserPage oxidesUserPage) {
+                                 OxidesUserPage oxidesUserPage,
+                                 OxidesErrorsPage oxidesErrorsPage) {
         this.oxidesWelcomePage = oxidesWelcomePage;
         this.oxidesSimulationsPage = oxidesSimulationsPage;
         this.oxidesUserPage = oxidesUserPage;
+        this.oxidesErrorsPage = oxidesErrorsPage;
     }
 
     public ModelAndView modelWelcomePage(AuthenticationSession authenticationSession) {
@@ -35,7 +38,8 @@ public class OxidesGridPortalPages {
     }
 
     public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID uuid, String path) {
-        return oxidesSimulationsPage.modelOneSimulationPage(authenticationSession, uuid, ofNullable(path));
+        return oxidesSimulationsPage.modelOneSimulationViewerPage(authenticationSession,
+                uuid, ofNullable(path), "simulations/one");
     }
 
     public ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession, UUID uuid) {
@@ -43,11 +47,12 @@ public class OxidesGridPortalPages {
     }
 
     public ModelAndView modelJsmolViewerPage(AuthenticationSession authenticationSession, UUID uuid, String path) {
-        return oxidesSimulationsPage.modelJsmolViewerPage(authenticationSession, uuid, ofNullable(path));
+        return oxidesSimulationsPage.modelOneSimulationViewerPage(authenticationSession,
+                uuid, ofNullable(path), "viewers/jsmol");
     }
 
-    public ModelAndView modelSubmitSimulationPage(AuthenticationSession authenticationSession) {
-        return oxidesSimulationsPage.modelSubmitSimulationPage(authenticationSession);
+    public ModelAndView modelSubmitScriptSimulationPage(AuthenticationSession authenticationSession) {
+        return oxidesSimulationsPage.modelSubmitScriptSimulationPage(authenticationSession);
     }
 
     public ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
@@ -60,5 +65,13 @@ public class OxidesGridPortalPages {
 
     public String signOutAndRedirect(HttpSession session) {
         return oxidesUserPage.signOutAndRedirect(session);
+    }
+
+    public ModelAndView modelForbiddenErrorPage(HttpSession session) {
+        return oxidesErrorsPage.modelForbiddenPage(session);
+    }
+
+    public ModelAndView modelNoTrustDelegationErrorPage(HttpSession session) {
+        return oxidesErrorsPage.modelNoTrustDelegationPage(session);
     }
 }

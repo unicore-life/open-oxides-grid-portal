@@ -1,6 +1,13 @@
 openOxides:
   groupName: /vo.plgrid.pl
 
+gridOxides:
+  accessGroup: /vo.plgrid.pl
+  applicationName: Bash shell
+#  applicationVersion: 4.1.2
+  jobPrefix: _OpenOxides__
+  resultsUrl: http://openoxides.icm.edu.pl/data/results.json
+
 grid:
   identityConfig: grid.properties
   idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
@@ -8,13 +15,6 @@ grid:
   registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
 #  registry: https://unicore.grid.icm.edu.pl:8080/PLGRID/services/Registry?res=default_registry
   targetUrl: https://localhost:8443/oxides/authn
-
-gridOxides:
-  accessGroup: /vo.plgrid.pl/main/groups/plggoxides
-  applicationName: Bash shell
-#  applicationVersion: 4.1.2
-  jobPrefix: _OpenOxides__
-  resultsUrl: http://openoxides.icm.edu.pl/data/results.json
 
 server:
   port: 8443

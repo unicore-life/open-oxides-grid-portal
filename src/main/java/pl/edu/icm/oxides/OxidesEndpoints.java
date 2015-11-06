@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static pl.edu.icm.oxides.config.PortalConfig.QUANTUM_ESPRESSO_SUBMISSION_MAPPING;
+import static pl.edu.icm.oxides.config.PortalConfig.SCRIPT_SUBMISSION_MAPPING;
+import static pl.edu.icm.oxides.config.PortalConfig.SIMULATIONS_MAPPING;
 
 @Controller
 @SessionAttributes("authenticationSession")
@@ -68,7 +70,7 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelWelcomePage(authenticationSession);
     }
 
-    @RequestMapping(value = "/simulations", method = RequestMethod.GET)
+    @RequestMapping(value = SIMULATIONS_MAPPING, method = RequestMethod.GET)
     public ModelAndView simulationsPage() {
         return oxidesGridPortalPages.modelSimulationsPage(authenticationSession);
     }
@@ -90,9 +92,9 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelJsmolViewerPage(authenticationSession, simulationUuid, path);
     }
 
-    @RequestMapping(value = "/simulations/submit", method = RequestMethod.GET)
+    @RequestMapping(value = SCRIPT_SUBMISSION_MAPPING, method = RequestMethod.GET)
     public ModelAndView submitSimulationPage() {
-        return oxidesGridPortalPages.modelSubmitSimulationPage(authenticationSession);
+        return oxidesGridPortalPages.modelSubmitScriptSimulationPage(authenticationSession);
     }
 
     @RequestMapping(value = QUANTUM_ESPRESSO_SUBMISSION_MAPPING, method = RequestMethod.GET)
@@ -108,6 +110,16 @@ public class OxidesEndpoints {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String signOut(HttpSession session) {
         return oxidesGridPortalPages.signOutAndRedirect(session);
+    }
+
+    @RequestMapping(value = "/error/forbidden", method = RequestMethod.GET)
+    public ModelAndView errorForbidden(HttpSession session) {
+        return oxidesGridPortalPages.modelForbiddenErrorPage(session);
+    }
+
+    @RequestMapping(value = "/error/no-etd", method = RequestMethod.GET)
+    public ModelAndView errorNoTrustDelegation(HttpSession session) {
+        return oxidesGridPortalPages.modelNoTrustDelegationErrorPage(session);
     }
 
 

@@ -1,3 +1,6 @@
+gridOxides:
+  accessGroup: /vo.plgrid.pl/main/groups/plggoxides
+
 grid:
   identityConfig: grid-prod.properties
   idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web

@@ -42,5 +42,8 @@ public class PortalConfig {
         return threadPoolTaskExecutor;
     }
 
+    public static final String SIMULATIONS_MAPPING = "/simulations";
+
     public static final String QUANTUM_ESPRESSO_SUBMISSION_MAPPING = "/simulations/submit/qe";
+    public static final String SCRIPT_SUBMISSION_MAPPING = "/simulations/submit/script";
 }

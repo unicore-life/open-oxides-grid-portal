@@ -12,7 +12,7 @@ angular
                 simulationNodes: '',
                 simulationCPUs: '',
                 simulationReservation: '',
-                simulationProperty: ''
+                simulationProperty: 'westmere'
             };
             $scope.simulationScriptText = '';
             $scope.simulationUploadFilesList = [];
