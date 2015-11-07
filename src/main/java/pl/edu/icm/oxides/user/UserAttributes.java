@@ -1,7 +1,9 @@
 package pl.edu.icm.oxides.user;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 class UserAttributes {
     private String commonName;
@@ -9,6 +11,7 @@ class UserAttributes {
     private String custodianDN;
 
     private final Set<String> memberGroups = new TreeSet<>();
+    private final Map<String, String> others = new ConcurrentHashMap<>();
 
     UserAttributes() {
     }
@@ -27,6 +30,10 @@ class UserAttributes {
 
     Set<String> getMemberGroups() {
         return memberGroups;
+    }
+
+    String getAttribute(String key) {
+        return others.get(key);
     }
 
     @Override
@@ -50,6 +57,7 @@ class UserAttributes {
                 memberGroups.add(value);
                 break;
             default:
+                others.put(name, value);
         }
     }
 }

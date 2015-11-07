@@ -56,6 +56,10 @@ public class AuthenticationSession {
         attributes.store(key, value);
     }
 
+    public String getAttribute(String key) {
+        return attributes.getAttribute(key);
+    }
+
     public UserAttributes getAttributes() {
         return attributes;
     }

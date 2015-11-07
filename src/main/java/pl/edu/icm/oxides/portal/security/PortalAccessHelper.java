@@ -23,12 +23,23 @@ public class PortalAccessHelper {
         if (authenticationSession == null || authenticationSession.getTrustDelegations() == null) {
             return PAGE_UNAUTHORIZED;
         }
-        if (!authenticationSession.isGroupMember(oxidesConfig.getAccessGroup())) {
+        if (!isPageNotForbidden(authenticationSession)) {
             return PAGE_FORBIDDEN;
         }
         if (authenticationSession.getTrustDelegations().size() == 0) {
             return NO_TRUST_DELEGATION;
         }
         return VALID;
+    }
+
+    private boolean isPageNotForbidden(AuthenticationSession authenticationSession) {
+        if (authenticationSession.isGroupMember(oxidesConfig.getAccessGroup())) {
+            return true;
+        }
+
+        String name = authenticationSession.getCommonName();
+        String oxidesAttribute = authenticationSession.getAttribute("oxides");
+
+        return name != null && name.equals(oxidesAttribute);
     }
 }
