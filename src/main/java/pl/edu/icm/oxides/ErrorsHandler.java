@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.UnprocessableResponseException;
 
 import java.time.Instant;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @ControllerAdvice
 public class ErrorsHandler {
@@ -27,9 +27,11 @@ public class ErrorsHandler {
     }
 
     @ExceptionHandler(UnprocessableResponseException.class)
-    @ResponseBody
-    public ResponseEntity handleUnprocessableResponseException(UnprocessableResponseException ex) {
-        return createErrorResponse(UNPROCESSABLE_ENTITY, ex);
+    public ModelAndView handleUnprocessableResponseException(UnprocessableResponseException ex) {
+        ModelAndView modelAndView = new ModelAndView("errors/default");
+        modelAndView.addObject("commonName", "");
+        modelAndView.addObject("exceptionMessage", ex.getMessage());
+        return modelAndView;
     }
 
     private ResponseEntity createErrorResponse(HttpStatus httpStatus, Exception ex) {

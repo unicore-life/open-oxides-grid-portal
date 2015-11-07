@@ -68,7 +68,7 @@ class SamlResponseHandler {
         );
         etdAssertionsWrapper.getAttributeData().getAttributes().forEach(
                 (attributeKey, attributeValues) -> {
-                    attributeValues.stream()
+                    attributeValues
                             .forEach(value -> authenticationSession.storeAttribute(attributeKey, value));
                 }
         );
