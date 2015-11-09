@@ -1,5 +1,5 @@
 gridOxides:
-  accessGroup: /vo.plgrid.pl/main/groups/plggoxides
+  accessGroup: /vo.plgrid.pl/groups/plggoxides
 
 grid:
   identityConfig: grid-prod.properties
