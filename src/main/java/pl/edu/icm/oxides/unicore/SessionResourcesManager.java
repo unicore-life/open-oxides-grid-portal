@@ -57,7 +57,7 @@ public class SessionResourcesManager {
             StorageFactoryClient storageFactoryClient = new StorageFactoryClient(
                     unicoreFactoryStorageEntity.getEpr(), clientConfiguration
             );
-            return storageFactoryClient.createSMS(calculateFactoryStorageLifetime());
+            return storageFactoryClient.createSMS(null, FACTORY_STORAGE_NAME, calculateFactoryStorageLifetime());
         } catch (Exception e) {
             log.error(String.format("Problem with storage factory client creation: <%s>",
                     unicoreFactoryStorageEntity.getEpr()), e);
@@ -75,4 +75,5 @@ public class SessionResourcesManager {
     private Log log = LogFactory.getLog(SessionResourcesManager.class);
 
     private static final int STORAGE_LIFETIME_IN_SECONDS = 24 * 60 * 60;
+    private static final String FACTORY_STORAGE_NAME = "Open Oxides";
 }

@@ -36,7 +36,8 @@ public class PortalAccessHelper {
         if (authenticationSession.isGroupMember(oxidesConfig.getAccessGroup())) {
             return true;
         }
-
+        // Workaround for old Unity IDM version:
+        //
         String name = authenticationSession.getCommonName();
         String oxidesAttribute = authenticationSession.getAttribute("oxides");
 
