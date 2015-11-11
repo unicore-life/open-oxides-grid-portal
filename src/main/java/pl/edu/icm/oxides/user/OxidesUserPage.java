@@ -2,17 +2,34 @@ package pl.edu.icm.oxides.user;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
+import pl.edu.icm.oxides.portal.security.OxidesForbiddenException;
+import pl.edu.icm.oxides.portal.security.PortalAccessHelper;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static pl.edu.icm.oxides.portal.security.PortalAccess.VALID;
+
 @Service
 public class OxidesUserPage {
+    private final PortalAccessHelper accessHelper;
+
+    @Autowired
+    public OxidesUserPage(PortalAccessHelper accessHelper) {
+        this.accessHelper = accessHelper;
+    }
+
     public ModelAndView modelPreferencesPage(Optional<AuthenticationSession> authenticationSession) {
+        if (authenticationSession.isPresent() &&
+                accessHelper.determineSessionAccess(authenticationSession.get()) != VALID) {
+            throw new OxidesForbiddenException("You should be signed in first!");
+        }
+
         ModelAndView modelAndView = new ModelAndView("preferences");
         modelAndView.addObject("commonName",
                 authenticationSession

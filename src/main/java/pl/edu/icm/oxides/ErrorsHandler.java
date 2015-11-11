@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.authn.UnprocessableResponseException;
+import pl.edu.icm.oxides.portal.security.OxidesForbiddenException;
 
 import java.time.Instant;
 
@@ -26,8 +27,8 @@ public class ErrorsHandler {
         return createErrorResponse(INTERNAL_SERVER_ERROR, ex);
     }
 
-    @ExceptionHandler(UnprocessableResponseException.class)
-    public ModelAndView handleUnprocessableResponseException(UnprocessableResponseException ex) {
+    @ExceptionHandler({UnprocessableResponseException.class, OxidesForbiddenException.class})
+    public ModelAndView handleUnprocessableResponseException(RuntimeException ex) {
         ModelAndView modelAndView = new ModelAndView("errors/default");
         modelAndView.addObject("commonName", "");
         modelAndView.addObject("exceptionMessage", ex.getMessage());
