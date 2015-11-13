@@ -98,7 +98,7 @@ public class UnicoreBroker {
                 String simulationScript = null;
                 try {
                     simulationScript = FileResourceLoader.getResourceString(
-                            resourceLoader.getResource("classpath:templates/quantum-espresso-script.sh")
+                            resourceLoader.getResource("classpath:quantum-espresso-script.sh")
                     );
                 } catch (IOException e) {
                     log.error("Problem with getting resource!", e);

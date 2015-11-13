@@ -34,7 +34,7 @@ class OpenOxidesResults {
         return resultOxides;
     }
 
-    @Scheduled(fixedDelay = HALF_AN_HOUR_IN_MILLIS)
+    @Scheduled(fixedDelay = SIX_HOURS_IN_MILLIS)
     public void updateOpenOxidesResults() {
         String resultsUrl = gridOxidesConfig.getResultsUrl();
         Objects.nonNull(resultsUrl);
@@ -54,5 +54,5 @@ class OpenOxidesResults {
 
     private Log log = LogFactory.getLog(OpenOxidesResults.class);
 
-    private static final long HALF_AN_HOUR_IN_MILLIS = 30L * 60L * 1000L;
+    private static final long SIX_HOURS_IN_MILLIS = 6L * 60L * 60L * 1000L;
 }
