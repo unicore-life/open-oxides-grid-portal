@@ -26,7 +26,7 @@ public class PortalAccessHelper {
         if (!isPageNotForbidden(authenticationSession)) {
             return PAGE_FORBIDDEN;
         }
-        if (authenticationSession.getTrustDelegations().size() == 0) {
+        if (authenticationSession.getTrustDelegations().isEmpty()) {
             return NO_TRUST_DELEGATION;
         }
         return VALID;
