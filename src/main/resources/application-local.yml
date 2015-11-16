@@ -1,0 +1,16 @@
+openOxides:
+  groupName: /vo.plgrid.pl
+
+grid:
+  identityConfig: grid-local.properties
+  idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
+  registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
+  targetUrl: https://localhost:8443/oxides/authn
+
+server:
+  port: 8443
+  ssl:
+    keyStore: classpath:keystores/sample.jks
+    keyStorePassword: secret
+    keyPassword: password
+#    clientAuth: NEED

@@ -55,6 +55,19 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 
+applicationDistribution.from('src/main/resources') {
+    into 'conf'
+    include 'application-prod.yml'
+    include 'grid-prod.properties'
+    rename '(.+)-prod.(.+)', '$1.$2'
+}
+
+bootRun {
+    systemProperties = [
+            'spring.profiles.active': 'local'
+    ]
+}
+
 node {
     version = '4.1.2'
     download = true
