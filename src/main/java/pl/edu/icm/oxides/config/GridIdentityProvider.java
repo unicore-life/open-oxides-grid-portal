@@ -6,6 +6,7 @@ import eu.unicore.security.canl.TrustedIssuersProperties;
 import eu.unicore.util.httpclient.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class GridIdentityProvider {
 
     @Autowired
     public GridIdentityProvider(GridConfig gridConfig) throws IOException {
-        Resource resource = new ClassPathResource(gridConfig.getIdentityConfig());
+        Resource resource = prepareResource(gridConfig);
         Properties gridIdentityProperties = PropertiesLoaderUtils.loadProperties(resource);
 
         ClientProperties clientProperties = new ClientProperties(gridIdentityProperties);
@@ -44,5 +45,16 @@ public class GridIdentityProvider {
 
     public X509CertChainValidatorExt getIdpValidator() {
         return idpValidator;
+    }
+
+    private Resource prepareResource(GridConfig gridConfig) {
+        String identityConfig = gridConfig.getIdentityConfig();
+        if (identityConfig.startsWith("classpath:")) {
+            int prefixOffset = "classpath:".length();
+            return new ClassPathResource(identityConfig.substring(prefixOffset));
+        } else {
+            int prefixOffset = identityConfig.startsWith("file:") ? "file:".length() : 0;
+            return new FileSystemResource(identityConfig.substring(prefixOffset));
+        }
     }
 }
