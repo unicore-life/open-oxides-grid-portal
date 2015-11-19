@@ -45,6 +45,7 @@ class SamlResponseHandler {
             ResponseDocument responseDocument = decodeResponse(samlResponse);
             validateSamlResponse(responseDocument, authenticationSession.getUuid());
 
+            log.debug("Response document: " + responseDocument.xmlText());
             EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
             if (authenticationSession != null) {
                 processAuthenticationResponseData(authenticationSession, etdAssertionsWrapper);

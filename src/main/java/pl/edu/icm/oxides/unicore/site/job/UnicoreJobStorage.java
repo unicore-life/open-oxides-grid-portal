@@ -99,6 +99,10 @@ class UnicoreJobStorage {
 
         String extension = null;
         if (!isDirectory) {
+            int lastIndexOfSlash = filePath.lastIndexOf('/');
+            int lastIndexOfPeriod = filePath.lastIndexOf('.');
+            log.info("processing file path: " + filePath + ", / - " + lastIndexOfSlash + ", . - " + lastIndexOfPeriod);
+
             String filename = Paths.get(filePath)
                     .getFileName()
                     .toString();

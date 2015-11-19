@@ -39,7 +39,7 @@ public class CachingResourcesManager {
     private void executeUserResourcesCacheInitialization(TrustDelegation trustDelegation) {
         taskExecutor.execute(() -> {
             String custodianDN = trustDelegation.getCustodianDN();
-            log.info("Staring caching resources calls for user <" + custodianDN + ">");
+            log.info("Starting caching resources calls for user <" + custodianDN + ">");
 
             jobHandler.retrieveSiteResourceList(trustDelegation);
 

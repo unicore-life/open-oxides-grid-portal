@@ -15,6 +15,6 @@ multipart:
 #spring.resources.add-mappings: false
 
 logging.level.: INFO
-logging.level.org.apache.cxf: FATAL
+logging.level.org.apache.cxf.service.factory.ReflectionServiceFactoryBean: FATAL
 logging.level.pl.edu.icm.oxides: DEBUG
 logging.level.pl.edu.icm.oxides.unicore.site.job: TRACE
