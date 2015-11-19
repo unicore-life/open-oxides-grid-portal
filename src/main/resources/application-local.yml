@@ -1,6 +1,3 @@
-openOxides:
-  groupName: /vo.plgrid.pl
-
 grid:
   identityConfig: classpath:grid-local.properties
   idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
