@@ -2,7 +2,7 @@ openOxides:
   accessGroup: /vo.plgrid.pl/groups/plggoxides
 
 grid:
-  identityConfig: grid-prod.properties
+  identityConfig: config/grid.properties
   idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web
   registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
   targetUrl: https://oxides.grid.icm.edu.pl/oxides/authn
