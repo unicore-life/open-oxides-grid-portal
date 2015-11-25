@@ -61,7 +61,6 @@ public class SessionResourcesManager {
         } catch (Exception e) {
             log.error(String.format("Problem with storage factory client creation: <%s>",
                     unicoreFactoryStorageEntity.getEpr()), e);
-            // TODO: should be used RuntimeException?
             return null;
         }
     }

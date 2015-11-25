@@ -34,7 +34,7 @@ public class UnicoreJobEntity implements Serializable {
     }
 
     public String getUuid() {
-        // FIXME: remove it - redundant with uri
+        // FIXME: remove it after frontend fixes - redundant with uri
         return uri.substring(uri.length() - 36);
     }
 

@@ -59,8 +59,6 @@ class UnicoreJobOperations {
         }
     }
 
-    // TODO: clean it up
-    //    @CacheEvict(value = "unicoreSessionJobList", key = "#trustDelegation.custodianDN")
     public void destroyJob(EndpointReferenceType epr, TrustDelegation trustDelegation) {
         taskExecutor.execute(() -> {
             try {

@@ -102,8 +102,6 @@ public class UnicoreBroker {
                     );
                 } catch (IOException e) {
                     log.error("Problem with getting resource!", e);
-
-//                    TODO: handle this with exception?
                 }
                 prepareScriptInputOnStorage(storageClient, simulationScript, simulationScriptName);
 
@@ -211,7 +209,6 @@ public class UnicoreBroker {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error(String.format("Error retrieving Service Orchestrator from UNICORE Registry <%s>!", registryUrl), e);
-            // TODO: should be used RuntimeException?
             throw new UnavailableBrokerException(e);
         }
     }

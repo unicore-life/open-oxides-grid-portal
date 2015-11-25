@@ -53,12 +53,10 @@ public class UnicoreJob {
     public void destroySiteResource(UUID simulationUuid, TrustDelegation trustDelegation) {
         Optional<EndpointReferenceType> resourceEpr = getResourceEpr(simulationUuid, trustDelegation);
         if (!resourceEpr.isPresent()) {
-            // TODO: think about exception
             log.warn("Could not found simulation: " + simulationUuid);
         }
         resourceEpr
                 .ifPresent(epr -> {
-                    // TODO: clean it up
                     List<EndpointReferenceType> eprList = unicoreJobsListing.retrieveSiteResourceList(trustDelegation);
                     List<EndpointReferenceType> result = new ArrayList<>();
                     for (EndpointReferenceType cachedEpr : eprList) {

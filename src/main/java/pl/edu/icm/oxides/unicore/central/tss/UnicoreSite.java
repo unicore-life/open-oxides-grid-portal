@@ -45,7 +45,6 @@ public class UnicoreSite {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error(String.format("Error retrieving Target System from UNICORE Registry <%s>!", registryUrl), e);
-            // TODO: should be used RuntimeException?
             throw new UnavailableSiteException(e);
         }
     }
