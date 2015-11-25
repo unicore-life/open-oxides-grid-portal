@@ -15,16 +15,16 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.4.7",
+    "angular": "~1.4.8",
     "angular-bootstrap": "~0.14.0",
     "angular-feeds": "~0.0.4",
     "angular-file-upload": "~2.1.4",
     "angular-spinkit": "~0.3.3",
-    "angularjs-toaster": "~0.4.15",
-    "bootstrap": "~3.3.5"
+    "angularjs-toaster": "~0.4.16",
+    "bootstrap": "~3.3.6"
   },
   "resolutions": {
-    "angular": "1.4.7",
-    "bootstrap": "3.3.5"
+    "angular": "1.4.8",
+    "bootstrap": "3.3.6"
   }
 }
