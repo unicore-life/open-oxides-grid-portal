@@ -1,6 +1,5 @@
 package pl.edu.icm.oxides.unicore.site.job;
 
-import de.fzj.unicore.uas.client.TSFClient;
 import de.fzj.unicore.uas.client.TSSClient;
 import eu.unicore.security.etd.TrustDelegation;
 import eu.unicore.util.httpclient.IClientConfiguration;
@@ -13,11 +12,12 @@ import org.springframework.stereotype.Component;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.central.tss.UnicoreSite;
-import pl.edu.icm.oxides.unicore.central.tss.UnicoreSiteEntity;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static pl.edu.icm.oxides.unicore.site.ProcessingHelper.toAccessibleTargetSystems;
 
 @Component
 class UnicoreJobsListing {
@@ -51,19 +51,6 @@ class UnicoreJobsListing {
                 .getCache("unicoreSessionJobList")
                 .put(trustDelegation.getCustodianDN(), eprs);
     }
-
-    private List<EndpointReferenceType> toAccessibleTargetSystems(UnicoreSiteEntity unicoreSiteEntity,
-                                                                  IClientConfiguration clientConfiguration) {
-        try {
-            return new TSFClient(unicoreSiteEntity.getEpr(), clientConfiguration)
-                    .getAccessibleTargetSystems();
-        } catch (Exception e) {
-            log.warn(String.format("Could not get accessible target systems from site <%s>!",
-                    unicoreSiteEntity.getUri()), e);
-        }
-        return null;
-    }
-
 
     private List<EndpointReferenceType> toTargetSystemJobList(EndpointReferenceType targetSystemEpr,
                                                               IClientConfiguration clientConfiguration) {
