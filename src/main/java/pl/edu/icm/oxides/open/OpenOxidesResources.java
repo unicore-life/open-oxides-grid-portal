@@ -38,7 +38,7 @@ public class OpenOxidesResources {
         this.openOxidesResults = openOxidesResults;
 
         responseHeaders = new HttpHeaders();
-        responseHeaders.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        responseHeaders.setAccessControlAllowOrigin("*");
     }
 
     public List<Oxide> getOpenOxidesResults() {
@@ -74,6 +74,4 @@ public class OpenOxidesResources {
     }
 
     private Log log = LogFactory.getLog(OpenOxidesResources.class);
-
-    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 }

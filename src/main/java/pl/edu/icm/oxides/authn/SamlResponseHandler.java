@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -61,12 +62,17 @@ class SamlResponseHandler {
 
     private void processAuthenticationResponseData(AuthenticationSession authenticationSession,
                                                    EtdAssertionsWrapper etdAssertionsWrapper) {
-        authenticationSession.setTrustDelegations(
-                etdAssertionsWrapper.getEtdAssertions().stream()
-                        .map(this::toTrustDelegation)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList())
-        );
+        List<TrustDelegation> trustDelegationList = etdAssertionsWrapper
+                .getEtdAssertions()
+                .stream()
+                .map(this::toTrustDelegation)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (trustDelegationList.isEmpty()) {
+            throw new RuntimeException("Missing trust delegation data!");
+        }
+
+        authenticationSession.setTrustDelegations(trustDelegationList);
         etdAssertionsWrapper.getAttributeData().getAttributes().forEach(
                 (attributeKey, attributeValues) -> {
                     attributeValues
