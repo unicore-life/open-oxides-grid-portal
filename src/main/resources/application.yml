@@ -12,6 +12,14 @@ multipart:
   maxFileSize: 16MB
   maxRequestSize: 64MB
 
+server.session.cookie:
+  http-only: true
+  secure: true
+
+#FIXME
+#spring.mvc.dispatch-trace-request: false
+#management.trace.include: request-headers,response-headers,errors
+
 #spring.resources.add-mappings: false
 
 logging.level.: INFO

@@ -9,11 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.context.request.RequestContextListener;
 
 @Configuration
 @EnableCaching
-public class PortalConfig {
+@EnableWebSecurity
+public class PortalConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(RequestContextListener.class)
     public RequestContextListener requestContextListener() {
@@ -38,8 +42,12 @@ public class PortalConfig {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(4);
         threadPoolTaskExecutor.setMaxPoolSize(32);
-//        threadPoolTaskExecutor.setQueueCapacity();
         return threadPoolTaskExecutor;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().deny();
     }
 
     public static final String SIMULATIONS_MAPPING = "/simulations";

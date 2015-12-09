@@ -19,6 +19,8 @@ apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 
 dependencies {
+    def springSecurityVersion = '4.0.3.RELEASE'
+
     compile 'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-undertow',
             'org.springframework.boot:spring-boot-starter-web',
@@ -27,6 +29,8 @@ dependencies {
 
             'org.apache.commons:commons-lang3:3.4',
             'org.springframework:spring-context-support:4.2.3.RELEASE',
+            "org.springframework.security:spring-security-config:${springSecurityVersion}",
+            "org.springframework.security:spring-security-web:${springSecurityVersion}",
             'net.sf.ehcache:ehcache:2.10.0',
 
             'eu.unicore.workflow:common:2.8.1',
