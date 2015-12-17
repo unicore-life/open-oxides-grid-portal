@@ -1,6 +1,5 @@
 package pl.edu.icm.oxides.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -9,16 +8,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 @EnableCaching
-public class PortalConfig {
-    @Bean
-    @ConditionalOnMissingBean(RequestContextListener.class)
-    public RequestContextListener requestContextListener() {
-        return new RequestContextListener();
-    }
+@EnableWebMvc
+@EnableWebSecurity
+public class PortalConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public CacheManager cacheManager() {
@@ -38,8 +37,14 @@ public class PortalConfig {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(4);
         threadPoolTaskExecutor.setMaxPoolSize(32);
-//        threadPoolTaskExecutor.setQueueCapacity();
         return threadPoolTaskExecutor;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+                .addResourceHandler("/**")
+                .addResourceLocations("classpath:/public/");
     }
 
     public static final String SIMULATIONS_MAPPING = "/simulations";

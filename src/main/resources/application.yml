@@ -12,9 +12,22 @@ multipart:
   maxFileSize: 16MB
   maxRequestSize: 64MB
 
-#spring.resources.add-mappings: false
+security.basic.enabled: false
+
+server.session.cookie:
+  http-only: true
+  secure: true
+
+spring:
+  mvc.dispatch-trace-request: true
+#  resources.add-mappings: true
+  thymeleaf.cache: false
+
+security.enable-csrf: true
 
 logging.level.: INFO
 logging.level.org.apache.cxf.service.factory.ReflectionServiceFactoryBean: FATAL
+logging.level.org.springframework.security: TRACE
+logging.level.org.springframework.web: TRACE
 logging.level.pl.edu.icm.oxides: DEBUG
 logging.level.pl.edu.icm.oxides.unicore.site.job: TRACE

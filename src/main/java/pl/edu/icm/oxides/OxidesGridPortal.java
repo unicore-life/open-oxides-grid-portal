@@ -11,8 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class OxidesGridPortal {
 
     public static void main(String[] args) throws Exception {
-        SpringApplication application = new SpringApplication(OxidesGridPortal.class);
-        application.setShowBanner(false);
-        application.run(args);
+        SpringApplication.run(OxidesGridPortal.class, args);
     }
 }

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+
 @Component
 class UnicoreJobStorage {
     private final UnicoreJobOperations unicoreJobOperations;
@@ -84,6 +86,7 @@ class UnicoreJobStorage {
         });
 
         try {
+            response.addHeader(CONTENT_DISPOSITION, "attachment");
             response.flushBuffer();
         } catch (IOException e) {
             log.error("problem with buffer flush", e);

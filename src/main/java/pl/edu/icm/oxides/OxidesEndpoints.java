@@ -61,6 +61,14 @@ public class OxidesEndpoints {
     }
 
 
+    @RequestMapping(value = "/qq", method = RequestMethod.POST)
+    @ResponseBody
+    public Oxide qq(HttpServletRequest request) {
+        logSessionData("POST-Q", request.getSession(), authenticationSession);
+        return new Oxide("a", "b", "c");
+    }
+
+
     /*
         MVC ENDPOINTS:
     ==========================================================================================================
@@ -226,7 +234,7 @@ public class OxidesEndpoints {
             AUTHENTICATION ENDPOINTS:
     ==========================================================================================================
      */
-    @RequestMapping(value = "/oxides/authn", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public void performAuthenticationRequest(@RequestParam(value = "returnUrl", required = false) String returnUrl,
                                              HttpSession session,
                                              HttpServletResponse response) {

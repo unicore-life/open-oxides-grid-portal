@@ -5,6 +5,8 @@ angular
     ['$http', function ($http) {
         return {
             submitSimulation: function (oxidesSimulationJson) {
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
                 var request = {
                     method: 'POST',
                     url: '/unicore/submit/qe',
@@ -13,6 +15,8 @@ angular
                     },
                     data: oxidesSimulationJson
                 };
+                $http.defaults.headers.common[header] = token;
+                console.log(request);
                 return $http(request);
             }
         };
