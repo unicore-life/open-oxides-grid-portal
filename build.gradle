@@ -24,9 +24,7 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
-//            'org.springframework.boot:spring-boot-starter-actuator',
 
-//            'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.0.BETA01',
             'org.apache.commons:commons-lang3:3.4',
             'org.springframework:spring-context-support:4.2.3.RELEASE',
             'net.sf.ehcache:ehcache:2.10.0',

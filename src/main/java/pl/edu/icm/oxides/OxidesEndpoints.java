@@ -107,7 +107,7 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelPreferencesPage(authenticationSession);
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public String signOut(HttpSession session) {
         return oxidesGridPortalPages.signOutAndRedirect(session);
     }
