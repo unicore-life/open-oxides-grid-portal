@@ -61,14 +61,6 @@ public class OxidesEndpoints {
     }
 
 
-    @RequestMapping(value = "/qq", method = RequestMethod.POST)
-    @ResponseBody
-    public Oxide qq(HttpServletRequest request) {
-        logSessionData("POST-Q", request.getSession(), authenticationSession);
-        return new Oxide("a", "b", "c");
-    }
-
-
     /*
         MVC ENDPOINTS:
     ==========================================================================================================
@@ -238,6 +230,7 @@ public class OxidesEndpoints {
     public void performAuthenticationRequest(@RequestParam(value = "returnUrl", required = false) String returnUrl,
                                              HttpSession session,
                                              HttpServletResponse response) {
+        regenerateSessionToAvoidSessionFixationAfterSignedIn(session);
         if (authenticationSession.getReturnUrl() == null && returnUrl != null) {
             authenticationSession.setReturnUrl(returnUrl);
         }
@@ -263,6 +256,10 @@ public class OxidesEndpoints {
             HELPER METHOD:
     ==========================================================================================================
      */
+    private void regenerateSessionToAvoidSessionFixationAfterSignedIn(HttpSession session) {
+        session.invalidate();
+    }
+
     private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
         log.info(String.format("%10s: %s", logPrefix, session.getId()));
         log.info(String.format("%10s: %s", logPrefix, authnSession));

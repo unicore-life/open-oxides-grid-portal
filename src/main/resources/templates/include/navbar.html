@@ -49,9 +49,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="/preferences">Details</a></li>
                             <li role="separator" class="divider"></li>
-                            <li>
-                                <a href="/logout">Sign out</a>
-                            </li>
+                            <li><a href="#" data-toggle="modal" data-target=".bs-example-modal-sm">Sign out</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -62,6 +60,25 @@
     <!-- /.container-fluid -->
 
     <toaster-container></toaster-container>
+
+    <div class="modal bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">x</button>
+                    <h4>Signing out... <i class="fa fa-lock"></i></h4>
+                </div>
+                <div class="modal-body">
+                    <i class="fa fa-question-circle"></i> Are you sure you want to leave?
+                </div>
+                <div class="modal-footer">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-primary">Sign out</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </nav>
 
 </body>

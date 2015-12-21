@@ -32,12 +32,20 @@ dependencies {
             'net.sf.ehcache:ehcache:2.10.0',
 
             'eu.unicore.workflow:common:2.8.1',
-            'eu.unicore:uas-client:1.9.2'
+//            'eu.unicore:uas-client:1.9.2'
+            files('securityLibrary-4.1.5.20151218.jar')
+
+    compile('eu.unicore:uas-client:1.9.2') {
+        exclude group: 'eu.unicore.security', module: 'securityLibrary'
+    }
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-spring:1.0-groovy-2.4',
             'org.apache.httpcomponents:httpclient'
 }
+
+// FIXME: workaround until security library is fixed
+distZip { excludes = ["**/securityLibrary-4.1.5.jar"] }
 
 configurations {
     all*.exclude module: 'javax.servlet'
@@ -57,7 +65,9 @@ targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
-applicationDefaultJvmArgs = ['-Dspring.profiles.active=local']
+run {
+    jvmArgs = ['-Dspring.profiles.active=local']
+}
 
 applicationDistribution.from('src/main/resources') {
     into 'config'

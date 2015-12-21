@@ -34,8 +34,7 @@ class OxidesSimulationsPage {
         if (portalAccess == VALID) {
             return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl(SIMULATIONS_MAPPING);
-        return redirectModelAndView(portalAccess);
+        return redirectModelAndView(portalAccess, SIMULATIONS_MAPPING);
     }
 
     ModelAndView modelOneSimulationViewerPage(AuthenticationSession authenticationSession,
@@ -50,8 +49,7 @@ class OxidesSimulationsPage {
             modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
             return modelAndView;
         }
-        authenticationSession.setReturnUrl(String.format("/simulations/%s/files", simulationUuid));
-        return redirectModelAndView(portalAccess);
+        return redirectModelAndView(portalAccess, String.format("/simulations/%s/files", simulationUuid));
     }
 
     ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession, UUID simulationUuid) {
@@ -64,8 +62,7 @@ class OxidesSimulationsPage {
             ));
             return modelAndView;
         }
-        authenticationSession.setReturnUrl(String.format("/simulations/%s/details", simulationUuid));
-        return redirectModelAndView(portalAccess);
+        return redirectModelAndView(portalAccess, String.format("/simulations/%s/details", simulationUuid));
     }
 
     ModelAndView modelSubmitScriptSimulationPage(AuthenticationSession authenticationSession) {
@@ -73,8 +70,7 @@ class OxidesSimulationsPage {
         if (portalAccess == VALID) {
             return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl(SCRIPT_SUBMISSION_MAPPING);
-        return redirectModelAndView(portalAccess);
+        return redirectModelAndView(portalAccess, SCRIPT_SUBMISSION_MAPPING);
     }
 
     ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
@@ -82,8 +78,7 @@ class OxidesSimulationsPage {
         if (portalAccess == VALID) {
             return prepareBasicModelAndView("simulations/submit-qe", ofNullable(authenticationSession));
         }
-        authenticationSession.setReturnUrl(QUANTUM_ESPRESSO_SUBMISSION_MAPPING);
-        return redirectModelAndView(portalAccess);
+        return redirectModelAndView(portalAccess, QUANTUM_ESPRESSO_SUBMISSION_MAPPING);
     }
 
     private ModelAndView prepareBasicModelAndView(String htmlTemplateName,
@@ -97,10 +92,10 @@ class OxidesSimulationsPage {
         return modelAndView;
     }
 
-    private ModelAndView redirectModelAndView(PortalAccess portalAccess) {
+    private ModelAndView redirectModelAndView(PortalAccess portalAccess, String returnUrl) {
         switch (portalAccess) {
             case PAGE_UNAUTHORIZED:
-                return new ModelAndView("redirect:/oxides/authn");
+                return new ModelAndView("redirect:/login?returnUrl=" + returnUrl);
             case PAGE_FORBIDDEN:
                 return new ModelAndView("redirect:/error/forbidden");
             case NO_TRUST_DELEGATION:

@@ -76,6 +76,7 @@ class UnicoreJobStorage {
 
         path.ifPresent(filePath -> {
             storageClient.ifPresent(sms -> {
+                avoidXssFromStoredFileByContentDispositionHeader(filePath, response);
                 try {
                     sms.getImport(filePath, ProtocolType.BFT, ProtocolType.RBYTEIO)
                             .readAllData(response.getOutputStream());
@@ -86,11 +87,17 @@ class UnicoreJobStorage {
         });
 
         try {
-            response.addHeader(CONTENT_DISPOSITION, "attachment");
             response.flushBuffer();
         } catch (IOException e) {
             log.error("problem with buffer flush", e);
         }
+    }
+
+    private void avoidXssFromStoredFileByContentDispositionHeader(String filePath, HttpServletResponse response) {
+        String filename = Paths.get(filePath)
+                .getFileName()
+                .toString();
+        response.addHeader(CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
     }
 
     private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {

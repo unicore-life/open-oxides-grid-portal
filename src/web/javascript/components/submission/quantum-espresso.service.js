@@ -16,7 +16,6 @@ angular
                     data: oxidesSimulationJson
                 };
                 $http.defaults.headers.common[header] = token;
-                console.log(request);
                 return $http(request);
             }
         };

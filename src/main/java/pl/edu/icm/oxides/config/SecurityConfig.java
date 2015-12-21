@@ -17,23 +17,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/assets/*");
+        web
+                .ignoring()
+                .antMatchers("/assets/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        protectFromClickjacking(http);
+
         http
-                .headers().frameOptions().deny()
-                .and()
-                .csrf().requireCsrfProtectionMatcher(csrfRequestMatcher)
-                .and()
+                .csrf()
+                .requireCsrfProtectionMatcher(csrfRequestMatcher);
+
+        http
+                .sessionManagement()
+                .sessionFixation()
+                .newSession();
+
+        http
                 .authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll()
-                .and()
-                .logout().permitAll();
+                .loginPage("/login").permitAll();
+
 //        .authorizeRequests()
 //                .antMatchers("/", "/home").permitAll()
 //                .anyRequest().authenticated()
@@ -42,6 +50,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .loginPage("/login").permitAll()
 //                .and()
 //                .logout().permitAll();
+        http
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
+    }
+
+    private void protectFromClickjacking(HttpSecurity http) throws Exception {
+        http
+                .headers()
+                .frameOptions()
+                .deny();
     }
 
     private RequestMatcher csrfRequestMatcher = new RequestMatcher() {
