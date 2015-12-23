@@ -19,7 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/assets/**");
+                .antMatchers("/assets/**")
+                .antMatchers("/fonts/**")
+                .antMatchers("/img/**")
+                .antMatchers("/favicon.ico");
     }
 
     @Override
@@ -42,14 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login").permitAll();
 
-//        .authorizeRequests()
-//                .antMatchers("/", "/home").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .loginPage("/login").permitAll()
-//                .and()
-//                .logout().permitAll();
         http
                 .logout()
                 .logoutUrl("/logout")

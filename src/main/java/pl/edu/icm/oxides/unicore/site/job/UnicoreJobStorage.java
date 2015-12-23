@@ -97,7 +97,9 @@ class UnicoreJobStorage {
         String filename = Paths.get(filePath)
                 .getFileName()
                 .toString();
-        response.addHeader(CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        String filenameWithRemovedNonPrintableChars = filename
+                .replaceAll("[\\p{C}\\p{Z}]", "");
+        response.addHeader(CONTENT_DISPOSITION, "attachment; filename=\"" + filenameWithRemovedNonPrintableChars + "\"");
     }
 
     private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {

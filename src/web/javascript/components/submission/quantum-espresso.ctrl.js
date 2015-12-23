@@ -95,6 +95,7 @@ angular
                     url: '/unicore/upload',
                     alias: 'uploadFile',
                     headers: {
+                        // FIXME: the name of header should be also read from meta
                         'X-CSRF-TOKEN': $("meta[name='_csrf']").attr("content")
                     },
                     queueLimit: 1,
