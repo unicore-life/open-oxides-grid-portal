@@ -26,9 +26,8 @@ spring:
   thymeleaf.cache: false
 
 logging.level.: INFO
-logging.level.org.apache.cxf.service.factory.ReflectionServiceFactoryBean: FATAL
-logging.level.org.apache.http: TRACE
-logging.level.org.springframework.security: TRACE
-logging.level.org.springframework.web: TRACE
-logging.level.pl.edu.icm.oxides: DEBUG
-logging.level.pl.edu.icm.oxides.unicore.site.job: TRACE
+logging.level:
+  org.apache.cxf.service.factory.ReflectionServiceFactoryBean: FATAL
+  org.springframework.security: DEBUG
+  pl.edu.icm.oxides: DEBUG
+  pl.edu.icm.oxides.unicore.site.job: TRACE

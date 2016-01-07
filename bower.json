@@ -1,11 +1,11 @@
 {
-  "name": "open-oxides-grid-portal",
+  "name": "oxides-grid-portal",
   "version": "0.0.1",
   "homepage": "https://github.com/unicore-life/open-oxides-grid-portal",
   "authors": [
     "Rafal Kluszczynski"
   ],
-  "description": "Open Oxides PLGrid Portal",
+  "description": "Oxides PLGrid Portal",
   "license": "MIT",
   "ignore": [
     "**/.*",

@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static eu.unicore.samly2.trust.DsigSamlTrustCheckerBase.CheckingMode.REQUIRE_SIGNED_RESPONSE_OR_ASSERTION;
+
 @Component
 class SamlResponseHandler {
     private final GridConfig gridConfig;
@@ -99,7 +101,7 @@ class SamlResponseHandler {
             throws URISyntaxException, SAMLValidationException {
         SamlTrustChecker trustChecker = new TruststoreBasedSamlTrustChecker(
                 idProvider.getIdpValidator(),
-                false
+                REQUIRE_SIGNED_RESPONSE_OR_ASSERTION
         );
         SSOAuthnResponseValidator validator = new SSOAuthnResponseValidator(
                 idProvider.getGridCredential().getSubjectName(),
