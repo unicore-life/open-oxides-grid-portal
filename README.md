@@ -2,13 +2,16 @@
 
 [![Build Status](https://travis-ci.org/unicore-life/oxides-grid-portal.svg?branch=master)](https://travis-ci.org/unicore-life/oxides-grid-portal)
 
-[![Stories in Ready](https://badge.waffle.io/unicore-life/open-oxides-grid-portal.png?label=ready&title=Ready)](https://waffle.io/unicore-life/open-oxides-grid-portal)
+[![Stories in Ready](https://badge.waffle.io/unicore-life/oxides-grid-portal.png?label=ready&title=Ready)](https://waffle.io/unicore-life/oxides-grid-portal)
 
 
 ## Running service on production environment:
 
+Enter service directory (because of `identityConfig` property) and run start script:
+
 ```bash
-JAVA_OPTS="-Dspring.profiles.active=prod" ./oxides-grid-portal-1.1.0-SNAPSHOT/bin/oxides-grid-portal
+cd oxides-grid-portal-*
+./bin/oxides-grid-portal
 ```
 
 
