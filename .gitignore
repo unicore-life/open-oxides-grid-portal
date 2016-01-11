@@ -1,7 +1,3 @@
-# FIXME: workaround for security library
-!securityLibrary-4.1.5.20151218.jar
-!securityLibrary-4.2.2.20160105.jar
-
 .DS_Store
 build/
 bower_components/

@@ -29,21 +29,13 @@ dependencies {
             'org.springframework:spring-context-support:4.2.4.RELEASE',
             'net.sf.ehcache:ehcache:2.10.1',
 
-            'eu.unicore.workflow:common:2.8.1',
-//            'eu.unicore:uas-client:1.9.4'
-            files('securityLibrary-4.2.2.20160105.jar')
-
-    compile('eu.unicore:uas-client:1.9.4') {
-        exclude group: 'eu.unicore.security', module: 'securityLibrary'
-    }
+            'eu.unicore.workflow:common:2.8.2',
+            'eu.unicore:uas-client:1.9.5-SNAPSHOT'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-spring:1.0-groovy-2.4',
             'org.apache.httpcomponents:httpclient'
 }
-
-// FIXME: workaround until uas-client is updated to use security library with version 4.3.0+
-distZip { excludes = ["**/securityLibrary-4.2.2.jar"] }
 
 configurations {
     all*.exclude module: 'javax.servlet'
