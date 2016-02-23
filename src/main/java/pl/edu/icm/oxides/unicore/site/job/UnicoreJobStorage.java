@@ -98,9 +98,19 @@ class UnicoreJobStorage {
                 .getFileName()
                 .toString();
         String filenameWithRemovedNonPrintableChars = filename
-                .replaceAll("[\\p{C}\\p{Z}]", "");
+                .replaceAll("[^\\p{Print}]", "");
+//                .replaceAll("[\\p{C}\\p{Z}]", "");
         response.addHeader(CONTENT_DISPOSITION, "attachment; filename=\"" + filenameWithRemovedNonPrintableChars + "\"");
     }
+
+//    public static void main(String[] args) {
+//        // FIXME: remove me!
+//        String q = "ad fa.dff";
+//        String qq = q.replaceAll("[^\\p{Print}]", "");
+//        System.out.println(qq);
+//        String qqq = q.replaceAll("[\\p{C}\\p{Z}]", "");
+//        System.out.println(qqq);
+//    }
 
     private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {
         String filePath = gridFileType.getPath();

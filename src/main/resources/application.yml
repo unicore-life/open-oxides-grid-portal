@@ -28,6 +28,5 @@ spring:
 logging.level.: INFO
 logging.level:
   org.apache.cxf.service.factory.ReflectionServiceFactoryBean: FATAL
-  org.springframework.security: DEBUG
   pl.edu.icm.oxides: DEBUG
   pl.edu.icm.oxides.unicore.site.job: TRACE

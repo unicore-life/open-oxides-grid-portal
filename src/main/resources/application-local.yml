@@ -11,3 +11,5 @@ server:
     keyStorePassword: secret
     keyPassword: password
 #    clientAuth: NEED
+
+logging.level.org.springframework.security: INFO
