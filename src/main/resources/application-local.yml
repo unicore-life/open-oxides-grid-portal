@@ -9,8 +9,7 @@ grid:
   targetUrl: https://localhost:8443/oxides/authn
 
 unicore.identityConfig: classpath:grid-local.properties
-
-unicore-grid.identityConfig: classpath:grid-local.properties
+unicore.registryUri: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
 
 server:
   port: 8443

@@ -1,11 +1,12 @@
-package pl.edu.icm.oxides.unicore.central.tss;
+package pl.edu.icm.oxides.unicore.central;
 
 import eu.unicore.security.etd.TrustDelegation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import pl.edu.icm.unicore.spring.central.tss.UnicoreSiteEntity;
-import pl.edu.icm.unicore.spring.central.tss.UnicoreSites;
+import pl.edu.icm.unicore.spring.central.site.UnavailableSiteException;
+import pl.edu.icm.unicore.spring.central.site.UnicoreSiteEntity;
+import pl.edu.icm.unicore.spring.central.site.UnicoreSites;
 
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class UnicoreSite {
 
     @Cacheable(value = "unicoreSessionSiteList", key = "#trustDelegation.custodianDN")
     public List<UnicoreSiteEntity> retrieveServiceList(TrustDelegation trustDelegation) {
-        return unicoreSites.retrieveServiceList(trustDelegation);
+        try {
+            return unicoreSites.getTargetSystemList(trustDelegation);
+        } catch (UnavailableSiteException e) {
+            throw new UnicoreSpringException(e);
+        }
     }
 }

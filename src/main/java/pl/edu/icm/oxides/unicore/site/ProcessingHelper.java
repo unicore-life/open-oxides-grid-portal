@@ -5,7 +5,7 @@ import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.unicore.spring.central.tss.UnicoreSiteEntity;
+import pl.edu.icm.unicore.spring.central.site.UnicoreSiteEntity;
 
 import java.util.List;
 

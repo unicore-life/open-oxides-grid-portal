@@ -12,7 +12,7 @@ import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.portal.model.SimulationGridFile;
-import pl.edu.icm.unicore.spring.security.GridClientHelper;
+import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
