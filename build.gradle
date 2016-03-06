@@ -29,6 +29,8 @@ dependencies {
             'org.springframework:spring-context-support:4.2.4.RELEASE',
             'net.sf.ehcache:ehcache:2.10.1',
 
+            'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.0',
+
             'eu.unicore.workflow:common:2.8.2',
             'eu.unicore:uas-client:1.9.5-SNAPSHOT'
 

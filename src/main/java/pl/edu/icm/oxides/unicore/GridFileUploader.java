@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.UserResources;
+import pl.edu.icm.unicore.spring.security.GridClientHelper;
 
 import java.io.InputStream;
 

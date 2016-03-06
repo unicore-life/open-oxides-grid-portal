@@ -11,7 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
+import pl.edu.icm.unicore.spring.security.GridClientHelper;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -14,6 +14,7 @@ import pl.edu.icm.oxides.unicore.central.factory.UnicoreFactoryStorage;
 import pl.edu.icm.oxides.unicore.central.factory.UnicoreFactoryStorageEntity;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.oxides.user.UserResources;
+import pl.edu.icm.unicore.spring.security.GridClientHelper;
 
 import java.util.Calendar;
 

@@ -22,12 +22,12 @@ import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.open.FileResourceLoader;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentDescription;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.unicore.spring.security.GridClientHelper;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
@@ -79,7 +79,8 @@ public class UnicoreBroker {
                 .findAny()
                 .orElseThrow(() -> new UnavailableBrokerException(new Exception("NO BROKER AT ALL!")));
 
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+        IClientConfiguration clientConfiguration = clientHelper
+                .createClientConfiguration(authenticationSession.getSelectedTrustDelegation());
         // Extending ETD with broker's DN:
         clientConfiguration.getETDSettings().setReceiver(
                 new X500Principal(
