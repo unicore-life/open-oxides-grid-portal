@@ -1,0 +1,14 @@
+2016-03-10 21:16:05,860 [qtp899577496-263] DEBUG eu.unicore.portal.authn.saml.SAMLLogoutProcessor
+- Logging out participant via redirect: SAMLSessionParticipant
+[
+    logoutEndpointURL=https://unity.grid.icm.edu.pl/unicore-icm-portal/SLO-WEB,
+    principalNameAtParticipant=
+    <xml-fragment Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName"
+        xmlns:urn="urn:oasis:names:tc:SAML:2.0:assertion">
+            CN=klusi,CN=Rafal Kluszczynski,OU=ICM,O=UW,O=KDM,C=PL
+    </xml-fragment>,
+    sessionIndex=SAMLY2lib_assert_3d5048b04c4931f381972030d9c3d45da95a35ef22e1d086,
+    localSamlId=CN=unicore-portal.grid.icm.edu.pl,OU=Domain Control Validated
+]
+2016-03-10 21:16:05,975 [qtp899577496-349] DEBUG eu.unicore.portal.authn.saml.SAMLLogoutProcessor  - Returning redirect with SLO request with HTTP POST binding to https://unity.g
+rid.icm.edu.pl/unicore-icm-portal/SLO-WEB

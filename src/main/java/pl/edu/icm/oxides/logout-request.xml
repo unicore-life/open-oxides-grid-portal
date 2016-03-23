@@ -1,0 +1,72 @@
+<urn:LogoutRequest Destination="https://unity.grid.icm.edu.pl/unicore-icm-portal/SLO-WEB"
+                   ID="SAMLY2lib_msg_26b674267a880f6ff0255eef6d4fd672f337649bd2d518c"
+                   IssueInstant="2016-03-10T20:16:05.860Z"
+                   NotOnOrAfter="2016-03-10T21:17:05.860+01:00"
+                   Version="2.0"
+                   xmlns:urn="urn:oasis:names:tc:SAML:2.0:protocol">
+    <urn1:Issuer Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName"
+                 xmlns:urn1="urn:oasis:names:tc:SAML:2.0:assertion">
+        CN=unicore-portal.grid.icm.edu.pl,OU=Domain Control Validated
+    </urn1:Issuer>
+    <dsig:Signature xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+        <dsig:SignedInfo>
+            <dsig:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <dsig:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <dsig:Reference URI="#SAMLY2lib_msg_26b674267a880f6ff0255eef6d4fd672f337649bd2d518c">
+                <dsig:Transforms>
+                    <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                    <dsig:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </dsig:Transforms>
+                <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <dsig:DigestValue>pfNmdk5ANspNa39At6Yzu9hCVxY=</dsig:DigestValue>
+            </dsig:Reference>
+        </dsig:SignedInfo>
+        <dsig:SignatureValue>se1QzJM4vGBKUMuK5SXqvUiTmoZdlVaUK7zzVqDkR+TzOXySK77kX7MKV9v/LedpquA/aF+6lbxq
+            MlrhT3rDT7w5WBJO44KZ4cVvPV1ahNw8zcocgkldzcdBXTCv+n8c651Tt6DphdCzAQiSyBTSNu+a
+            KVoUOq5yh9L/bs8QwU/+YHUr02Je5ABw05pqFJolPqkXylm71xth5PkXxHMWUxtYI2rPUYbwYLiT
+            TE6yy4fhwNFAvudHWcT5D+ffYH/OcShbmlzlUnh9VH7CnIJXf/G2E1qRvwSRKiB2Nfv+1i5Eexd9
+            tewEnkpv64vzTVnNJPoFHeeoKIvf+xmHYlw/K9ui52bYhYr/1pd0SmdYmoyZICPyhQiZkceRsxtE
+            w8nO4vujreMKi96mY5CRtR+oFz+KgsZVqtv3CopEuvG9SyBo0nhwz8pL3HLh3IdEC4xPzTBz3FuX
+            6o8H714W1/csf74OqeDspeFxpiC+oPMUh2sK5sP6GvtXwXYTsw7tBTWWk8/ORnJT0TRRjRkPcMBd
+            Zlk65mDoMEbtMvtHbx32pAUij0AKgTG2QEftYWRWdVf0vn9nse84nl9dLqUxbiYRPTP/pTUFPpte
+            WyusJgyztSHTg7ILn9F3Gyuah9l1ZnsLlHtzOkTvFfEQH8yHLQLF8I1abzANu0hBCPR97EdlPu0=
+        </dsig:SignatureValue>
+        <dsig:KeyInfo>
+            <dsig:X509Data>
+                <dsig:X509Certificate>MIIFiTCCBHGgAwIBAgIQTrlk+Mj7941jsNKxstPqADANBgkqhkiG9w0BAQUFADA2MQswCQYDVQQG
+                    EwJOTDEPMA0GA1UEChMGVEVSRU5BMRYwFAYDVQQDEw1URVJFTkEgU1NMIENBMB4XDTE0MTAwMTAw
+                    MDAwMFoXDTE2MTIzMTIzNTk1OVowTDEhMB8GA1UECxMYRG9tYWluIENvbnRyb2wgVmFsaWRhdGVk
+                    MScwJQYDVQQDEx51bmljb3JlLXBvcnRhbC5ncmlkLmljbS5lZHUucGwwggIiMA0GCSqGSIb3DQEB
+                    AQUAA4ICDwAwggIKAoICAQDxv3u9zD6P6WxpVVYjn+EZZKWXyJRR141XNdbU+YpkHB7wFiSYFw5+
+                    r/3VDgLamEYysegqanECXr0bIyx38rXIZRJADun4PKeqQlICm34JkIF3wriWzvFJS45/KP2YE5vJ
+                    WtRdy2XcU3iNeo3FIYy7zlpptJT+QgS1sn8QCAGKoLjFBU6nvMzs0waFmJX/mYzCLhnW09Bs0YKt
+                    vioQTFdaZvAx/BC/10oblS6Tu8M37D3/XbHGDzn6Abh3vJ3kXwkwktaLh9OaA0pmfMoKUn62xcjo
+                    w7+tO0GXOhI39QlIlN1iQbFB6h13rtyY/NLMFYaX4dnSbl65mgM7tajcTM4ZZWOmMlHoPFFa1rR3
+                    opZihgyhQRqmRYTqqY/gGn/3nRv3nNKN8rxyYxgfYRDnQUAShwqjpkPWlZs0NnX5rUeYeapEeXun
+                    E8fIbdg6olPd1lvaevdQtztgnTwhTa83ieQKGV6tcHBZBERiBTfe3w8PryPlsrsAKGor2OPh3z1b
+                    d5WZamg7VDAbXXXWbALiLY4Z7B9rgAxATAtTtrIWpUPFnq4PnKgNjTaRTMGNcWyWr9nci5yvTb1K
+                    pks245M+xAHqrlDGr7Af67taAmrnOevfLV+EJLoi78Y9octsCf/594NYzLCuNt57KldmDEuQ3BOU
+                    b4IXXh1uA91gkv1Ljf0dawIDAQABo4IBezCCAXcwHwYDVR0jBBgwFoAUDL2TaAzz3qujSWsrN1dH
+                    6pDjue0wHQYDVR0OBBYEFGCYKtTab5rMh8Lr7j3n4YgQ2kY8MA4GA1UdDwEB/wQEAwIFoDAMBgNV
+                    HRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAiBgNVHSAEGzAZMA0GCysG
+                    AQQBsjEBAgIdMAgGBmeBDAECATA6BgNVHR8EMzAxMC+gLaArhilodHRwOi8vY3JsLnRjcy50ZXJl
+                    bmEub3JnL1RFUkVOQVNTTENBLmNybDBtBggrBgEFBQcBAQRhMF8wNQYIKwYBBQUHMAKGKWh0dHA6
+                    Ly9jcnQudGNzLnRlcmVuYS5vcmcvVEVSRU5BU1NMQ0EuY3J0MCYGCCsGAQUFBzABhhpodHRwOi8v
+                    b2NzcC50Y3MudGVyZW5hLm9yZzApBgNVHREEIjAggh51bmljb3JlLXBvcnRhbC5ncmlkLmljbS5l
+                    ZHUucGwwDQYJKoZIhvcNAQEFBQADggEBAALCd2s8SwBmDrHvkn5c1UD6D9T4xOFfRqnCXhNVIDmf
+                    ekt5rE5KzTlK2Z7E9/OTsHlY720Y7+RfN4hh3Edq6xDHTdN4eVRGerQaBugiFcAZJsiAwdiybmeL
+                    ZjBhDzZBHXnZRfPvpEbccMwIWXeGXE4R8Tz1PpY/1aocJiFPSUTyWtgzhV4MTWnb7AO0f83JzBS3
+                    1ZNCjyj3E8AOQo4K3YbO6sGugyF/BczZ/B65d2T8TKZ9Td8MMHqNKVcbJK6P/N8rHm+XA9XnNK8/
+                    EJCVRsfqyv65sz7V28ncKSxbjg/PTfbpHc7m3oRvCudtGwjydnMTuIRrzLYXx/+htAia+vw=
+                </dsig:X509Certificate>
+            </dsig:X509Data>
+        </dsig:KeyInfo>
+    </dsig:Signature>
+    <urn:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName"
+                xmlns:urn="urn:oasis:names:tc:SAML:2.0:assertion">
+        CN=klusi,CN=Rafal Kluszczynski,OU=ICM,O=UW,O=KDM,C=PL
+    </urn:NameID>
+    <urn:SessionIndex>
+        SAMLY2lib_assert_3d5048b04c4931f381972030d9c3d45da95a35ef22e1d086
+    </urn:SessionIndex>
+</urn:LogoutRequest>
