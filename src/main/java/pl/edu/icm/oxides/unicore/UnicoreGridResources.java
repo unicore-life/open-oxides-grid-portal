@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.portal.security.PortalAccess;
 import pl.edu.icm.oxides.portal.security.PortalAccessHelper;
-import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker;
-import pl.edu.icm.oxides.unicore.central.broker.UnicoreBroker.BrokerJobType;
+import pl.edu.icm.oxides.unicore.central.UnicoreBroker;
+import pl.edu.icm.oxides.unicore.central.UnicoreBroker.BrokerJobType;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 

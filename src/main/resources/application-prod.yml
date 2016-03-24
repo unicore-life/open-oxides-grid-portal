@@ -7,6 +7,9 @@ grid:
   registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
   targetUrl: https://oxides.grid.icm.edu.pl/oxides/authn
 
+unicore.identityConfig: config/grid.properties
+unicore.registryUri: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
+
 server:
   port: 443
   ssl:

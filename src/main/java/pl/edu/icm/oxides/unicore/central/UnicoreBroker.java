@@ -1,9 +1,9 @@
-package pl.edu.icm.oxides.unicore.central.broker;
+package pl.edu.icm.oxides.unicore.central;
 
 import de.fzj.unicore.uas.client.StorageClient;
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
-import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
 import eu.unicore.security.etd.TrustDelegation;
+import eu.unicore.security.wsutil.client.UnicoreWSClientFactory;
 import eu.unicore.util.httpclient.IClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,25 +22,32 @@ import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.open.FileResourceLoader;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
 import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentDescription;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentFile;
 import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.unicore.spring.central.broker.UnavailableBrokerException;
+import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokerEntity;
+import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokers;
+import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static pl.edu.icm.unicore.spring.util.EndpointReferenceHelper.toEndpointReference;
+
 @Repository
 public class UnicoreBroker {
+    private final UnicoreBrokers unicoreBrokers;
     private final GridConfig gridConfig;
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
@@ -52,11 +59,13 @@ public class UnicoreBroker {
     }
 
     @Autowired
-    public UnicoreBroker(GridConfig gridConfig,
+    public UnicoreBroker(UnicoreBrokers unicoreBrokers,
+                         GridConfig gridConfig,
                          GridOxidesConfig oxidesConfig,
                          GridClientHelper clientHelper,
                          GridFileUploader fileUploader,
                          FileResourceLoader resourceLoader) {
+        this.unicoreBrokers = unicoreBrokers;
         this.gridConfig = gridConfig;
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
@@ -66,9 +75,11 @@ public class UnicoreBroker {
 
     @Cacheable(value = "unicoreSessionBrokerList", key = "#trustDelegation.custodianDN")
     public List<UnicoreBrokerEntity> retrieveServiceList(TrustDelegation trustDelegation) {
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
-        log.debug("COLLECT BROKERS");
-        return collectBrokerServiceList(clientConfiguration);
+        try {
+            return unicoreBrokers.getBrokerServices(trustDelegation);
+        } catch (UnavailableBrokerException exception) {
+            throw new UnicoreSpringException(exception);
+        }
     }
 
     public void submitBrokeredJob(BrokerJobType brokerJobType,
@@ -77,16 +88,18 @@ public class UnicoreBroker {
         UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
-                .orElseThrow(() -> new UnavailableBrokerException(new Exception("NO BROKER AT ALL!")));
+                .orElseThrow(() -> new UnicoreSpringException(new Exception("NO BROKER AT ALL!")));
 
-        IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(authenticationSession);
+        IClientConfiguration clientConfiguration = clientHelper
+                .createClientConfiguration(authenticationSession.getSelectedTrustDelegation());
         // Extending ETD with broker's DN:
         clientConfiguration.getETDSettings().setReceiver(
                 new X500Principal(
-                        WSUtilities.extractServerIDFromEPR(brokerEntity.getEpr())));
+                        WSUtilities.extractServerIDFromEPR(
+                                toEndpointReference(brokerEntity.getUri()))));
 //        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
 
-        Optional<IServiceOrchestrator> brokerClient = brokerEntity.createBrokerClient(clientConfiguration);
+        Optional<IServiceOrchestrator> brokerClient = createBrokerClient(brokerEntity, clientConfiguration);
         StorageClient storageClient = authenticationSession
                 .getResources()
                 .getStorageClient();
@@ -164,6 +177,34 @@ public class UnicoreBroker {
         log.info("WA SUBMITTED: " + response);
     }
 
+    public Optional<IServiceOrchestrator> createBrokerClient(UnicoreBrokerEntity brokerEntity, IClientConfiguration clientConfiguration) {
+        try {
+            final EndpointReferenceType endpointReference = toEndpointReference(brokerEntity.getUri());
+            return Optional.ofNullable(initializeClient(
+                    IServiceOrchestrator.class, endpointReference, clientConfiguration));
+        } catch (MalformedURLException e) {
+            throw new UnicoreSpringException(e);
+        }
+    }
+
+    private <T> T initializeClient(Class<T> clazz,
+                                   EndpointReferenceType epr,
+                                   IClientConfiguration clientConfig) throws MalformedURLException {
+        String receiverDn = WSUtilities.extractServerIDFromEPR(epr);
+        if (receiverDn != null) {
+            clientConfig.getETDSettings().setReceiver(
+                    new X500Principal(receiverDn));
+        }
+        return new UnicoreWSClientFactory(clientConfig)
+                .createPlainWSProxy(clazz, epr
+                        .getAddress()
+                        .getStringValue());
+        // TODO: think of retry feature (included in WSRFClientFactory)
+//        return wsrfClientFactory.createPlainWSProxy(clazz, serviceEpr
+//                .getAddress()
+//                .getStringValue());
+    }
+
     private WorkAssignmentDescription toWorkAssignment(String simulationName,
                                                        OxidesSimulation simulation,
                                                        List<WorkAssignmentFile> waFiles) {
@@ -194,22 +235,6 @@ public class UnicoreBroker {
         } catch (Exception e) {
             log.error("Could not save script input " + inputScriptName + " during submission!", e);
             throw new InputScriptStoreException(e);
-        }
-    }
-
-    private List<UnicoreBrokerEntity> collectBrokerServiceList(IClientConfiguration clientConfiguration) {
-        String registryUrl = gridConfig.getRegistry();
-        EndpointReferenceType registryEpr = EndpointReferenceType.Factory.newInstance();
-        registryEpr.addNewAddress().setStringValue(registryUrl);
-        try {
-            return new RegistryClient(registryEpr, clientConfiguration)
-                    .listAccessibleServices(IServiceOrchestrator.PORT)
-                    .parallelStream()
-                    .map(endpointReferenceType -> new UnicoreBrokerEntity(endpointReferenceType))
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error(String.format("Error retrieving Service Orchestrator from UNICORE Registry <%s>!", registryUrl), e);
-            throw new UnavailableBrokerException(e);
         }
     }
 

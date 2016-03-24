@@ -12,7 +12,7 @@ import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.ProtocolType;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.portal.model.SimulationGridFile;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
+import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -99,18 +99,10 @@ class UnicoreJobStorage {
                 .toString();
         String filenameWithRemovedNonPrintableChars = filename
                 .replaceAll("[^\\p{Print}]", "");
-//                .replaceAll("[\\p{C}\\p{Z}]", "");
-        response.addHeader(CONTENT_DISPOSITION, "attachment; filename=\"" + filenameWithRemovedNonPrintableChars + "\"");
-    }
 
-//    public static void main(String[] args) {
-//        // FIXME: remove me!
-//        String q = "ad fa.dff";
-//        String qq = q.replaceAll("[^\\p{Print}]", "");
-//        System.out.println(qq);
-//        String qqq = q.replaceAll("[\\p{C}\\p{Z}]", "");
-//        System.out.println(qqq);
-//    }
+        response.addHeader(CONTENT_DISPOSITION,
+                String.format("attachment; filename=\"%s\"", filenameWithRemovedNonPrintableChars));
+    }
 
     private SimulationGridFile toSimulationGridFile(GridFileType gridFileType) {
         String filePath = gridFileType.getPath();

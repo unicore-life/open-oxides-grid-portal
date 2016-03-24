@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.unigrids.x2006.x04.services.jms.JobPropertiesDocument.JobProperties;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
-import pl.edu.icm.oxides.unicore.GridClientHelper;
+import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
