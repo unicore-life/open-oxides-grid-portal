@@ -61,6 +61,11 @@ run {
     jvmArgs = ['-Dspring.profiles.active=local']
 }
 
+clean {
+    delete "${rootDir}/bower_components"
+    delete "${rootDir}/node_modules"
+}
+
 applicationDistribution.from('src/main/resources') {
     into 'config'
     include 'application-prod.yml'
