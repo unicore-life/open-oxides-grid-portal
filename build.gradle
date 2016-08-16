@@ -37,7 +37,7 @@ dependencies {
             'org.springframework:spring-context-support:4.2.5.RELEASE',
             'net.sf.ehcache:ehcache:2.10.1',
 
-            'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.2'
+            'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.4'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-spring:1.0-groovy-2.4',
@@ -59,6 +59,11 @@ targetCompatibility = JavaVersion.VERSION_1_8
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 run {
     jvmArgs = ['-Dspring.profiles.active=local']
+}
+
+clean {
+    delete "${rootDir}/bower_components"
+    delete "${rootDir}/node_modules"
 }
 
 applicationDistribution.from('src/main/resources') {
@@ -87,5 +92,5 @@ project.tasks.grunt_check.dependsOn grunt_install
 project.tasks.check.dependsOn grunt_check
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.11'
+    gradleVersion = '2.14.1'
 }

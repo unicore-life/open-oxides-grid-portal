@@ -9,21 +9,19 @@ import pl.edu.icm.unicore.spring.central.site.UnicoreSiteEntity;
 
 import java.util.List;
 
-import static pl.edu.icm.unicore.spring.util.EndpointReferenceHelper.toEndpointReference;
-
 public final class ProcessingHelper {
     private ProcessingHelper() {
     }
 
     public static List<EndpointReferenceType> toAccessibleTargetSystems(UnicoreSiteEntity unicoreSiteEntity,
                                                                         IClientConfiguration clientConfiguration) {
-        final EndpointReferenceType endpointReference = toEndpointReference(unicoreSiteEntity.getUri());
+        final EndpointReferenceType endpointReference = unicoreSiteEntity.getEndpointReferenceType();
         try {
             return new TSFClient(endpointReference, clientConfiguration)
                     .getAccessibleTargetSystems();
         } catch (Exception e) {
             LOGGER.warn(String.format("Could not get accessible target systems from site <%s>!",
-                    unicoreSiteEntity.getUri()), e);
+                    unicoreSiteEntity.getEndpointAddress()), e);
         }
         return null;
     }

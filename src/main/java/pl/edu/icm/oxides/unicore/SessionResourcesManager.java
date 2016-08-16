@@ -19,8 +19,6 @@ import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
 import java.util.Calendar;
 
-import static pl.edu.icm.unicore.spring.util.EndpointReferenceHelper.toEndpointReference;
-
 @Service
 public class SessionResourcesManager {
     private final UnicoreStorageFactory unicoreStorageFactory;
@@ -57,7 +55,7 @@ public class SessionResourcesManager {
     private StorageClient toStorageClient(UnicoreFactoryStorageEntity unicoreFactoryStorageEntity,
                                           TrustDelegation trustDelegation) {
         IClientConfiguration clientConfiguration = clientHelper.createClientConfiguration(trustDelegation);
-        final EndpointReferenceType endpointReference = toEndpointReference(unicoreFactoryStorageEntity.getUri());
+        final EndpointReferenceType endpointReference = unicoreFactoryStorageEntity.getEndpointReferenceType();
         try {
             StorageFactoryClient storageFactoryClient = new StorageFactoryClient(endpointReference, clientConfiguration);
             return storageFactoryClient.createSMS(null, FACTORY_STORAGE_NAME, calculateFactoryStorageLifetime());
