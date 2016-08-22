@@ -21,7 +21,7 @@ import pl.edu.icm.oxides.open.model.Oxide;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
 import pl.edu.icm.oxides.unicore.UnicoreGridResources;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.oxides.user.UserResourcesManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class OxidesEndpoints {
     private final OpenOxidesResources openOxidesResources;
     private final SamlAuthenticationHandler samlAuthenticationHandler;
     private final UserResourcesManager userResourcesManager;
-    private AuthenticationSession authenticationSession;
+    private OxidesPortalGridSession oxidesPortalGridSession;
 
     @Autowired
     public OxidesEndpoints(OxidesGridPortalPages oxidesGridPortalPages,
@@ -51,13 +51,13 @@ public class OxidesEndpoints {
                            OpenOxidesResources openOxidesResources,
                            SamlAuthenticationHandler samlAuthenticationHandler,
                            UserResourcesManager userResourcesManager,
-                           AuthenticationSession authenticationSession) {
+                           OxidesPortalGridSession oxidesPortalGridSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
         this.openOxidesResources = openOxidesResources;
         this.samlAuthenticationHandler = samlAuthenticationHandler;
         this.userResourcesManager = userResourcesManager;
-        this.authenticationSession = authenticationSession;
+        this.oxidesPortalGridSession = oxidesPortalGridSession;
     }
 
 
@@ -67,49 +67,44 @@ public class OxidesEndpoints {
     */
     @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public ModelAndView welcomePage() {
-        return oxidesGridPortalPages.modelWelcomePage(authenticationSession);
+        return oxidesGridPortalPages.modelWelcomePage(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = SIMULATIONS_MAPPING, method = RequestMethod.GET)
     public ModelAndView simulationsPage() {
-        return oxidesGridPortalPages.modelSimulationsPage(authenticationSession);
+        return oxidesGridPortalPages.modelSimulationsPage(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/simulations/{uuid}/details", method = RequestMethod.GET)
     public ModelAndView simulationDetailsPage(@PathVariable("uuid") UUID simulationUuid) {
-        return oxidesGridPortalPages.modelSimulationDetailsPage(authenticationSession, simulationUuid);
+        return oxidesGridPortalPages.modelSimulationDetailsPage(oxidesPortalGridSession, simulationUuid);
     }
 
     @RequestMapping(value = "/simulations/{uuid}/files", method = RequestMethod.GET)
     public ModelAndView oneSimulationPage(@PathVariable("uuid") UUID simulationUuid,
                                           @RequestParam(value = "path", required = false) String path) {
-        return oxidesGridPortalPages.modelOneSimulationPage(authenticationSession, simulationUuid, path);
+        return oxidesGridPortalPages.modelOneSimulationPage(oxidesPortalGridSession, simulationUuid, path);
     }
 
     @RequestMapping(value = "/simulations/{uuid}/jsmol", method = RequestMethod.GET)
     public ModelAndView simulationJsmolViewerPage(@PathVariable("uuid") UUID simulationUuid,
                                                   @RequestParam(value = "path", required = true) String path) {
-        return oxidesGridPortalPages.modelJsmolViewerPage(authenticationSession, simulationUuid, path);
+        return oxidesGridPortalPages.modelJsmolViewerPage(oxidesPortalGridSession, simulationUuid, path);
     }
 
     @RequestMapping(value = SCRIPT_SUBMISSION_MAPPING, method = RequestMethod.GET)
     public ModelAndView submitSimulationPage() {
-        return oxidesGridPortalPages.modelSubmitScriptSimulationPage(authenticationSession);
+        return oxidesGridPortalPages.modelSubmitScriptSimulationPage(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = QUANTUM_ESPRESSO_SUBMISSION_MAPPING, method = RequestMethod.GET)
     public ModelAndView submitQuantumEspressoSimulationPage() {
-        return oxidesGridPortalPages.modelSubmitQuantumEspressoSimulationPage(authenticationSession);
+        return oxidesGridPortalPages.modelSubmitQuantumEspressoSimulationPage(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/preferences", method = RequestMethod.GET)
     public ModelAndView preferencesPage() {
-        return oxidesGridPortalPages.modelPreferencesPage(authenticationSession);
-    }
-
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public String signOut(HttpSession session) {
-        return oxidesGridPortalPages.signOutAndRedirect(session);
+        return oxidesGridPortalPages.modelPreferencesPage(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/error/forbidden", method = RequestMethod.GET)
@@ -133,7 +128,7 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<Void> submitScriptSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted UNICORE Job: " + simulation);
-        return unicoreGridResources.submitScriptWorkAssignment(simulation, authenticationSession);
+        return unicoreGridResources.submitScriptWorkAssignment(simulation, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/submit/qe", method = RequestMethod.POST,
@@ -142,7 +137,7 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<Void> submitQuantumEspressoSimulation(@RequestBody @Valid OxidesSimulation simulation) {
         log.info("Submitted QE Job: " + simulation);
-        return unicoreGridResources.submitQuantumEspressoWorkAssignment(simulation, authenticationSession);
+        return unicoreGridResources.submitQuantumEspressoWorkAssignment(simulation, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/upload", method = RequestMethod.POST,
@@ -152,8 +147,8 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<String> uploadSimulationFile(@RequestParam("uploadFile") MultipartFile file,
                                                        HttpSession session) {
-        logSessionData("UNICORE-UPLOAD", session, authenticationSession);
-        return unicoreGridResources.uploadFile(file, authenticationSession);
+        logSessionData("UNICORE-UPLOAD", session, oxidesPortalGridSession);
+        return unicoreGridResources.uploadFile(file, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/jobs", method = RequestMethod.GET,
@@ -161,8 +156,8 @@ public class OxidesEndpoints {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List> listSimulations(HttpSession session) {
-        logSessionData("UNICORE-JOBS", session, authenticationSession);
-        return unicoreGridResources.listUserJobs(authenticationSession);
+        logSessionData("UNICORE-JOBS", session, oxidesPortalGridSession);
+        return unicoreGridResources.listUserJobs(oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/jobs/{uuid}", method = RequestMethod.DELETE,
@@ -171,8 +166,8 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<Void> destroySimulation(@PathVariable(value = "uuid") UUID simulationUuid,
                                                   HttpSession session) {
-        logSessionData("DELETE-UNICORE-JOB", session, authenticationSession);
-        return unicoreGridResources.destroyUserJob(simulationUuid, authenticationSession);
+        logSessionData("DELETE-UNICORE-JOB", session, oxidesPortalGridSession);
+        return unicoreGridResources.destroyUserJob(simulationUuid, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/jobs/{uuid}/file", method = RequestMethod.GET)
@@ -181,8 +176,8 @@ public class OxidesEndpoints {
             @RequestParam(value = "path", required = false) String path,
             HttpServletResponse response,
             HttpSession session) {
-        logSessionData("UNICORE-JOB-DOWNLOAD", session, authenticationSession);
-        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, authenticationSession);
+        logSessionData("UNICORE-JOB-DOWNLOAD", session, oxidesPortalGridSession);
+        return unicoreGridResources.downloadUserJobFile(simulationUuid, path, response, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/unicore/jobs/{uuid}/files", method = RequestMethod.GET,
@@ -192,8 +187,8 @@ public class OxidesEndpoints {
     public ResponseEntity<List> listSimulationFiles(@PathVariable(value = "uuid") UUID simulationUuid,
                                                     @RequestParam(value = "path", required = false) String path,
                                                     HttpSession session) {
-        logSessionData("UNICORE-JOB-FILES", session, authenticationSession);
-        return unicoreGridResources.listUserJobFiles(simulationUuid, path, authenticationSession);
+        logSessionData("UNICORE-JOB-FILES", session, oxidesPortalGridSession);
+        return unicoreGridResources.listUserJobFiles(simulationUuid, path, oxidesPortalGridSession);
     }
 
 
@@ -205,14 +200,14 @@ public class OxidesEndpoints {
     @ResponseBody
     public ResponseEntity<String> retrieveStructureData(@RequestParam(value = "name") String name,
                                                         HttpSession session) {
-        logSessionData("OPEN-OXIDES", session, authenticationSession);
-        return openOxidesResources.getParticleParameters(name, authenticationSession);
+        logSessionData("OPEN-OXIDES", session, oxidesPortalGridSession);
+        return openOxidesResources.getParticleParameters(name, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/oxides/login", method = RequestMethod.GET)
     public void performAuthenticationRequest(HttpServletResponse response) {
-        authenticationSession.setReturnUrl("http://openoxides.icm.edu.pl");
-        samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
+        oxidesPortalGridSession.setReturnUrl("http://openoxides.icm.edu.pl");
+        samlAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/oxides/results", method = RequestMethod.GET)
@@ -231,23 +226,35 @@ public class OxidesEndpoints {
                                              HttpSession session,
                                              HttpServletResponse response) {
         regenerateSessionToAvoidSessionFixationAfterSignedIn(session);
-        if (authenticationSession.getReturnUrl() == null && returnUrl != null) {
-            authenticationSession.setReturnUrl(returnUrl);
+        if (oxidesPortalGridSession.getReturnUrl() == null && returnUrl != null) {
+            oxidesPortalGridSession.setReturnUrl(returnUrl);
         }
-        logSessionData("SAML-G", session, authenticationSession);
-        samlAuthenticationHandler.performAuthenticationRequest(response, authenticationSession);
+        logSessionData("SAML-G", session, oxidesPortalGridSession);
+        samlAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/oxides/authn", method = RequestMethod.POST)
     public String processAuthenticationResponse(HttpServletRequest request) {
-        logSessionData("SAML-P", request.getSession(), authenticationSession);
-        return processResponseAndUserSessionInitialization(request, authenticationSession);
+        logSessionData("SAML-P", request.getSession(), oxidesPortalGridSession);
+        return processResponseAndUserSessionInitialization(request, oxidesPortalGridSession);
+    }
+
+    @RequestMapping(value = "/authn/slo", method = RequestMethod.POST)
+    public String processSingleLogoutResponse(HttpServletRequest request) {
+        logSessionData("SAML-R", request.getSession(), oxidesPortalGridSession);
+        return samlAuthenticationHandler.processSingleLogoutResponse(request);
+    }
+
+    @RequestMapping(value = "/authn/sign-out", method = RequestMethod.POST)
+    public String processLogoutResponse(HttpServletRequest request) {
+        logSessionData("SAML-O", request.getSession(), oxidesPortalGridSession);
+        return samlAuthenticationHandler.processSingleLogoutResponse(request);
     }
 
     private String processResponseAndUserSessionInitialization(HttpServletRequest request,
-                                                               AuthenticationSession authenticationSession) {
-        String returnUrl = samlAuthenticationHandler.processAuthenticationResponse(request, authenticationSession);
-        userResourcesManager.initializeAfterSuccessfulSignIn(authenticationSession);
+                                                               OxidesPortalGridSession oxidesPortalGridSession) {
+        String returnUrl = samlAuthenticationHandler.processAuthenticationResponse(request, oxidesPortalGridSession);
+        userResourcesManager.initializeAfterSuccessfulSignIn(oxidesPortalGridSession);
         return returnUrl;
     }
 
@@ -260,7 +267,7 @@ public class OxidesEndpoints {
         session.invalidate();
     }
 
-    private void logSessionData(String logPrefix, HttpSession session, AuthenticationSession authnSession) {
+    private void logSessionData(String logPrefix, HttpSession session, OxidesPortalGridSession authnSession) {
         log.info(String.format("%10s: %s", logPrefix, session.getId()));
         log.info(String.format("%10s: %s", logPrefix, authnSession));
     }

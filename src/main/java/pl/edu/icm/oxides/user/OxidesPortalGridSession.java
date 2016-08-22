@@ -6,17 +6,18 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@Component
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 @Lazy
-public class AuthenticationSession {
+public class OxidesPortalGridSession {
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
+    private String sessionIndex;
 
     private final UserAttributes attributes = new UserAttributes();
     private final UserResources resources = new UserResources();
@@ -36,6 +37,14 @@ public class AuthenticationSession {
 
     public void setTrustDelegations(List<TrustDelegation> trustDelegations) {
         this.trustDelegations = trustDelegations;
+    }
+
+    public String getSessionIndex() {
+        return sessionIndex;
+    }
+
+    public void setSessionIndex(String sessionIndex) {
+        this.sessionIndex = sessionIndex;
     }
 
     public UserResources getResources() {
@@ -68,6 +77,10 @@ public class AuthenticationSession {
         return attributes.getCommonName();
     }
 
+    public String getDistinguishedName() {
+        return attributes.getCustodianDN();
+    }
+
     public boolean isGroupMember(String groupName) {
         return attributes.getMemberGroups().contains(groupName);
     }
@@ -82,5 +95,5 @@ public class AuthenticationSession {
         return trustDelegation;
     }
 
-    private Log log = LogFactory.getLog(AuthenticationSession.class);
+    private Log log = LogFactory.getLog(OxidesPortalGridSession.class);
 }

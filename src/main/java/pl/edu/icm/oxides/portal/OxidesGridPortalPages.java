@@ -3,7 +3,7 @@ package pl.edu.icm.oxides.portal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.oxides.user.OxidesUserPage;
 
 import javax.servlet.http.HttpSession;
@@ -29,42 +29,38 @@ public class OxidesGridPortalPages {
         this.oxidesErrorsPage = oxidesErrorsPage;
     }
 
-    public ModelAndView modelWelcomePage(AuthenticationSession authenticationSession) {
-        return oxidesWelcomePage.modelWelcomePage(ofNullable(authenticationSession));
+    public ModelAndView modelWelcomePage(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesWelcomePage.modelWelcomePage(ofNullable(oxidesPortalGridSession));
     }
 
-    public ModelAndView modelSimulationsPage(AuthenticationSession authenticationSession) {
-        return oxidesSimulationsPage.modelSimulationsPage(authenticationSession);
+    public ModelAndView modelSimulationsPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesSimulationsPage.modelSimulationsPage(oxidesPortalGridSession);
     }
 
-    public ModelAndView modelOneSimulationPage(AuthenticationSession authenticationSession, UUID uuid, String path) {
-        return oxidesSimulationsPage.modelOneSimulationViewerPage(authenticationSession,
+    public ModelAndView modelOneSimulationPage(OxidesPortalGridSession oxidesPortalGridSession, UUID uuid, String path) {
+        return oxidesSimulationsPage.modelOneSimulationViewerPage(oxidesPortalGridSession,
                 uuid, ofNullable(path), "simulations/one");
     }
 
-    public ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession, UUID uuid) {
-        return oxidesSimulationsPage.modelSimulationDetailsPage(authenticationSession, uuid);
+    public ModelAndView modelSimulationDetailsPage(OxidesPortalGridSession oxidesPortalGridSession, UUID uuid) {
+        return oxidesSimulationsPage.modelSimulationDetailsPage(oxidesPortalGridSession, uuid);
     }
 
-    public ModelAndView modelJsmolViewerPage(AuthenticationSession authenticationSession, UUID uuid, String path) {
-        return oxidesSimulationsPage.modelOneSimulationViewerPage(authenticationSession,
+    public ModelAndView modelJsmolViewerPage(OxidesPortalGridSession oxidesPortalGridSession, UUID uuid, String path) {
+        return oxidesSimulationsPage.modelOneSimulationViewerPage(oxidesPortalGridSession,
                 uuid, ofNullable(path), "viewers/jsmol");
     }
 
-    public ModelAndView modelSubmitScriptSimulationPage(AuthenticationSession authenticationSession) {
-        return oxidesSimulationsPage.modelSubmitScriptSimulationPage(authenticationSession);
+    public ModelAndView modelSubmitScriptSimulationPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesSimulationsPage.modelSubmitScriptSimulationPage(oxidesPortalGridSession);
     }
 
-    public ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
-        return oxidesSimulationsPage.modelSubmitQuantumEspressoSimulationPage(authenticationSession);
+    public ModelAndView modelSubmitQuantumEspressoSimulationPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesSimulationsPage.modelSubmitQuantumEspressoSimulationPage(oxidesPortalGridSession);
     }
 
-    public ModelAndView modelPreferencesPage(AuthenticationSession authenticationSession) {
-        return oxidesUserPage.modelPreferencesPage(ofNullable(authenticationSession));
-    }
-
-    public String signOutAndRedirect(HttpSession session) {
-        return oxidesUserPage.signOutAndRedirect(session);
+    public ModelAndView modelPreferencesPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesUserPage.modelPreferencesPage(ofNullable(oxidesPortalGridSession));
     }
 
     public ModelAndView modelForbiddenErrorPage(HttpSession session) {

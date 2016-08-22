@@ -9,6 +9,7 @@ public class GridConfig {
     private String identityConfig;
     private String registry;
     private String idpUrl;
+    private String idpSloUrl;
     private String targetUrl;
 
     public String getIdentityConfig() {
@@ -33,6 +34,14 @@ public class GridConfig {
 
     public void setIdpUrl(String idpUrl) {
         this.idpUrl = idpUrl;
+    }
+
+    public String getIdpSloUrl() {
+        return idpSloUrl;
+    }
+
+    public void setIdpSloUrl(String idpSloUrl) {
+        this.idpSloUrl = idpSloUrl;
     }
 
     public String getTargetUrl() {

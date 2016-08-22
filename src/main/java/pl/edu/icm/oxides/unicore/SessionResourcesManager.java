@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 import pl.edu.icm.oxides.unicore.central.UnicoreSpringException;
 import pl.edu.icm.oxides.unicore.central.UnicoreStorageFactory;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.oxides.user.UserResources;
 import pl.edu.icm.unicore.spring.central.factory.UnicoreFactoryStorageEntity;
 import pl.edu.icm.unicore.spring.util.GridClientHelper;
@@ -34,9 +34,9 @@ public class SessionResourcesManager {
         this.clientHelper = clientHelper;
     }
 
-    public void prepareStorageClient(AuthenticationSession authenticationSession) {
-        TrustDelegation trustDelegation = authenticationSession.getSelectedTrustDelegation();
-        UserResources resources = authenticationSession.getResources();
+    public void prepareStorageClient(OxidesPortalGridSession oxidesPortalGridSession) {
+        TrustDelegation trustDelegation = oxidesPortalGridSession.getSelectedTrustDelegation();
+        UserResources resources = oxidesPortalGridSession.getResources();
 
         taskExecutor.execute(() -> resources.setStorageClient(getStorageClient(trustDelegation)));
     }

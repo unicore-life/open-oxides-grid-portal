@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.edu.icm.oxides.config.OpenOxidesConfig;
 import pl.edu.icm.oxides.open.model.Oxide;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,8 +45,8 @@ public class OpenOxidesResources {
         return openOxidesResults.getResultOxides();
     }
 
-    public ResponseEntity<String> getParticleParameters(String name, AuthenticationSession authenticationSession) {
-        if (isValidAuthenticationSession(authenticationSession)) {
+    public ResponseEntity<String> getParticleParameters(String name, OxidesPortalGridSession oxidesPortalGridSession) {
+        if (isValidAuthenticationSession(oxidesPortalGridSession)) {
             Resource resource = fileResourceLoader.getResource("classpath:data/" + name + ".json");
             if (!resource.exists()) {
                 return serviceResponse(NOT_FOUND);
@@ -68,9 +68,9 @@ public class OpenOxidesResources {
         return status(httpStatus).headers(responseHeaders).body(null);
     }
 
-    private boolean isValidAuthenticationSession(AuthenticationSession authenticationSession) {
-        return authenticationSession != null
-                && authenticationSession.isGroupMember(openOxidesConfig.getGroupName());
+    private boolean isValidAuthenticationSession(OxidesPortalGridSession oxidesPortalGridSession) {
+        return oxidesPortalGridSession != null
+                && oxidesPortalGridSession.isGroupMember(openOxidesConfig.getGroupName());
     }
 
     private Log log = LogFactory.getLog(OpenOxidesResources.class);

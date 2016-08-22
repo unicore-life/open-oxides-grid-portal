@@ -25,7 +25,7 @@ import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentDescription;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentFile;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.central.broker.UnavailableBrokerException;
 import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokerEntity;
 import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokers;
@@ -79,14 +79,14 @@ public class UnicoreBroker {
 
     public void submitBrokeredJob(BrokerJobType brokerJobType,
                                   OxidesSimulation simulation,
-                                  AuthenticationSession authenticationSession) {
-        UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
+                                  OxidesPortalGridSession oxidesPortalGridSession) {
+        UnicoreBrokerEntity brokerEntity = retrieveServiceList(oxidesPortalGridSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
                 .orElseThrow(() -> new UnicoreSpringException(new Exception("NO BROKER AT ALL!")));
 
         IClientConfiguration clientConfiguration = clientHelper
-                .createClientConfiguration(authenticationSession.getSelectedTrustDelegation());
+                .createClientConfiguration(oxidesPortalGridSession.getSelectedTrustDelegation());
         // Extending ETD with broker's DN:
         clientConfiguration.getETDSettings().setReceiver(
                 new X500Principal(
@@ -95,7 +95,7 @@ public class UnicoreBroker {
 //        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
 
         Optional<IServiceOrchestrator> brokerClient = createBrokerClient(brokerEntity, clientConfiguration);
-        StorageClient storageClient = authenticationSession
+        StorageClient storageClient = oxidesPortalGridSession
                 .getResources()
                 .getStorageClient();
 

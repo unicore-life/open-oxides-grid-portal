@@ -3,7 +3,7 @@ package pl.edu.icm.oxides.portal.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 
 import static pl.edu.icm.oxides.portal.security.PortalAccess.NO_TRUST_DELEGATION;
 import static pl.edu.icm.oxides.portal.security.PortalAccess.PAGE_FORBIDDEN;
@@ -19,27 +19,27 @@ public class PortalAccessHelper {
         this.oxidesConfig = oxidesConfig;
     }
 
-    public PortalAccess determineSessionAccess(AuthenticationSession authenticationSession) {
-        if (authenticationSession == null || authenticationSession.getTrustDelegations() == null) {
+    public PortalAccess determineSessionAccess(OxidesPortalGridSession oxidesPortalGridSession) {
+        if (oxidesPortalGridSession == null || oxidesPortalGridSession.getTrustDelegations() == null) {
             return PAGE_UNAUTHORIZED;
         }
-        if (!isPageNotForbidden(authenticationSession)) {
+        if (!isPageNotForbidden(oxidesPortalGridSession)) {
             return PAGE_FORBIDDEN;
         }
-        if (authenticationSession.getTrustDelegations().isEmpty()) {
+        if (oxidesPortalGridSession.getTrustDelegations().isEmpty()) {
             return NO_TRUST_DELEGATION;
         }
         return VALID;
     }
 
-    private boolean isPageNotForbidden(AuthenticationSession authenticationSession) {
-        if (authenticationSession.isGroupMember(oxidesConfig.getAccessGroup())) {
+    private boolean isPageNotForbidden(OxidesPortalGridSession oxidesPortalGridSession) {
+        if (oxidesPortalGridSession.isGroupMember(oxidesConfig.getAccessGroup())) {
             return true;
         }
         // Workaround for old Unity IDM version:
         //
-        String name = authenticationSession.getCommonName();
-        String oxidesAttribute = authenticationSession.getAttribute("oxides");
+        String name = oxidesPortalGridSession.getCommonName();
+        String oxidesAttribute = oxidesPortalGridSession.getAttribute("oxides");
 
         return name != null && name.equals(oxidesAttribute);
     }

@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.oxides.user.UserResources;
 import pl.edu.icm.unicore.spring.util.GridClientHelper;
 
@@ -24,8 +24,8 @@ public class GridFileUploader {
         this.clientHelper = clientHelper;
     }
 
-    public String uploadFileToGrid(MultipartFile file, AuthenticationSession authenticationSession) {
-        UserResources userResources = authenticationSession.getResources();
+    public String uploadFileToGrid(MultipartFile file, OxidesPortalGridSession oxidesPortalGridSession) {
+        UserResources userResources = oxidesPortalGridSession.getResources();
 
         String fileName = file.getName();
         String originalFilename = file.getOriginalFilename();
