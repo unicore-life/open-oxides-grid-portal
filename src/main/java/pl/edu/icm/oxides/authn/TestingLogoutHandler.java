@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.NameIDType;
 import xmlbeans.org.oasis.saml2.protocol.LogoutRequestDocument;
@@ -49,10 +49,10 @@ class TestingLogoutHandler {
         this.singleLogoutHandler = singleLogoutHandler;
     }
 
-    public void perform2(HttpServletResponse response, AuthenticationSession authenticationSession) {
+    public void perform2(HttpServletResponse response, OxidesPortalGridSession oxidesPortalGridSession) {
         final String logoutEndpoint = "https://unity.grid.icm.edu.pl/unicore-portal/SLO-SOAP/SingleLogoutService";
         final String principalName = "CN=plgkluszczynski,CN=Rafal Kluszczynski,O=ICM,O=Uzytkownik,O=PL-Grid,C=PL";
-        final String sessionIndex = authenticationSession.getSessionIndex();
+        final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
         LogoutRequest logoutRequest = null;
@@ -114,10 +114,10 @@ class TestingLogoutHandler {
         log.info("RESP.BODY: " + responseEntity.getBody());
     }
 
-    public void perform(HttpServletResponse response, AuthenticationSession authenticationSession) {
+    public void perform(HttpServletResponse response, OxidesPortalGridSession oxidesPortalGridSession) {
         final String logoutEndpoint = "https://unity.grid.icm.edu.pl/unicore-portal/SLO-WEB";
         final String principalName = "CN=plgkluszczynski,CN=Rafal Kluszczynski,O=ICM,O=Uzytkownik,O=PL-Grid,C=PL";
-        final String sessionIndex = authenticationSession.getSessionIndex();
+        final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
         LogoutRequest logoutRequest = null;

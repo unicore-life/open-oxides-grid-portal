@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import xmlbeans.org.oasis.saml2.protocol.LogoutResponseDocument;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,14 +24,14 @@ public class SamlAuthenticationHandler {
     }
 
     public void performAuthenticationRequest(HttpServletResponse response,
-                                             AuthenticationSession authenticationSession) {
-        final String authenticationRequestId = authenticationSession.getUuid();
+                                             OxidesPortalGridSession oxidesPortalGridSession) {
+        final String authenticationRequestId = oxidesPortalGridSession.getUuid();
         samlRequestHandler.performAuthenticationRequest(response, authenticationRequestId);
     }
 
     public String processAuthenticationResponse(HttpServletRequest request,
-                                                AuthenticationSession authenticationSession) {
-        return samlResponseHandler.processAuthenticationResponse(request, authenticationSession);
+                                                OxidesPortalGridSession oxidesPortalGridSession) {
+        return samlResponseHandler.processAuthenticationResponse(request, oxidesPortalGridSession);
     }
 
     public String processSingleLogoutResponse(HttpServletRequest request) {

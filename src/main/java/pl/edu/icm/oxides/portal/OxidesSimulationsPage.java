@@ -6,7 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.portal.security.PortalAccess;
 import pl.edu.icm.oxides.portal.security.PortalAccessHelper;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -29,21 +29,21 @@ class OxidesSimulationsPage {
         this.accessHelper = accessHelper;
     }
 
-    ModelAndView modelSimulationsPage(AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    ModelAndView modelSimulationsPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            return prepareBasicModelAndView("simulations/main", ofNullable(authenticationSession));
+            return prepareBasicModelAndView("simulations/main", ofNullable(oxidesPortalGridSession));
         }
         return redirectModelAndView(portalAccess, SIMULATIONS_MAPPING);
     }
 
-    ModelAndView modelOneSimulationViewerPage(AuthenticationSession authenticationSession,
+    ModelAndView modelOneSimulationViewerPage(OxidesPortalGridSession oxidesPortalGridSession,
                                               UUID simulationUuid,
                                               Optional<String> path,
                                               String viewTemplateName) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            ModelAndView modelAndView = prepareBasicModelAndView(viewTemplateName, ofNullable(authenticationSession));
+            ModelAndView modelAndView = prepareBasicModelAndView(viewTemplateName, ofNullable(oxidesPortalGridSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
             modelAndView.addObject("path", path.orElse("/"));
             modelAndView.addObject("escapedPath", escapeEcmaScript(path.orElse("/")));
@@ -52,41 +52,41 @@ class OxidesSimulationsPage {
         return redirectModelAndView(portalAccess, String.format("/simulations/%s/files", simulationUuid));
     }
 
-    ModelAndView modelSimulationDetailsPage(AuthenticationSession authenticationSession, UUID simulationUuid) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    ModelAndView modelSimulationDetailsPage(OxidesPortalGridSession oxidesPortalGridSession, UUID simulationUuid) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            ModelAndView modelAndView = prepareBasicModelAndView("simulations/details", ofNullable(authenticationSession));
+            ModelAndView modelAndView = prepareBasicModelAndView("simulations/details", ofNullable(oxidesPortalGridSession));
             modelAndView.addObject("uuid", simulationUuid.toString());
             modelAndView.addObject("details", unicoreJob.retrieveJobDetails(
-                    simulationUuid, authenticationSession.getSelectedTrustDelegation()
+                    simulationUuid, oxidesPortalGridSession.getSelectedTrustDelegation()
             ));
             return modelAndView;
         }
         return redirectModelAndView(portalAccess, String.format("/simulations/%s/details", simulationUuid));
     }
 
-    ModelAndView modelSubmitScriptSimulationPage(AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    ModelAndView modelSubmitScriptSimulationPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            return prepareBasicModelAndView("simulations/submit", ofNullable(authenticationSession));
+            return prepareBasicModelAndView("simulations/submit", ofNullable(oxidesPortalGridSession));
         }
         return redirectModelAndView(portalAccess, SCRIPT_SUBMISSION_MAPPING);
     }
 
-    ModelAndView modelSubmitQuantumEspressoSimulationPage(AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    ModelAndView modelSubmitQuantumEspressoSimulationPage(OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            return prepareBasicModelAndView("simulations/submit-qe", ofNullable(authenticationSession));
+            return prepareBasicModelAndView("simulations/submit-qe", ofNullable(oxidesPortalGridSession));
         }
         return redirectModelAndView(portalAccess, QUANTUM_ESPRESSO_SUBMISSION_MAPPING);
     }
 
     private ModelAndView prepareBasicModelAndView(String htmlTemplateName,
-                                                  Optional<AuthenticationSession> authenticationSession) {
+                                                  Optional<OxidesPortalGridSession> authenticationSession) {
         ModelAndView modelAndView = new ModelAndView(htmlTemplateName);
         modelAndView.addObject("commonName",
                 authenticationSession
-                        .map(AuthenticationSession::getCommonName)
+                        .map(OxidesPortalGridSession::getCommonName)
                         .orElse("")
         );
         return modelAndView;

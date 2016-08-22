@@ -17,10 +17,10 @@ public class UserResourcesManager {
         this.sessionResourcesManager = sessionResourcesManager;
     }
 
-    public void initializeAfterSuccessfulSignIn(AuthenticationSession authenticationSession) {
-        sessionResourcesManager.prepareStorageClient(authenticationSession);
+    public void initializeAfterSuccessfulSignIn(OxidesPortalGridSession oxidesPortalGridSession) {
+        sessionResourcesManager.prepareStorageClient(oxidesPortalGridSession);
         cachingResourcesManager.initializeSignedInUserResources(
-                authenticationSession.getSelectedTrustDelegation()
+                oxidesPortalGridSession.getSelectedTrustDelegation()
         );
     }
 }

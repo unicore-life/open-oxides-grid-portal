@@ -5,14 +5,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class SingleLogoutHandler implements LogoutHandler {
     @Autowired
-    private AuthenticationSession authenticationSession;
+    private OxidesPortalGridSession oxidesPortalGridSession;
     @Autowired
     private SamlSingleLogoutHandler singleLogoutHandler;
     @Autowired
@@ -21,11 +21,11 @@ public class SingleLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("Invalidating session: " + request.getSession().getId());
-        log.debug("Disposing authenticated session: " + authenticationSession);
+        log.debug("Disposing authenticated session: " + oxidesPortalGridSession);
 
 //        testingLogoutHandler.perform2(response, authenticationSession);
 
-        if (!singleLogoutHandler.performSingleLogoutRequest(response, authenticationSession)) {
+        if (!singleLogoutHandler.performSingleLogoutRequest(response, oxidesPortalGridSession)) {
             final String redirectPath = "/";
             try {
                 response.sendRedirect(redirectPath);

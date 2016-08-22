@@ -24,31 +24,31 @@ public class OxidesUserPage {
         this.accessHelper = accessHelper;
     }
 
-    public ModelAndView modelPreferencesPage(Optional<AuthenticationSession> authenticationSession) {
+    public ModelAndView modelPreferencesPage(Optional<OxidesPortalGridSession> authenticationSession) {
         checkIfAccessIsValid(authenticationSession);
 
         ModelAndView modelAndView = new ModelAndView("preferences");
         modelAndView.addObject("commonName",
                 authenticationSession
-                        .map(AuthenticationSession::getAttributes)
+                        .map(OxidesPortalGridSession::getAttributes)
                         .map(userAttributes -> userAttributes.getCommonName())
                         .orElse("")
         );
         modelAndView.addObject("emailAddress",
                 authenticationSession
-                        .map(AuthenticationSession::getAttributes)
+                        .map(OxidesPortalGridSession::getAttributes)
                         .map(userAttributes -> userAttributes.getEmailAddress())
                         .orElse("")
         );
         modelAndView.addObject("custodianDN",
                 authenticationSession
-                        .map(AuthenticationSession::getAttributes)
+                        .map(OxidesPortalGridSession::getAttributes)
                         .map(userAttributes -> userAttributes.getCustodianDN())
                         .orElse("")
         );
         modelAndView.addObject("memberGroups",
                 authenticationSession
-                        .map(AuthenticationSession::getAttributes)
+                        .map(OxidesPortalGridSession::getAttributes)
                         .map(UserAttributes::getMemberGroups)
                         .map(memberGroups -> (List) new ArrayList<>(memberGroups))
                         .orElse(Collections.emptyList())
@@ -56,7 +56,7 @@ public class OxidesUserPage {
         return modelAndView;
     }
 
-    private void checkIfAccessIsValid(Optional<AuthenticationSession> authenticationSession) {
+    private void checkIfAccessIsValid(Optional<OxidesPortalGridSession> authenticationSession) {
         Boolean accessNotValid = authenticationSession
                 .map(accessHelper::determineSessionAccess)
                 .map(portalAccess -> portalAccess != VALID)
@@ -64,7 +64,7 @@ public class OxidesUserPage {
 
         if (accessNotValid) {
             String commonName = authenticationSession
-                    .map(AuthenticationSession::getAttributes)
+                    .map(OxidesPortalGridSession::getAttributes)
                     .map(UserAttributes::getCommonName)
                     .orElse("(anonymous)");
             log.info("Preferences page is not allowed for user: " + commonName);

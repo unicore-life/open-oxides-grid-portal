@@ -10,12 +10,10 @@ import eu.unicore.samly2.validators.SSOAuthnResponseValidator;
 import eu.unicore.security.etd.TrustDelegation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.impl.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
 import xmlbeans.org.oasis.saml2.assertion.AuthnStatementType;
@@ -24,7 +22,6 @@ import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,23 +39,23 @@ class SamlResponseHandler {
         this.idProvider = idProvider;
     }
 
-    String processAuthenticationResponse(HttpServletRequest request, AuthenticationSession authenticationSession) {
+    String processAuthenticationResponse(HttpServletRequest request, OxidesPortalGridSession oxidesPortalGridSession) {
         String samlResponse = request.getParameter("SAMLResponse");
         String returnUrl = "/";
         try {
             ResponseDocument responseDocument = Utils.decodeMessage(samlResponse, log);
             final SSOAuthnResponseValidator validator =
-                    validateSamlResponse(responseDocument, authenticationSession.getUuid());
+                    validateSamlResponse(responseDocument, oxidesPortalGridSession.getUuid());
 
             final String sessionIndex = extractSessionIndex(validator);
             log.trace(String.format("Authority session index: %s", sessionIndex));
-            authenticationSession.setSessionIndex(sessionIndex);
+            oxidesPortalGridSession.setSessionIndex(sessionIndex);
 
             log.debug("Response document: " + responseDocument.xmlText());
             EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
-            if (authenticationSession != null) {
-                processAuthenticationResponseData(authenticationSession, etdAssertionsWrapper);
-                returnUrl = authenticationSession.getReturnUrl();
+            if (oxidesPortalGridSession != null) {
+                processAuthenticationResponseData(oxidesPortalGridSession, etdAssertionsWrapper);
+                returnUrl = oxidesPortalGridSession.getReturnUrl();
             }
             return String.format("redirect:%s", returnUrl);
         } catch (Exception e) {
@@ -68,7 +65,7 @@ class SamlResponseHandler {
         }
     }
 
-    private void processAuthenticationResponseData(AuthenticationSession authenticationSession,
+    private void processAuthenticationResponseData(OxidesPortalGridSession oxidesPortalGridSession,
                                                    EtdAssertionsWrapper etdAssertionsWrapper) {
         List<TrustDelegation> trustDelegationList = etdAssertionsWrapper
                 .getEtdAssertions()
@@ -80,11 +77,11 @@ class SamlResponseHandler {
             throw new RuntimeException("Missing trust delegation data!");
         }
 
-        authenticationSession.setTrustDelegations(trustDelegationList);
+        oxidesPortalGridSession.setTrustDelegations(trustDelegationList);
         etdAssertionsWrapper.getAttributeData().getAttributes().forEach(
                 (attributeKey, attributeValues) -> {
                     attributeValues
-                            .forEach(value -> authenticationSession.storeAttribute(attributeKey, value));
+                            .forEach(value -> oxidesPortalGridSession.storeAttribute(attributeKey, value));
                 }
         );
     }

@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.NameIDType;
 
@@ -36,10 +36,10 @@ class SamlSingleLogoutHandler {
     }
 
     public boolean performSingleLogoutRequest(HttpServletResponse response,
-                                              AuthenticationSession authenticationSession) {
+                                              OxidesPortalGridSession oxidesPortalGridSession) {
         final String singleLogoutEndpointUrl = gridConfig.getIdpSloUrl();
-        final String principalCommonName = authenticationSession.getDistinguishedName();
-        final String sessionIndex = authenticationSession.getSessionIndex();
+        final String principalCommonName = oxidesPortalGridSession.getDistinguishedName();
+        final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
         try {

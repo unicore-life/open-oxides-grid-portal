@@ -14,7 +14,7 @@ import java.util.UUID;
 @Component
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 @Lazy
-public class AuthenticationSession {
+public class OxidesPortalGridSession {
     private String returnUrl;
     private List<TrustDelegation> trustDelegations;
     private String sessionIndex;
@@ -95,5 +95,5 @@ public class AuthenticationSession {
         return trustDelegation;
     }
 
-    private Log log = LogFactory.getLog(AuthenticationSession.class);
+    private Log log = LogFactory.getLog(OxidesPortalGridSession.class);
 }
