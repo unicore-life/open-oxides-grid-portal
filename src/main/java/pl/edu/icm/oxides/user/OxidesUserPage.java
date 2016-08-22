@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.edu.icm.oxides.portal.security.OxidesForbiddenException;
 import pl.edu.icm.oxides.portal.security.PortalAccessHelper;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,12 +70,6 @@ public class OxidesUserPage {
             log.info("Preferences page is not allowed for user: " + commonName);
             throw new OxidesForbiddenException("You are not allowed or activated!");
         }
-    }
-
-    public String signOutAndRedirect(HttpSession session) {
-        log.info(String.format("Invalidating session: %s", session.getId()));
-        session.invalidate();
-        return "redirect:/";
     }
 
     private Log log = LogFactory.getLog(OxidesUserPage.class);

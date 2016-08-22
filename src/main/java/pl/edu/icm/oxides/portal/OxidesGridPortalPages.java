@@ -63,10 +63,6 @@ public class OxidesGridPortalPages {
         return oxidesUserPage.modelPreferencesPage(ofNullable(authenticationSession));
     }
 
-    public String signOutAndRedirect(HttpSession session) {
-        return oxidesUserPage.signOutAndRedirect(session);
-    }
-
     public ModelAndView modelForbiddenErrorPage(HttpSession session) {
         return oxidesErrorsPage.modelForbiddenPage(session);
     }

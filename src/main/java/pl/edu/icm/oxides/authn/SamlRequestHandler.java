@@ -4,21 +4,24 @@ import eu.emi.security.authn.x509.X509Credential;
 import eu.unicore.samly2.SAMLConstants;
 import eu.unicore.samly2.binding.HttpPostBindingSupport;
 import eu.unicore.samly2.binding.SAMLMessageType;
-import eu.unicore.samly2.elements.NameID;
 import eu.unicore.samly2.proto.AuthnRequest;
+import eu.unicore.security.dsig.DSigException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
+import xmlbeans.org.oasis.saml2.assertion.NameIDType;
 import xmlbeans.org.oasis.saml2.protocol.AuthnRequestDocument;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.net.URISyntaxException;
+
+import static pl.edu.icm.oxides.authn.Utils.configureHttpResponse;
+import static pl.edu.icm.oxides.authn.Utils.convertDistinguishedNameToNameID;
 
 @Component
 class SamlRequestHandler {
@@ -41,38 +44,35 @@ class SamlRequestHandler {
                     authnRequest.getXMLBeanDoc().xmlText());
 
             configureHttpResponse(response);
-            String form = HttpPostBindingSupport.getHtmlPOSTFormContents(
+            String htmlFormContent = HttpPostBindingSupport.getHtmlPOSTFormContents(
                     SAMLMessageType.SAMLRequest,
                     idpUrl,
                     authnRequestDocument.xmlText(),
                     null);
             PrintWriter writer = response.getWriter();
-            writer.write(form);
+            writer.write(htmlFormContent);
             writer.flush();
+        } catch (URISyntaxException e) {
+            log.error("Wrong service provider target URL.", e);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    private void configureHttpResponse(HttpServletResponse response) {
-        response.setContentType(String.format("%s; charset=%s", MediaType.TEXT_HTML, StandardCharsets.UTF_8));
-//        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache,no-store,must-revalidate");
-//        response.setHeader(HttpHeaders.PRAGMA, "no-cache");
-//        response.setDateHeader(HttpHeaders.EXPIRES, -1);
-    }
+    private AuthnRequest createRequest(String identityProviderUrl,
+                                       String serviceProviderTargetUrl,
+                                       X509Credential x509Credential,
+                                       String requestId) throws DSigException, URISyntaxException {
+        final URI samlServletUri = new URI(serviceProviderTargetUrl);
+        final NameIDType requestIssuer = convertDistinguishedNameToNameID(x509Credential.getSubjectName());
 
-    private AuthnRequest createRequest(String idpUrl, String targetUrl,
-                                       X509Credential credential, String requestId) throws Exception {
-        URI samlServletUri = new URI(targetUrl);
-        NameID myId = new NameID(credential.getSubjectName(), SAMLConstants.NFORMAT_DN);
-
-        AuthnRequest request = new AuthnRequest(myId.getXBean());
+        AuthnRequest request = new AuthnRequest(requestIssuer);
         request.setFormat(SAMLConstants.NFORMAT_DN);
-        request.getXMLBean().setDestination(idpUrl);
+        request.getXMLBean().setDestination(identityProviderUrl);
         request.getXMLBean().setAssertionConsumerServiceURL(samlServletUri.toASCIIString());
         request.getXMLBean().setID(requestId);
 
-        request.sign(credential.getKey(), credential.getCertificateChain());
+        request.sign(x509Credential.getKey(), x509Credential.getCertificateChain());
         return request;
     }
 

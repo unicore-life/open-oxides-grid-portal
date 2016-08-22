@@ -18,6 +18,7 @@ import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.user.AuthenticationSession;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
 import xmlbeans.org.oasis.saml2.assertion.AssertionDocument;
+import xmlbeans.org.oasis.saml2.assertion.AuthnStatementType;
 import xmlbeans.org.oasis.saml2.protocol.ResponseDocument;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +46,13 @@ class SamlResponseHandler {
         String samlResponse = request.getParameter("SAMLResponse");
         String returnUrl = "/";
         try {
-            ResponseDocument responseDocument = decodeResponse(samlResponse);
-            validateSamlResponse(responseDocument, authenticationSession.getUuid());
+            ResponseDocument responseDocument = Utils.decodeMessage(samlResponse, log);
+            final SSOAuthnResponseValidator validator =
+                    validateSamlResponse(responseDocument, authenticationSession.getUuid());
+
+            final String sessionIndex = extractSessionIndex(validator);
+            log.trace(String.format("Authority session index: %s", sessionIndex));
+            authenticationSession.setSessionIndex(sessionIndex);
 
             log.debug("Response document: " + responseDocument.xmlText());
             EtdAssertionsWrapper etdAssertionsWrapper = new EtdAssertionsWrapper(responseDocument);
@@ -83,20 +89,6 @@ class SamlResponseHandler {
         );
     }
 
-    private ResponseDocument decodeResponse(String response) throws SAMLValidationException {
-        byte[] decoded = Base64.decode(response.getBytes());
-        if (decoded == null) {
-            throw new SAMLValidationException("The SAML response is not properly Base64 encoded");
-        }
-        String responseString = new String(decoded, StandardCharsets.UTF_8);
-        log.trace(responseString);
-        try {
-            return ResponseDocument.Factory.parse(responseString);
-        } catch (XmlException e) {
-            throw new SAMLValidationException(e.getMessage());
-        }
-    }
-
     private SSOAuthnResponseValidator validateSamlResponse(ResponseDocument response, String requestId)
             throws URISyntaxException, SAMLValidationException {
         SamlTrustChecker trustChecker = new TruststoreBasedSamlTrustChecker(
@@ -114,6 +106,15 @@ class SamlResponseHandler {
         );
         validator.validate(response);
         return validator;
+    }
+
+    private String extractSessionIndex(SSOAuthnResponseValidator validator) {
+        AuthnStatementType[] statements = validator
+                .getAuthNAssertions()
+                .get(0)
+                .getAssertion()
+                .getAuthnStatementArray();
+        return statements.length > 0 ? statements[0].getSessionIndex() : "";
     }
 
     private TrustDelegation toTrustDelegation(AssertionDocument assertionDocument) {

@@ -107,11 +107,6 @@ public class OxidesEndpoints {
         return oxidesGridPortalPages.modelPreferencesPage(authenticationSession);
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public String signOut(HttpSession session) {
-        return oxidesGridPortalPages.signOutAndRedirect(session);
-    }
-
     @RequestMapping(value = "/error/forbidden", method = RequestMethod.GET)
     public ModelAndView errorForbidden(HttpSession session) {
         return oxidesGridPortalPages.modelForbiddenErrorPage(session);
@@ -242,6 +237,18 @@ public class OxidesEndpoints {
     public String processAuthenticationResponse(HttpServletRequest request) {
         logSessionData("SAML-P", request.getSession(), authenticationSession);
         return processResponseAndUserSessionInitialization(request, authenticationSession);
+    }
+
+    @RequestMapping(value = "/authn/slo", method = RequestMethod.POST)
+    public String processSingleLogoutResponse(HttpServletRequest request) {
+        logSessionData("SAML-R", request.getSession(), authenticationSession);
+        return samlAuthenticationHandler.processSingleLogoutResponse(request);
+    }
+
+    @RequestMapping(value = "/authn/sign-out", method = RequestMethod.POST)
+    public String processLogoutResponse(HttpServletRequest request) {
+        logSessionData("SAML-O", request.getSession(), authenticationSession);
+        return samlAuthenticationHandler.processSingleLogoutResponse(request);
     }
 
     private String processResponseAndUserSessionInitialization(HttpServletRequest request,
