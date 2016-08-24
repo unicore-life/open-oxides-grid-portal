@@ -5,7 +5,6 @@ import eu.unicore.samly2.exceptions.SAMLResponderException;
 import eu.unicore.samly2.proto.LogoutRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -25,9 +24,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.security.GridIdentityProvider;
-import xmlbeans.org.oasis.saml2.assertion.NameIDType;
 import xmlbeans.org.oasis.saml2.protocol.LogoutRequestDocument;
-import xmlbeans.org.oasis.saml2.protocol.LogoutRequestType;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletResponse;
@@ -51,45 +48,17 @@ class TestingLogoutHandler {
 
     public void perform2(HttpServletResponse response, OxidesPortalGridSession oxidesPortalGridSession) {
         final String logoutEndpoint = "https://unity.grid.icm.edu.pl/unicore-portal/SLO-SOAP/SingleLogoutService";
-        final String principalName = "CN=plgkluszczynski,CN=Rafal Kluszczynski,O=ICM,O=Uzytkownik,O=PL-Grid,C=PL";
+        final String principalName = oxidesPortalGridSession.getDistinguishedName();
         final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
         LogoutRequest logoutRequest = null;
         try {
-            logoutRequest = singleLogoutHandler.createLogoutRequest(logoutEndpoint, principalName, sessionIndex, localSamlId);
+            logoutRequest =
+                    singleLogoutHandler.createLogoutRequest(logoutEndpoint, principalName, sessionIndex, localSamlId);
         } catch (SAMLResponderException e) {
             log.error("ERROR", e);
         }
-
-        LogoutRequestDocument logoutRequestDocument = LogoutRequestDocument.Factory.newInstance();
-        final LogoutRequestType logoutRequestType = logoutRequestDocument.addNewLogoutRequest();
-        final NameIDType nameIDType = logoutRequestType.addNewNameID();
-
-        TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
-        SSLContext sslContext = null;
-        try {
-            sslContext = org.apache.http.ssl.SSLContexts.custom()
-                    .loadTrustMaterial(idProvider.getGridCredential().getKeyStore(), acceptingTrustStrategy)
-                    .build();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-        CloseableHttpClient httpClient2 = HttpClients.custom()
-                .setSSLSocketFactory(csf)
-                .build();
-
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setHttpClient(httpClient2);
-
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_XML);
@@ -108,6 +77,7 @@ class TestingLogoutHandler {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
         log.debug("REQ.ENTITY: " + requestEntity.toString());
 
+        final RestTemplate restTemplate = createSecureRestTemplate();
         final ResponseEntity<String> responseEntity =
                 restTemplate.exchange(logoutEndpoint, HttpMethod.POST, requestEntity, String.class);
         log.info("RESP.CODE: " + responseEntity.getStatusCode().name());
@@ -116,21 +86,40 @@ class TestingLogoutHandler {
 
     public void perform(HttpServletResponse response, OxidesPortalGridSession oxidesPortalGridSession) {
         final String logoutEndpoint = "https://unity.grid.icm.edu.pl/unicore-portal/SLO-WEB";
-        final String principalName = "CN=plgkluszczynski,CN=Rafal Kluszczynski,O=ICM,O=Uzytkownik,O=PL-Grid,C=PL";
+        final String principalName = oxidesPortalGridSession.getDistinguishedName();
         final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
         LogoutRequest logoutRequest = null;
         try {
-            logoutRequest = singleLogoutHandler.createLogoutRequest(logoutEndpoint, principalName, sessionIndex, localSamlId);
+            logoutRequest =
+                    singleLogoutHandler.createLogoutRequest(logoutEndpoint, principalName, sessionIndex, localSamlId);
         } catch (SAMLResponderException e) {
             log.error("ERROR", e);
         }
 
-        CloseableHttpClient httpClient1 =
-                HttpClients.custom()
-                        .setSSLHostnameVerifier(new NoopHostnameVerifier())
-                        .build();
+        HttpHeaders requestHeaders = new HttpHeaders();
+//        requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        final LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("RelayState", newArrayList(""));
+        params.put(SAMLMessageType.SAMLRequest.toString(),
+                newArrayList(new String(Base64.encode(logoutRequest.getXMLBeanDoc().xmlText().getBytes()))));
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, requestHeaders);
+        log.debug("REQ.ENTITY: " + requestEntity.toString());
+
+        final RestTemplate restTemplate = createSecureRestTemplate();
+        final ResponseEntity<String> responseEntity =
+                restTemplate.exchange(logoutEndpoint, HttpMethod.POST, requestEntity, String.class);
+        log.info("RESP.CODE: " + responseEntity.getStatusCode().name());
+        log.info("RESP.BODY: " + responseEntity.getBody());
+    }
+
+    private RestTemplate createSecureRestTemplate() {
+//        http://www.baeldung.com/httpclient-ssl
+//        http://blog.codeleak.pl/2016/02/skip-ssl-certificate-verification-in.html
 
         TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
@@ -149,32 +138,16 @@ class TestingLogoutHandler {
 
         SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
 
-        CloseableHttpClient httpClient2 = HttpClients.custom()
+        CloseableHttpClient httpClient = HttpClients.custom()
                 .setSSLSocketFactory(csf)
                 .build();
 
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setHttpClient(httpClient2);
+        clientHttpRequestFactory.setHttpClient(httpClient);
 
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-
-        HttpHeaders requestHeaders = new HttpHeaders();
-//        requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-        requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        final LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.put("RelayState", newArrayList(""));
-        params.put(SAMLMessageType.SAMLRequest.toString(),
-                newArrayList(new String(Base64.encode(logoutRequest.getXMLBeanDoc().xmlText().getBytes()))));
-
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, requestHeaders);
-        log.debug("REQ.ENTITY: " + requestEntity.toString());
-
-        final ResponseEntity<String> responseEntity =
-                restTemplate.exchange(logoutEndpoint, HttpMethod.POST, requestEntity, String.class);
-        log.info("RESP.CODE: " + responseEntity.getStatusCode().name());
-        log.info("RESP.BODY: " + responseEntity.getBody());
+        return new RestTemplate(clientHttpRequestFactory);
     }
+
 
     private List<String> newArrayList(String... elements) {
         return Arrays.asList(elements);

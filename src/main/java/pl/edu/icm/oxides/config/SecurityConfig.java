@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new AntPathRequestMatcher("/authn/slo"),
                 new AntPathRequestMatcher("/authn/signout"),
                 // ^^^ - both needed to handle Unity's POST request.
-                new AntPathRequestMatcher("/oxides/authn")
+                new AntPathRequestMatcher("/authn/sign-in")
         };
 
         @Override

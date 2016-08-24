@@ -233,7 +233,7 @@ public class OxidesEndpoints {
         samlAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
     }
 
-    @RequestMapping(value = "/oxides/authn", method = RequestMethod.POST)
+    @RequestMapping(value = "/authn/sign-in", method = RequestMethod.POST)
     public String processAuthenticationResponse(HttpServletRequest request) {
         logSessionData("SAML-P", request.getSession(), oxidesPortalGridSession);
         return processResponseAndUserSessionInitialization(request, oxidesPortalGridSession);
