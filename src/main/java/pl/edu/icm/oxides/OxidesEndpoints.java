@@ -239,12 +239,6 @@ public class OxidesEndpoints {
         return processResponseAndUserSessionInitialization(request, oxidesPortalGridSession);
     }
 
-    @RequestMapping(value = "/authn/slo", method = RequestMethod.POST)
-    public String processSingleLogoutResponse(HttpServletRequest request) {
-        logSessionData("SAML-R", request.getSession(), oxidesPortalGridSession);
-        return samlAuthenticationHandler.processSingleLogoutResponse(request);
-    }
-
     @RequestMapping(value = "/authn/sign-out", method = RequestMethod.POST)
     public String processLogoutResponse(HttpServletRequest request) {
         logSessionData("SAML-O", request.getSession(), oxidesPortalGridSession);

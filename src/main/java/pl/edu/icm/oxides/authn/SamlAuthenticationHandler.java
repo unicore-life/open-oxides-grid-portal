@@ -40,7 +40,7 @@ public class SamlAuthenticationHandler {
             final LogoutResponseDocument messageXml = Utils.decodeMessage(samlResponse, log);
             log.warn("SAML RESPONSE: " + messageXml.xmlText());
         } catch (SAMLValidationException e) {
-            log.error("BLAD", e);
+            log.error("ERROR", e);
         }
         return "redirect:/";
     }

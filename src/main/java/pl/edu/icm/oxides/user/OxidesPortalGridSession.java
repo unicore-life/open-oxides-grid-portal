@@ -57,8 +57,8 @@ public class OxidesPortalGridSession {
 
     @Override
     public String toString() {
-        return String.format("AuthenticationSession{returnUrl='%s', trustDelegations=%s, attributes=%s, uuid='%s'}",
-                returnUrl, trustDelegations, attributes, uuid);
+        return String.format("OxidesPortalGridSession{returnUrl='%s', trustDelegations=%s, sessionIndex='%s', " +
+                "attributes=%s, uuid='%s'}", returnUrl, trustDelegations, sessionIndex, attributes, uuid);
     }
 
     public void storeAttribute(String key, String value) {

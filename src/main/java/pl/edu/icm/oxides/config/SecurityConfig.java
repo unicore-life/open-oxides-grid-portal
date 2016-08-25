@@ -70,9 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RequestMatcher csrfRequestMatcher = new RequestMatcher() {
         private Pattern allowedMethods = Pattern.compile("^GET$");
         private AntPathRequestMatcher[] disabledCsrfRequestMatchers = {
-                new AntPathRequestMatcher("/authn/slo"),
-                new AntPathRequestMatcher("/authn/signout"),
-                // ^^^ - both needed to handle Unity's POST request.
+                // Needed to handle Unity's POST sign-in and sign-out requests:
+                new AntPathRequestMatcher("/authn/sign-out"),
                 new AntPathRequestMatcher("/authn/sign-in")
         };
 
