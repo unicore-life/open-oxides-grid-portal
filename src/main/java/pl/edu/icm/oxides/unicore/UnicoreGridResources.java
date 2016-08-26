@@ -10,7 +10,7 @@ import pl.edu.icm.oxides.portal.security.PortalAccessHelper;
 import pl.edu.icm.oxides.unicore.central.UnicoreBroker;
 import pl.edu.icm.oxides.unicore.central.UnicoreBroker.BrokerJobType;
 import pl.edu.icm.oxides.unicore.site.job.UnicoreJob;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -45,31 +45,31 @@ public class UnicoreGridResources {
         this.accessHelper = accessHelper;
     }
 
-    public ResponseEntity<List> listUserJobs(AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    public ResponseEntity<List> listUserJobs(OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            return ok(jobHandler.retrieveSiteResourceList(authenticationSession.getSelectedTrustDelegation()));
+            return ok(jobHandler.retrieveSiteResourceList(oxidesPortalGridSession.getSelectedTrustDelegation()));
         }
         return notValidResponse(portalAccess);
     }
 
     public ResponseEntity<Void> submitScriptWorkAssignment(OxidesSimulation simulation,
-                                                           AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+                                                           OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            unicoreBroker.submitBrokeredJob(BrokerJobType.SCRIPT, simulation, authenticationSession);
-            cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
+            unicoreBroker.submitBrokeredJob(BrokerJobType.SCRIPT, simulation, oxidesPortalGridSession);
+            cachingResourcesManager.reinitializeAfterSubmission(oxidesPortalGridSession.getSelectedTrustDelegation());
             return ResponseEntity.noContent().build();
         }
         return notValidResponse(portalAccess);
     }
 
     public ResponseEntity<Void> submitQuantumEspressoWorkAssignment(OxidesSimulation simulation,
-                                                                    AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+                                                                    OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            unicoreBroker.submitBrokeredJob(BrokerJobType.QUANTUM_ESPRESSO, simulation, authenticationSession);
-            cachingResourcesManager.reinitializeAfterSubmission(authenticationSession.getSelectedTrustDelegation());
+            unicoreBroker.submitBrokeredJob(BrokerJobType.QUANTUM_ESPRESSO, simulation, oxidesPortalGridSession);
+            cachingResourcesManager.reinitializeAfterSubmission(oxidesPortalGridSession.getSelectedTrustDelegation());
             return ResponseEntity.noContent().build();
         }
         return notValidResponse(portalAccess);
@@ -77,12 +77,12 @@ public class UnicoreGridResources {
 
     public ResponseEntity<List> listUserJobFiles(UUID simulationUuid,
                                                  String path,
-                                                 AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+                                                 OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
             return ok(jobHandler.retrieveJobFilesListing(simulationUuid,
                     ofNullable(path),
-                    authenticationSession.getSelectedTrustDelegation()));
+                    oxidesPortalGridSession.getSelectedTrustDelegation()));
         }
         return notValidResponse(portalAccess);
     }
@@ -90,30 +90,30 @@ public class UnicoreGridResources {
     public ResponseEntity<Void> downloadUserJobFile(UUID simulationUuid,
                                                     String path,
                                                     HttpServletResponse response,
-                                                    AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+                                                    OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
             jobHandler.downloadJobFile(simulationUuid,
                     ofNullable(path),
                     response,
-                    authenticationSession.getSelectedTrustDelegation());
+                    oxidesPortalGridSession.getSelectedTrustDelegation());
             return ok().build();
         }
         return notValidResponse(portalAccess);
     }
 
-    public ResponseEntity<String> uploadFile(MultipartFile file, AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    public ResponseEntity<String> uploadFile(MultipartFile file, OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            return ok(fileUploader.uploadFileToGrid(file, authenticationSession));
+            return ok(fileUploader.uploadFileToGrid(file, oxidesPortalGridSession));
         }
         return notValidResponse(portalAccess);
     }
 
-    public ResponseEntity<Void> destroyUserJob(UUID simulationUuid, AuthenticationSession authenticationSession) {
-        PortalAccess portalAccess = accessHelper.determineSessionAccess(authenticationSession);
+    public ResponseEntity<Void> destroyUserJob(UUID simulationUuid, OxidesPortalGridSession oxidesPortalGridSession) {
+        PortalAccess portalAccess = accessHelper.determineSessionAccess(oxidesPortalGridSession);
         if (portalAccess == VALID) {
-            jobHandler.destroySiteResource(simulationUuid, authenticationSession.getSelectedTrustDelegation());
+            jobHandler.destroySiteResource(simulationUuid, oxidesPortalGridSession.getSelectedTrustDelegation());
             return noContent().build();
         }
         return notValidResponse(portalAccess);

@@ -1,12 +1,11 @@
-gridOxides:
-  accessGroup: /vo.plgrid.pl/testbed-groups/plggoxides
+gridOxides.accessGroup: /vo.plgrid.pl/testbed-groups/plggoxides
 
 grid:
   identityConfig: classpath:grid-local.properties
-#  idpUrl: https://unity.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
-  idpUrl: https://unicoreportal.grid.icm.edu.pl/testbed-portal/saml2unicoreIdp-web
+  idpUrl: https://testbed.grid.icm.edu.pl:2443/testbed-portal/saml2unicoreIdp-web
+  idpSloUrl: https://testbed.grid.icm.edu.pl:2443/testbed-portal/SLO-WEB
   registry: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
-  targetUrl: https://localhost:8443/oxides/authn
+  targetUrl: https://localhost:8443/authn/sign-in
 
 unicore.identityConfig: classpath:grid-local.properties
 unicore.registryUri: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-import pl.edu.icm.oxides.config.GridConfig;
 import pl.edu.icm.oxides.config.GridOxidesConfig;
 import pl.edu.icm.oxides.open.FileResourceLoader;
 import pl.edu.icm.oxides.portal.model.OxidesSimulation;
@@ -26,7 +25,7 @@ import pl.edu.icm.oxides.unicore.GridFileUploader;
 import pl.edu.icm.oxides.unicore.simulation.BrokeredJobModel;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentDescription;
 import pl.edu.icm.oxides.unicore.simulation.WorkAssignmentFile;
-import pl.edu.icm.oxides.user.AuthenticationSession;
+import pl.edu.icm.oxides.user.OxidesPortalGridSession;
 import pl.edu.icm.unicore.spring.central.broker.UnavailableBrokerException;
 import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokerEntity;
 import pl.edu.icm.unicore.spring.central.broker.UnicoreBrokers;
@@ -43,12 +42,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static pl.edu.icm.unicore.spring.util.EndpointReferenceHelper.toEndpointReference;
-
 @Repository
 public class UnicoreBroker {
     private final UnicoreBrokers unicoreBrokers;
-    private final GridConfig gridConfig;
     private final GridOxidesConfig oxidesConfig;
     private final GridClientHelper clientHelper;
     private final GridFileUploader fileUploader;
@@ -60,13 +56,11 @@ public class UnicoreBroker {
 
     @Autowired
     public UnicoreBroker(UnicoreBrokers unicoreBrokers,
-                         GridConfig gridConfig,
                          GridOxidesConfig oxidesConfig,
                          GridClientHelper clientHelper,
                          GridFileUploader fileUploader,
                          FileResourceLoader resourceLoader) {
         this.unicoreBrokers = unicoreBrokers;
-        this.gridConfig = gridConfig;
         this.oxidesConfig = oxidesConfig;
         this.clientHelper = clientHelper;
         this.fileUploader = fileUploader;
@@ -78,29 +72,30 @@ public class UnicoreBroker {
         try {
             return unicoreBrokers.getBrokerServices(trustDelegation);
         } catch (UnavailableBrokerException exception) {
+            log.warn("Problem retrieving brokers!", exception);
             throw new UnicoreSpringException(exception);
         }
     }
 
     public void submitBrokeredJob(BrokerJobType brokerJobType,
                                   OxidesSimulation simulation,
-                                  AuthenticationSession authenticationSession) {
-        UnicoreBrokerEntity brokerEntity = retrieveServiceList(authenticationSession.getSelectedTrustDelegation())
+                                  OxidesPortalGridSession oxidesPortalGridSession) {
+        UnicoreBrokerEntity brokerEntity = retrieveServiceList(oxidesPortalGridSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
                 .orElseThrow(() -> new UnicoreSpringException(new Exception("NO BROKER AT ALL!")));
 
         IClientConfiguration clientConfiguration = clientHelper
-                .createClientConfiguration(authenticationSession.getSelectedTrustDelegation());
+                .createClientConfiguration(oxidesPortalGridSession.getSelectedTrustDelegation());
         // Extending ETD with broker's DN:
         clientConfiguration.getETDSettings().setReceiver(
                 new X500Principal(
                         WSUtilities.extractServerIDFromEPR(
-                                toEndpointReference(brokerEntity.getUri()))));
+                                brokerEntity.getEndpointReferenceType())));
 //        clientConfiguration.getETDSettings().setExtendTrustDelegation(true);
 
         Optional<IServiceOrchestrator> brokerClient = createBrokerClient(brokerEntity, clientConfiguration);
-        StorageClient storageClient = authenticationSession
+        StorageClient storageClient = oxidesPortalGridSession
                 .getResources()
                 .getStorageClient();
 
@@ -179,7 +174,7 @@ public class UnicoreBroker {
 
     public Optional<IServiceOrchestrator> createBrokerClient(UnicoreBrokerEntity brokerEntity, IClientConfiguration clientConfiguration) {
         try {
-            final EndpointReferenceType endpointReference = toEndpointReference(brokerEntity.getUri());
+            final EndpointReferenceType endpointReference = brokerEntity.getEndpointReferenceType();
             return Optional.ofNullable(initializeClient(
                     IServiceOrchestrator.class, endpointReference, clientConfiguration));
         } catch (MalformedURLException e) {
