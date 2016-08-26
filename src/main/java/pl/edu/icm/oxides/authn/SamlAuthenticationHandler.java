@@ -11,6 +11,8 @@ import xmlbeans.org.oasis.saml2.protocol.LogoutResponseDocument;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static pl.edu.icm.oxides.authn.Utils.decodeMessage;
+
 @Service
 public class SamlAuthenticationHandler {
     private final SamlRequestHandler samlRequestHandler;
@@ -37,10 +39,10 @@ public class SamlAuthenticationHandler {
     public String processSingleLogoutResponse(HttpServletRequest request) {
         try {
             final String samlResponse = request.getParameter("SAMLResponse");
-            final LogoutResponseDocument messageXml = Utils.decodeMessage(samlResponse, log);
-            log.warn("SAML RESPONSE: " + messageXml.xmlText());
+            final LogoutResponseDocument messageXml = decodeMessage(samlResponse, log);
+            log.info("Single logout response message: " + messageXml.xmlText());
         } catch (SAMLValidationException e) {
-            log.error("ERROR", e);
+            log.error("Could not read single logout response message!", e);
         }
         return "redirect:/";
     }

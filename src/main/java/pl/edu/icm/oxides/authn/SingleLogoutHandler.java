@@ -23,7 +23,7 @@ public class SingleLogoutHandler implements LogoutHandler {
         log.info("Invalidating session: " + request.getSession().getId());
         log.debug("Disposing authenticated session: " + oxidesPortalGridSession);
 
-//        testingLogoutHandler.perform2(response, authenticationSession);
+//        testingLogoutHandler.perform2(response, oxidesPortalGridSession);
 
         if (!singleLogoutHandler.performSingleLogoutRequest(response, oxidesPortalGridSession)) {
             final String redirectPath = "/";
