@@ -67,6 +67,6 @@ Remember to configure [Bintray](https://bintray.com) user and key by using param
 * [UNICORE](http://unicore.eu)
 * [Unity IDM](http://unity-idm.eu)
 
-## Other links which may come handy:
+## Other links which may come handy
  
 * [websockets](http://g00glen00b.be/spring-websockets-config/)

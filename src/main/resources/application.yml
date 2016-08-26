@@ -1,5 +1,4 @@
-openOxides:
-  groupName: /vo.plgrid.pl
+openOxides.groupName: /vo.plgrid.pl
 
 gridOxides:
   accessGroup: /
