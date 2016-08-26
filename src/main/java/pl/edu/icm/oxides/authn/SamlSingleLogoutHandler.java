@@ -42,6 +42,9 @@ class SamlSingleLogoutHandler {
         final String sessionIndex = oxidesPortalGridSession.getSessionIndex();
         final String localSamlId = idProvider.getGridCredential().getSubjectName();
 
+        if (singleLogoutEndpointUrl == null || singleLogoutEndpointUrl.isEmpty()) {
+            return false;
+        }
         try {
             LogoutRequest logoutRequest =
                     createLogoutRequest(singleLogoutEndpointUrl, principalCommonName, sessionIndex, localSamlId);
@@ -61,7 +64,7 @@ class SamlSingleLogoutHandler {
 
             return true;
         } catch (IOException | SAMLResponderException exception) {
-            log.error("Could not responde with logout form!", exception);
+            log.error("Could not respond with logout form!", exception);
         }
         return false;
     }

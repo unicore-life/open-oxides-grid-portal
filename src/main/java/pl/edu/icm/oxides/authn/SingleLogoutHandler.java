@@ -15,15 +15,11 @@ public class SingleLogoutHandler implements LogoutHandler {
     private OxidesPortalGridSession oxidesPortalGridSession;
     @Autowired
     private SamlSingleLogoutHandler singleLogoutHandler;
-    @Autowired
-    private TestingLogoutHandler testingLogoutHandler;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("Invalidating session: " + request.getSession().getId());
-        log.debug("Disposing authenticated session: " + oxidesPortalGridSession);
-
-//        testingLogoutHandler.perform2(response, authenticationSession);
+        log.debug("Disposing authenticated grid session: " + oxidesPortalGridSession);
 
         if (!singleLogoutHandler.performSingleLogoutRequest(response, oxidesPortalGridSession)) {
             final String redirectPath = "/";
