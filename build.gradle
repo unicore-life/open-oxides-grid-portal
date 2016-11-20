@@ -3,8 +3,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE',
-                'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE',
+                'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
     }
 }
 
@@ -13,10 +13,11 @@ plugins {
     id 'java'
     id 'groovy'
     id 'checkstyle'
-    id 'com.moowork.grunt' version '0.11'
-    id 'pl.allegro.tech.build.axion-release' version '1.4.0'
+    id 'com.moowork.grunt' version '0.13'
+    id "com.moowork.node" version "0.13"
+    id 'pl.allegro.tech.build.axion-release' version '1.4.1'
 }
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 
@@ -34,9 +35,9 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-security',
 
             'cglib:cglib:3.2.4',
-            'org.apache.commons:commons-lang3:3.4',
-            'org.springframework:spring-context-support:4.3.2.RELEASE',
-            'net.sf.ehcache:ehcache:2.10.2',
+            'org.apache.commons:commons-lang3:3.5',
+            'org.springframework:spring-context-support:4.3.4.RELEASE',
+            'net.sf.ehcache:ehcache:2.10.3',
 
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
 
@@ -75,7 +76,7 @@ applicationDistribution.from('src/main/resources') {
 }
 
 node {
-    version = '5.4.0'
+    version = '6.9.1'
     download = true
 }
 
@@ -93,5 +94,5 @@ project.tasks.grunt_check.dependsOn grunt_install
 project.tasks.check.dependsOn grunt_check
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+    gradleVersion = '3.2'
 }

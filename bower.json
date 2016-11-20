@@ -24,7 +24,7 @@
     "bootstrap": "~3.3.7"
   },
   "resolutions": {
-    "angular": "1.4.12",
+    "angular": "1.4.14",
     "bootstrap": "3.3.7"
   }
 }

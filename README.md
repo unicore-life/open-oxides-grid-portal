@@ -70,3 +70,5 @@ Remember to configure [Bintray](https://bintray.com) user and key by using param
 ## Other links which may come handy
  
 * [websockets](http://g00glen00b.be/spring-websockets-config/)
+* https://github.com/vdenotaris/spring-boot-security-saml-sample
+* https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples
