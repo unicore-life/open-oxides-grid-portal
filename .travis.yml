@@ -3,3 +3,13 @@ jdk:
   - oraclejdk8
 before_install:
   - chmod +x gradlew
+deploy:
+  provider: releases
+  api_key:
+    secure: ZsPk/XBG0WvG8UyZvUSu6ZiOrOkgSrAuPlJd+xdezi3HLjjMT07d1nIbEf8R0+f3O7CnS9Z7I3w+2nY/mZpF1/4HzQ/XQ0GnQa8XEwResvRzWFpN5GpBC2jVgCpKpPgAK0yQSciODLU8obkkHpLP80+wmC78iJfM6JwWFWEipELrf+KeplfVdctX1diKNREDAAea2aYb61L6mJ1bcMaM7aVBK7LgmeNdEqhk6dNFTg9qzCHkoxSk6LMyl0aM6hxlA6Soxcf7KxVrWIXWc/e1YC56oHy/hYd9X0oyO2Jpo5fZoNugNK5bPaFzEPfbG2Xqf1NSP7bZSqQor95B4fnj153IvhTYqx6vdHd78aVlU93/TtU8hiKvd2LES/qK6X4m7pBzm/VLcWUUsRHv92ID6rTYmryA4SoT2rVzoHD2VesJ+lASwGjqhKvpBbVY+3vowfBFuZNxCtgHi/iqsfWJMmh46hnJW97isGtIQRBwo69m+fHDFkB3PGsam6Q/OhZiPtINMtrWYFhFkRYu2GJDbCEoR1KMRDQIKxe9w5pwEEXYzOl9I8jjXe7OcWhgM0fViogj69DwtQtCQq9PPIL/aGSbTDfIBHU5pdRwnZ033gwZmftatDevO1WQMOxKSoF/NLprpz0Ls4ODDUsVO5+9ikAbWctCicHFvQTXCwG95ek=
+  file_glob: true
+  file: "build/distributions/oxides-grid-portal-*.zip"
+  skip_cleanup: true
+  on:
+    repo: unicore-life/oxides-grid-portal
+    tags: true

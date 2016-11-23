@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/assets/**")
                 .antMatchers("/fonts/**")
-                .antMatchers("/img/**")
+                .antMatchers("/images/**")
                 .antMatchers("/favicon.ico");
     }
 
