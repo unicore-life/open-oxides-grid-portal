@@ -5,3 +5,6 @@ resources/public/fonts/
 # CSS and JavaScript resources generated during build:
 #
 resources/public/assets/oxides-grid-portal.*
+resources/public/assets/oxides-grid-portal-dependencies.*
+resources/public/assets/oxides-grid-portal-main.*
+resources/public/assets/oxides-grid-portal-full.*

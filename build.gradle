@@ -1,10 +1,10 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE',
-                'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.0.RC1'
     }
 }
 
@@ -16,9 +16,10 @@ plugins {
     id 'com.moowork.grunt' version '0.13'
     id "com.moowork.node" version "0.13"
     id 'pl.allegro.tech.build.axion-release' version '1.4.1'
+    id "io.spring.dependency-management" version "1.0.0.RELEASE"
+//    id 'org.springframework.boot' version '1.5.0.RELEASE'
 }
 apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 
 scmVersion.tag.prefix = project.name
@@ -34,9 +35,10 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
 
+            'com.rometools:rome:1.7.1',
             'cglib:cglib:3.2.4',
             'org.apache.commons:commons-lang3:3.5',
-            'org.springframework:spring-context-support:4.3.4.RELEASE',
+            'org.springframework:spring-context-support:4.3.5.RELEASE',
             'net.sf.ehcache:ehcache:2.10.3',
 
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
@@ -48,6 +50,7 @@ dependencies {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
     maven { url 'http://unicore-dev.zam.kfa-juelich.de/maven' }
     maven { url 'http://dl.bintray.com/unicore-life/maven' }
 }
