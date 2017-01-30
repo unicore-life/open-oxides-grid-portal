@@ -30,7 +30,6 @@ project.version = scmVersion.version
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter',
-            'org.springframework.boot:spring-boot-starter-undertow',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
@@ -42,6 +41,10 @@ dependencies {
             'net.sf.ehcache:ehcache:2.10.3',
 
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
+
+    compile('org.springframework.boot:spring-boot-starter-undertow') {
+        exclude group: 'io.undertow', module: 'undertow-websockets-jsr'
+    }
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-spring:1.0-groovy-2.4',

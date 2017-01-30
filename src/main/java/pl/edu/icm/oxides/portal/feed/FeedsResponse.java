@@ -19,13 +19,13 @@ public class FeedsResponse {
 
     public static class FeedEntry {
         private final String title;
-        private final String url;
+        private final String link;
         private final String content;
         private final String description;
 
-        public FeedEntry(String title, String url, String content, String description) {
+        public FeedEntry(String title, String link, String content, String description) {
             this.title = title;
-            this.url = url;
+            this.link = link;
             this.content = content;
             this.description = description;
         }
@@ -34,8 +34,8 @@ public class FeedsResponse {
             return title;
         }
 
-        public String getUrl() {
-            return url;
+        public String getLink() {
+            return link;
         }
 
         public String getContent() {

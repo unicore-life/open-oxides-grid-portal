@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <meta name="_csrf" content="860db8d4-ea12-45e7-afa7-5237c017a876"/>
+    <meta name="_csrf_header" content="X-CSRF-TOKEN"/>
+
+    <meta name="description" content="Oxides Grid Portal"/>
+    <meta name="author" content="Rafal Kluszczynski"/>
+
+    <title>Oxides Grid Portal</title>
+
+    <!-- Oxides Grid Portal CSS -->
+    <link rel="stylesheet" href="../../../src/main/resources/public/assets/oxides-grid-portal.css"/>
+    <!--<link rel="stylesheet" href="../../../src/web/external/angular-feeds.css">-->
+
+    <script type="text/javascript" src="../../../bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="../../../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="../../../src/web/external/angular-feeds-simplified-for-json.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angularjs-toaster/toaster.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script type="text/javascript"
+            src="../../../bower_components/angular-file-upload/dist/angular-file-upload.js"></script>
+    <script type="text/javascript" src="../../../bower_components/angular-spinkit/build/angular-spinkit.js"></script>
+
+    <!-- Oxides Grid Portal JavaScript -->
+    <!--<script>-->
+        <!--angular.module('oxidesGridPortal', ['feeds']);-->
+    <!--</script>-->
+    <script type="text/javascript" src="../../../src/main/resources/public/assets/oxides-grid-portal-main.js"></script>
+</head>
+<body ng-app="oxidesGridPortal">
+
+<!-- Wrap all page content here -->
+<div id="wrap">
+    <!-- Begin page content -->
+    <div class="container">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">summary: true</h3>
+            </div>
+
+            <div class="panel-body">
+                <div class="feed-block">
+                    <feed summary="true" link="/src/test/resources/test-simplified-angular-feeds.json" count="3"></feed>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">summary: false</h3>
+            </div>
+
+            <div class="panel-body">
+                <div class="feed-block">
+                    <feed summary="false" link="/src/test/resources/test-simplified-angular-feeds.json"
+                          count="1"></feed>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</div>
+
+</body>
+</html>

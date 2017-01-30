@@ -68,7 +68,7 @@ function feedDirective(feedService, $compile, $templateCache, $http) {
                 renderTemplate($templateCache.get('feed-list.html'));
             }).finally(function () {
                 $element.find('.spinner').slideUp();
-                $scope.$evalAsync('finishedLoading = true')
+                $scope.$evalAsync('finishedLoading = true');
             });
         }
 

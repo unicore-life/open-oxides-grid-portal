@@ -3,7 +3,7 @@ angular.module('oxidesGridPortal', [
         'toaster',
         'angular-spinkit',
         'angularFileUpload',
-        // 'ngAnimate',
+        'ngAnimate',
         'ngRoute',
         'ui.bootstrap'
     ]

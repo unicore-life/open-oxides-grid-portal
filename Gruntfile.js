@@ -11,9 +11,8 @@ module.exports = function (grunt) {
         },
         jshint: {
             all: [
-                'Gruntfile.js',
                 'src/web/javascript/**/*.js',
-                'src/web/spec/**/*.js'
+                'Gruntfile.js'
             ],
             options: {
                 jshintrc: 'config/.jshintrc'
@@ -25,16 +24,10 @@ module.exports = function (grunt) {
                     'src/main/resources/public/assets/oxides-grid-portal-dependencies.js': [
                         'bower_components/jquery/dist/jquery.js',
                         'bower_components/bootstrap/dist/js/bootstrap.js',
-                        'bower_components/yui/build/yui/yui.js',
-                        'bower_components/yui/build/oop/oop.js',
-                        'bower_components/yui/build/jsonp/jsonp.js',
-                        'bower_components/yui/build/jsonp-url/jsonp-url.js',
-                        'bower_components/yui/build/yql/yql.js',
-                        'bower_components/yui/build/yql-jsonp/yql-jsonp.js',
                         'bower_components/angular/angular.js',
-                        'bower_components/angular-animate/angular-animate.js',
                         'bower_components/angular-route/angular-route.js',
-                        'src/web/angular-feeds-simplified-for-json.js',
+                        'bower_components/angular-animate/angular-animate.js',
+                        'src/web/external/angular-feeds-simplified-for-json.js',
                         'bower_components/angularjs-toaster/toaster.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.js',
                         'bower_components/angular-file-upload/dist/angular-file-upload.js',
