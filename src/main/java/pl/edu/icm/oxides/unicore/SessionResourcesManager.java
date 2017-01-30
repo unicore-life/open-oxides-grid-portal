@@ -42,14 +42,14 @@ public class SessionResourcesManager {
     }
 
     public StorageClient getStorageClient(TrustDelegation trustDelegation) {
-        log.warn(String.format("Using the one with custodian DN = <%s> and " +
-                        "subject = <%s> issued by <%s>.", trustDelegation.getCustodianDN(),
+        log.info(String.format("Creating storage via StorageFactory service using credentials with custodian " +
+                        "DN = <%s> and subject = <%s> issued by <%s>.", trustDelegation.getCustodianDN(),
                 trustDelegation.getSubjectName(), trustDelegation.getIssuerName()));
         return unicoreStorageFactory.retrieveServiceList(trustDelegation)
                 .stream()
                 .findAny()
                 .map(unicoreFactoryStorageEntity -> toStorageClient(unicoreFactoryStorageEntity, trustDelegation))
-                .orElseThrow(() -> new UnicoreSpringException(new Exception("No Broker at All!")));
+                .orElseThrow(() -> new UnicoreSpringException(new Exception("No StorageFactory service found!")));
     }
 
     private StorageClient toStorageClient(UnicoreFactoryStorageEntity unicoreFactoryStorageEntity,
