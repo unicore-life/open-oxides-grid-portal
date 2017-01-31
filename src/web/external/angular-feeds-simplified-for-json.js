@@ -68,7 +68,7 @@ function feedDirective(feedService, $compile, $templateCache, $http) {
                 renderTemplate($templateCache.get('feed-list.html'));
             }).finally(function () {
                 $element.find('.spinner').slideUp();
-                $scope.$evalAsync('finishedLoading = true');
+                $scope.$evalAsync('finishedLoading = true')
             });
         }
 
@@ -123,6 +123,7 @@ function feedService($q, $sce, feedCache) {
     }
 
     function getFeeds(feedURL, count) {
+
         var deferredFeedsFetch = $q.defer();
 
         if (count === 0) {
@@ -137,7 +138,6 @@ function feedService($q, $sce, feedCache) {
 
         return deferredFeedsFetch.promise;
 
-
         function fetchFeed(feedURL) {
             try {
                 $.getJSON(feedURL, function (data) {
@@ -145,8 +145,7 @@ function feedService($q, $sce, feedCache) {
 
                     feedCache.set(feedURL, entries);
 
-                    var response = sanitizeEntries(entries);
-                    resolve(response);
+                    resolve(sanitizeEntries(entries));
                 });
             } catch (ex) {
                 deferredFeedsFetch.reject(ex);
@@ -157,6 +156,8 @@ function feedService($q, $sce, feedCache) {
         function resolve(withData) {
             deferredFeedsFetch.resolve(withData);
         }
+
+
     }
 
     function sanitizeFeedEntry(feedEntry) {
@@ -180,6 +181,7 @@ function feedService($q, $sce, feedCache) {
                 }
             });
         });
+
         return normalizedFeedEntry;
     }
 
@@ -188,6 +190,7 @@ function feedService($q, $sce, feedCache) {
         for (var i = 0; i < entries.length; i++) {
             sanitezedEntries.push(sanitizeFeedEntry(entries[i]));
         }
+
         return sanitezedEntries;
     }
 }
