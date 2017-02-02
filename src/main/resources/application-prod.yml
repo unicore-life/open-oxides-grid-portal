@@ -13,8 +13,8 @@ unicore.registryUri: https://hyx.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Re
 server:
   port: 443
   ssl:
-    keyStore: /opt/plgrid/certificates/oxides-grid-portal.jks
-    keyStorePassword: the!oxides
-    keyPassword: the!oxides
+    keyStore: /opt/plgrid/certificates/oxides-grid-portal-2016.jks
+    keyStorePassword: the0xides
+    keyPassword: the0xides
 
 logging.file: /tmp/oxides-grid-portal.log
