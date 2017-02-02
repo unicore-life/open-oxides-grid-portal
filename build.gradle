@@ -20,9 +20,7 @@ project.version = scmVersion.version
 
 
 ext {
-    // The drivers we want to use
-    drivers = ["firefox", "chrome", "phantomJs"]
-
+    drivers = ['firefox', 'chrome', 'phantomJs']
     versions = [
             geb     : '1.1.1',
             spock   : '1.0-groovy-2.4',
@@ -62,7 +60,7 @@ dependencies {
             "org.seleniumhq.selenium:selenium-chrome-driver:${versions.selenium}",
             "org.seleniumhq.selenium:selenium-firefox-driver:${versions.selenium}"
 
-    testCompile("com.codeborne:phantomjsdriver:1.3.0") {
+    testCompile('com.codeborne:phantomjsdriver:1.3.0') {
         transitive = false
     }
 
