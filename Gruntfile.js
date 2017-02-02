@@ -11,9 +11,8 @@ module.exports = function (grunt) {
         },
         jshint: {
             all: [
-                'Gruntfile.js',
                 'src/web/javascript/**/*.js',
-                'src/web/spec/**/*.js'
+                'Gruntfile.js'
             ],
             options: {
                 jshintrc: 'config/.jshintrc'
@@ -21,28 +20,35 @@ module.exports = function (grunt) {
         },
         concat: {
             js: {
-                src: [
-                    'bower_components/jquery/jquery.js',
-                    'bower_components/bootstrap/dist/js/bootstrap.js',
-                    'bower_components/angular/angular.js',
-                    'bower_components/angular-animate/angular-animate.js',
-                    'bower_components/angular-route/angular-route.js',
-                    'bower_components/angular-feeds/app/angular-feeds/angular-feeds.js',
-                    'bower_components/angularjs-toaster/toaster.js',
-                    'bower_components/angular-bootstrap/ui-bootstrap.js',
-                    'bower_components/angular-file-upload/dist/angular-file-upload.min.js',
-                    'bower_components/angular-spinkit/build/angular-spinkit.js',
-                    'src/web/javascript/oxides-grid-portal.js',
-                    'src/web/javascript/*/**/*.js'
-                ],
-                dest: 'src/main/resources/public/assets/oxides-grid-portal.js'
+                files: {
+                    'src/main/resources/public/assets/oxides-grid-portal-dependencies.js': [
+                        'bower_components/jquery/dist/jquery.js',
+                        'bower_components/bootstrap/dist/js/bootstrap.js',
+                        'bower_components/angular/angular.js',
+                        'bower_components/angular-route/angular-route.js',
+                        'bower_components/angular-animate/angular-animate.js',
+                        'src/web/external/angular-feeds-simplified-for-json.js',
+                        'bower_components/angularjs-toaster/toaster.js',
+                        'bower_components/angular-bootstrap/ui-bootstrap.js',
+                        'bower_components/angular-file-upload/dist/angular-file-upload.js',
+                        'bower_components/angular-spinkit/build/angular-spinkit.js'
+                    ],
+                    'src/main/resources/public/assets/oxides-grid-portal-main.js': [
+                        'src/web/javascript/oxides-grid-portal.js',
+                        'src/web/javascript/*/**/*.js'
+                    ],
+                    'src/main/resources/public/assets/oxides-grid-portal-full.js': [
+                        'src/main/resources/public/assets/oxides-grid-portal-dependencies.js',
+                        'src/main/resources/public/assets/oxides-grid-portal-main.js'
+                    ]
+                }
             }
         },
         uglify: {
             js: {
                 files: {
-                    'src/main/resources/public/assets/oxides-grid-portal.min.js': [
-                        'src/main/resources/public/assets/oxides-grid-portal.js'
+                    'src/main/resources/public/assets/oxides-grid-portal-full.min.js': [
+                        'src/main/resources/public/assets/oxides-grid-portal-full.js'
                     ]
                 },
                 options: {
@@ -79,9 +85,15 @@ module.exports = function (grunt) {
             'bootstrap-fonts': ['src/main/resources/public/fonts/'],
             'build': [
                 'src/main/resources/public/assets/oxides-grid-portal.css',
-                'src/main/resources/public/assets/oxides-grid-portal.js',
-                'src/main/resources/public/assets/oxides-grid-portal.min.js',
-                'src/main/resources/public/assets/oxides-grid-portal.min.js.map'
+                'src/main/resources/public/assets/oxides-grid-portal-dependencies.js',
+                'src/main/resources/public/assets/oxides-grid-portal-dependencies.min.js',
+                'src/main/resources/public/assets/oxides-grid-portal-dependencies.min.js.map',
+                'src/main/resources/public/assets/oxides-grid-portal-main.js',
+                'src/main/resources/public/assets/oxides-grid-portal-main.min.js',
+                'src/main/resources/public/assets/oxides-grid-portal-main.min.js.map',
+                'src/main/resources/public/assets/oxides-grid-portal-full.js',
+                'src/main/resources/public/assets/oxides-grid-portal-full.min.js',
+                'src/main/resources/public/assets/oxides-grid-portal-full.min.js.map'
             ]
         }
     });

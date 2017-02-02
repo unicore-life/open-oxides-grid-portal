@@ -1,7 +1,7 @@
 # oxides-grid-portal
 
+[![Release](http://github-release-version.herokuapp.com/github/unicore-life/oxides-grid-portal/release.svg?style=flat)](https://github.com/unicore-life/oxides-grid-portal/releases/latest)
 [![Build Status](https://travis-ci.org/unicore-life/oxides-grid-portal.svg?branch=master)](https://travis-ci.org/unicore-life/oxides-grid-portal)
-
 [![Stories in Ready](https://badge.waffle.io/unicore-life/oxides-grid-portal.png?label=ready&title=Ready)](https://waffle.io/unicore-life/oxides-grid-portal)
 
 
@@ -70,3 +70,4 @@ Remember to configure [Bintray](https://bintray.com) user and key by using param
 ## Other links which may come handy
  
 * [websockets](http://g00glen00b.be/spring-websockets-config/)
+* https://github.com/vdenotaris/spring-boot-security-saml-sample

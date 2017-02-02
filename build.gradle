@@ -1,23 +1,16 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE',
-                'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
-    }
-}
-
 plugins {
     id 'application'
     id 'java'
     id 'groovy'
     id 'checkstyle'
-    id 'com.moowork.grunt' version '0.11'
-    id 'pl.allegro.tech.build.axion-release' version '1.4.0'
+
+    id 'com.moowork.node' version '1.1.1'
+    id 'com.moowork.grunt' version '1.1.1'
+
+    id 'io.spring.dependency-management' version '1.0.0.RELEASE'
+    id 'org.springframework.boot' version '1.5.1.RELEASE'
+    id 'pl.allegro.tech.build.axion-release' version '1.4.1'
 }
-apply plugin: 'spring-boot'
-apply plugin: 'io.spring.dependency-management'
 
 
 scmVersion.tag.prefix = project.name
@@ -26,23 +19,52 @@ group = 'pl.edu.icm.unicore.portal'
 project.version = scmVersion.version
 
 
+ext {
+    drivers = ['firefox', 'chrome', 'phantomJs']
+    versions = [
+            geb     : '1.1.1',
+            spock   : '1.0-groovy-2.4',
+            selenium: '2.53.0',
+
+            node    : '6.9.1',
+            gradle  : '3.3'
+    ]
+
+    ext {
+        chromeDriverVersion = '2.24'
+        phantomJsVersion = '2.1.1'
+    }
+}
+
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter',
-            'org.springframework.boot:spring-boot-starter-undertow',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
 
+            'com.rometools:rome:1.7.1',
             'cglib:cglib:3.2.4',
-            'org.apache.commons:commons-lang3:3.4',
-            'org.springframework:spring-context-support:4.3.2.RELEASE',
-            'net.sf.ehcache:ehcache:2.10.2',
+            'org.apache.commons:commons-lang3:3.5',
+            'org.springframework:spring-context-support:4.3.6.RELEASE',
+            'net.sf.ehcache:ehcache:2.10.3',
 
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
 
+    compile('org.springframework.boot:spring-boot-starter-undertow') {
+        exclude group: 'io.undertow', module: 'undertow-websockets-jsr'
+    }
+
     testCompile 'org.springframework.boot:spring-boot-starter-test',
-            'org.spockframework:spock-spring:1.0-groovy-2.4',
-            'org.apache.httpcomponents:httpclient'
+            "org.gebish:geb-spock:${versions.geb}",
+            "org.spockframework:spock-spring:${versions.spock}",
+            "org.seleniumhq.selenium:selenium-chrome-driver:${versions.selenium}",
+            "org.seleniumhq.selenium:selenium-firefox-driver:${versions.selenium}"
+
+    testCompile('com.codeborne:phantomjsdriver:1.3.0') {
+        transitive = false
+    }
+
+    testRuntime "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
 }
 
 repositories {
@@ -75,7 +97,7 @@ applicationDistribution.from('src/main/resources') {
 }
 
 node {
-    version = '5.4.0'
+    version = "${versions.node}"
     download = true
 }
 
@@ -93,5 +115,47 @@ project.tasks.grunt_check.dependsOn grunt_install
 project.tasks.check.dependsOn grunt_check
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+    gradleVersion = "${versions.gradle}"
+}
+
+
+apply from: "gradle/osSpecificDownloads.gradle"
+
+drivers.each { driver ->
+    task "${driver}Test"(type: Test) {
+        reports {
+            html.destination = reporting.file("$name/tests")
+            junitXml.destination = file("$buildDir/test-results/$name")
+        }
+
+        outputs.upToDateWhen { false }  // Always run tests
+
+        systemProperty 'geb.build.reportsDir', reporting.file("$name/geb")
+        systemProperty 'geb.env', driver
+
+        // If you wanted to set the baseUrl in your build…
+        // systemProperty "geb.build.baseUrl", "http://myapp.com"
+    }
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+chromeTest {
+    dependsOn unzipChromeDriver
+
+    def chromedriverFilename = Os.isFamily(Os.FAMILY_WINDOWS) ? "chromedriver.exe" : "chromedriver"
+    systemProperty "webdriver.chrome.driver", new File(unzipChromeDriver.outputs.files.singleFile, chromedriverFilename).absolutePath
+}
+
+phantomJsTest {
+    dependsOn unzipPhantomJs
+
+    def phantomJsFilename = Os.isFamily(Os.FAMILY_WINDOWS) ? "phantomjs.exe" : "bin/phantomjs"
+    systemProperty "phantomjs.binary.path", new File(unzipPhantomJs.outputs.files.singleFile, phantomJsFilename).absolutePath
+}
+
+test {
+//    dependsOn drivers.collect { tasks["${it}Test"] }
+    dependsOn 'phantomJsTest'
+    enabled = false
 }
