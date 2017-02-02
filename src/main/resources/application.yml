@@ -7,6 +7,13 @@ gridOxides:
   jobPrefix: _OpenOxides__
   resultsUrl: http://openoxides.icm.edu.pl/data/results.json
 
+feeds:
+  sources:
+    - url: https://www.unicore.eu/feed
+      count: 3
+    - url: https://unicore-life.github.io/feed
+      count: 1
+
 multipart:
   maxFileSize: 16MB
   maxRequestSize: 64MB
