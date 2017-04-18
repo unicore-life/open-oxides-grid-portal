@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.authn.SamlAuthenticationHandler;
+import pl.edu.icm.oxides.authn.UnityAuthenticationHandler;
 import pl.edu.icm.oxides.open.OpenOxidesResources;
 import pl.edu.icm.oxides.open.model.Oxide;
 import pl.edu.icm.oxides.portal.OxidesGridPortalPages;
@@ -41,7 +41,7 @@ public class OxidesEndpoints {
     private final OxidesGridPortalPages oxidesGridPortalPages;
     private final UnicoreGridResources unicoreGridResources;
     private final OpenOxidesResources openOxidesResources;
-    private final SamlAuthenticationHandler samlAuthenticationHandler;
+    private final UnityAuthenticationHandler unityAuthenticationHandler;
     private final UserResourcesManager userResourcesManager;
     private OxidesPortalGridSession oxidesPortalGridSession;
 
@@ -49,13 +49,13 @@ public class OxidesEndpoints {
     public OxidesEndpoints(OxidesGridPortalPages oxidesGridPortalPages,
                            UnicoreGridResources unicoreGridResources,
                            OpenOxidesResources openOxidesResources,
-                           SamlAuthenticationHandler samlAuthenticationHandler,
+                           UnityAuthenticationHandler unityAuthenticationHandler,
                            UserResourcesManager userResourcesManager,
                            OxidesPortalGridSession oxidesPortalGridSession) {
         this.oxidesGridPortalPages = oxidesGridPortalPages;
         this.unicoreGridResources = unicoreGridResources;
         this.openOxidesResources = openOxidesResources;
-        this.samlAuthenticationHandler = samlAuthenticationHandler;
+        this.unityAuthenticationHandler = unityAuthenticationHandler;
         this.userResourcesManager = userResourcesManager;
         this.oxidesPortalGridSession = oxidesPortalGridSession;
     }
@@ -207,7 +207,7 @@ public class OxidesEndpoints {
     @RequestMapping(value = "/oxides/login", method = RequestMethod.GET)
     public void performAuthenticationRequest(HttpServletResponse response) {
         oxidesPortalGridSession.setReturnUrl("http://openoxides.icm.edu.pl");
-        samlAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
+        unityAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/oxides/results", method = RequestMethod.GET)
@@ -230,7 +230,7 @@ public class OxidesEndpoints {
             oxidesPortalGridSession.setReturnUrl(returnUrl);
         }
         logSessionData("SAML-G", session, oxidesPortalGridSession);
-        samlAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
+        unityAuthenticationHandler.performAuthenticationRequest(response, oxidesPortalGridSession);
     }
 
     @RequestMapping(value = "/authn/sign-in", method = RequestMethod.POST)
@@ -242,12 +242,12 @@ public class OxidesEndpoints {
     @RequestMapping(value = "/authn/sign-out", method = RequestMethod.POST)
     public String processLogoutResponse(HttpServletRequest request) {
         logSessionData("SAML-O", request.getSession(), oxidesPortalGridSession);
-        return samlAuthenticationHandler.processSingleLogoutResponse(request);
+        return unityAuthenticationHandler.processSingleLogoutResponse(request);
     }
 
     private String processResponseAndUserSessionInitialization(HttpServletRequest request,
                                                                OxidesPortalGridSession oxidesPortalGridSession) {
-        String returnUrl = samlAuthenticationHandler.processAuthenticationResponse(request, oxidesPortalGridSession);
+        String returnUrl = unityAuthenticationHandler.processAuthenticationResponse(request, oxidesPortalGridSession);
         userResourcesManager.initializeAfterSuccessfulSignIn(oxidesPortalGridSession);
         return returnUrl;
     }

@@ -9,7 +9,7 @@ plugins {
 
     id 'io.spring.dependency-management' version '1.0.0.RELEASE'
     id 'org.springframework.boot' version '1.5.1.RELEASE'
-    id 'pl.allegro.tech.build.axion-release' version '1.4.1'
+    id 'pl.allegro.tech.build.axion-release' version '1.5.0'
 }
 
 
@@ -23,11 +23,11 @@ ext {
     drivers = ['firefox', 'chrome', 'phantomJs']
     versions = [
             geb     : '1.1.1',
-            spock   : '1.0-groovy-2.4',
+            spock   : '1.1-groovy-2.4-rc-3',
             selenium: '2.53.0',
 
             node    : '6.9.1',
-            gradle  : '3.3'
+            gradle  : '3.4'
     ]
 
     ext {
@@ -48,6 +48,7 @@ dependencies {
             'org.springframework:spring-context-support:4.3.6.RELEASE',
             'net.sf.ehcache:ehcache:2.10.3',
 
+            'pl.edu.icm.unity:unity-idm-spring-boot-starter:0.1.0-SNAPSHOT',
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
 
     compile('org.springframework.boot:spring-boot-starter-undertow') {
@@ -56,6 +57,7 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             "org.gebish:geb-spock:${versions.geb}",
+            "org.spockframework:spock-core:${versions.spock}",
             "org.spockframework:spock-spring:${versions.spock}",
             "org.seleniumhq.selenium:selenium-chrome-driver:${versions.selenium}",
             "org.seleniumhq.selenium:selenium-firefox-driver:${versions.selenium}"
@@ -68,6 +70,7 @@ dependencies {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'http://unicore-dev.zam.kfa-juelich.de/maven' }
     maven { url 'http://dl.bintray.com/unicore-life/maven' }

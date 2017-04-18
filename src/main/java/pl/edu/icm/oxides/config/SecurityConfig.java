@@ -1,5 +1,6 @@
 package pl.edu.icm.oxides.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,7 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import pl.edu.icm.oxides.authn.SingleLogoutHandler;
+import pl.edu.icm.oxides.authn.OxidesSingleLogoutContext;
+import pl.edu.icm.unity.spring.authn.SingleLogoutHandler;
+import pl.edu.icm.unity.spring.slo.UnitySingleLogoutHandlerSupplier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
@@ -16,10 +19,21 @@ import java.util.regex.Pattern;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private final UnitySingleLogoutHandlerSupplier singleLogoutHandlerSupplier;
+    private final OxidesSingleLogoutContext oxidesSingleLogoutContext;
+
+    @Autowired
+    public SecurityConfig(UnitySingleLogoutHandlerSupplier singleLogoutHandlerSupplier,
+                          OxidesSingleLogoutContext oxidesSingleLogoutContext) {
+        this.singleLogoutHandlerSupplier = singleLogoutHandlerSupplier;
+        this.oxidesSingleLogoutContext = oxidesSingleLogoutContext;
+    }
 
     @Bean
     public SingleLogoutHandler singleLogoutHandler() {
-        return new SingleLogoutHandler();
+        return singleLogoutHandlerSupplier
+                .withContext(oxidesSingleLogoutContext)
+                .createSingleLogoutHandler();
     }
 
     @Override

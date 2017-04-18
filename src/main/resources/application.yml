@@ -1,5 +1,11 @@
 openOxides.groupName: /vo.plgrid.pl
 
+unity-idm:
+  enable: true
+  idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web
+  idpSloUrl: https://unity.grid.icm.edu.pl/unicore-portal/SLO-WEB
+  targetUrl: https://localhost:8443/authn/sign-in
+
 gridOxides:
   accessGroup: /
   applicationName: Bash shell
