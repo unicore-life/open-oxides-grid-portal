@@ -27,7 +27,7 @@ ext {
             selenium: '2.53.0',
 
             node    : '6.9.1',
-            gradle  : '3.5'
+            gradle  : '3.3'
     ]
 
     ext {
@@ -38,6 +38,7 @@ ext {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-cache',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
@@ -45,10 +46,9 @@ dependencies {
             'com.rometools:rome:1.7.1',
             'cglib:cglib:3.2.4',
             'org.apache.commons:commons-lang3:3.5',
-            'org.springframework:spring-context-support:4.3.6.RELEASE',
             'net.sf.ehcache:ehcache:2.10.3',
 
-            'pl.edu.icm.unity:unity-idm-spring-boot-starter:0.1.0-SNAPSHOT',
+            'pl.edu.icm.unity:unity-idm-spring-boot-starter:0.0.1',
             'pl.edu.icm.unicore:unicore-spring-boot-starter:0.1.5'
 
     compile('org.springframework.boot:spring-boot-starter-undertow') {
