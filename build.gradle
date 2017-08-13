@@ -84,6 +84,10 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+checkstyle {
+    toolVersion = '8.1'
+}
+
 mainClassName = 'pl.edu.icm.oxides.OxidesGridPortal'
 run {
     jvmArgs = ['-Dspring.profiles.active=local']
@@ -152,7 +156,7 @@ firefoxTest {
     systemProperty "webdriver.gecko.driver", geckodriverFile.absolutePath
 }
 
-drivers.findAll{it =~ /^chrome.*/}.each { chromeTask ->
+drivers.findAll { it =~ /^chrome.*/ }.each { chromeTask ->
     "${chromeTask}Test" {
         dependsOn unzipChromeDriver
 
