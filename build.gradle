@@ -176,6 +176,6 @@ phantomJsTest {
 
 test {
 //    dependsOn drivers.collect { tasks["${it}Test"] }
-    dependsOn 'chromeHeadlessTest'
+    dependsOn 'phantomJsTest'
     enabled = false
 }
