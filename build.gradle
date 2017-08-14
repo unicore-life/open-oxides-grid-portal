@@ -68,7 +68,9 @@ dependencies {
         transitive = false
     }
 
-    testRuntime "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
+    testRuntime "org.seleniumhq.selenium:selenium-api:${versions.selenium}",
+            "org.seleniumhq.selenium:selenium-remote-driver:${versions.selenium}",
+            "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
 }
 
 repositories {
