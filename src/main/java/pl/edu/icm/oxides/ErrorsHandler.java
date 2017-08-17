@@ -30,7 +30,11 @@ public class ErrorsHandler implements ErrorController {
         return createErrorResponse(INTERNAL_SERVER_ERROR, ex);
     }
 
-    @ExceptionHandler({UnprocessableResponseException.class, OxidesForbiddenException.class, HttpRequestMethodNotSupportedException.class})
+    @ExceptionHandler({
+            UnprocessableResponseException.class,
+            OxidesForbiddenException.class,
+            HttpRequestMethodNotSupportedException.class
+    })
     public ModelAndView handleUnprocessableResponseException(HttpSession session, RuntimeException ex) {
         session.invalidate();
 
