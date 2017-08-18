@@ -1,0 +1,6 @@
+[eugridpma]
+name=EUGridPMA
+baseurl=http://dist.eugridpma.info/distribution/igtf/current/
+gpgcheck=1
+gpgkey=https://dist.eugridpma.info/distribution/igtf/current/GPG-KEY-EUGridPMA-RPM-3
+enabled=1
