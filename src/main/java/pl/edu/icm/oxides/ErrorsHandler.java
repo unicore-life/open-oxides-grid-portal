@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import pl.edu.icm.oxides.authn.UnprocessableResponseException;
 import pl.edu.icm.oxides.portal.security.OxidesForbiddenException;
+import pl.edu.icm.unity.spring.authn.UnprocessableResponseException;
 
+import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
@@ -29,8 +30,14 @@ public class ErrorsHandler implements ErrorController {
         return createErrorResponse(INTERNAL_SERVER_ERROR, ex);
     }
 
-    @ExceptionHandler({UnprocessableResponseException.class, OxidesForbiddenException.class, HttpRequestMethodNotSupportedException.class})
-    public ModelAndView handleUnprocessableResponseException(RuntimeException ex) {
+    @ExceptionHandler({
+            UnprocessableResponseException.class,
+            OxidesForbiddenException.class,
+            HttpRequestMethodNotSupportedException.class
+    })
+    public ModelAndView handleUnprocessableResponseException(HttpSession session, RuntimeException ex) {
+        session.invalidate();
+
         ModelAndView modelAndView = new ModelAndView("errors/default");
         modelAndView.addObject("commonName", "");
         modelAndView.addObject("exceptionMessage", ex.getMessage());

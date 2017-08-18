@@ -2,7 +2,7 @@
 
 # Loading module for QE:
 #
-module load plgrid/apps/espresso
+module load plgrid/apps/espresso/5.0.3
 
 # Running simulation using MPI:
 #
@@ -11,8 +11,8 @@ mpirun pw.x -nband 1 -ntg 1 < simulation.in > simulation.out
 # Extracting simulation steps to mol files:
 #
 date
-module load plgrid/tools/atomsk
-module load plgrid/tools/openbabel
+module load plgrid/tools/atomsk/b0.8.3
+module load plgrid/tools/openbabel/2.3.2
 
 mkdir mol
 cd mol
