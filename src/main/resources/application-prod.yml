@@ -10,6 +10,11 @@ grid:
 unicore.identityConfig: config/grid.properties
 unicore.registryUri: https://unicoreportal.grid.icm.edu.pl:8080/UNICORE-PORTAL/services/Registry?res=default_registry
 
+unity-idm:
+  idpUrl: https://unity.grid.icm.edu.pl/unicore-portal/saml2unicoreIdp-web
+  idpSloUrl: https://unity.grid.icm.edu.pl/unicore-portal/SLO-WEB
+  targetUrl: https://oxides.grid.icm.edu.pl/authn/sign-in
+
 server:
   port: 443
   ssl:
