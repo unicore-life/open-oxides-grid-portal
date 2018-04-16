@@ -33,7 +33,10 @@ public class GridFileUploader {
 
         String name = originalFilename;
         if (file.isEmpty()) {
-            return "You failed to upload " + name + " because the file was empty.";
+            final String message = "File upload failed of '" + name + "': it was empty!";
+
+            log.warn(message);
+            return message;
         }
 
         try {
@@ -42,12 +45,17 @@ public class GridFileUploader {
                     name,
                     file.getInputStream()
             );
-            return "You successfully uploaded " + name + "!";
+            final String message = "File '" + name + "' uploaded successfully!";
+
+            log.debug(message);
+            return message;
         } catch (Exception e) {
-            return "You failed to upload " + name + " => " + e.getMessage();
+            final String message = "File upload failed of '" + name + "'!";
+
+            log.error(message, e);
+            return message + " Reason: " + e.getMessage();
         }
     }
-
 
     public void importFileToGrid(StorageClient storageClient, String filename, InputStream source) throws Exception {
         storageClient

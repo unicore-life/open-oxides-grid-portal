@@ -83,7 +83,7 @@ public class UnicoreBroker {
         UnicoreBrokerEntity brokerEntity = retrieveServiceList(oxidesPortalGridSession.getSelectedTrustDelegation())
                 .stream()
                 .findAny()
-                .orElseThrow(() -> new UnicoreSpringException(new Exception("NO BROKER AT ALL!")));
+                .orElseThrow(() -> new UnicoreSpringException(BROKER_NOT_FOUND_MESSAGE));
 
         IClientConfiguration clientConfiguration = clientHelper
                 .createClientConfiguration(oxidesPortalGridSession.getSelectedTrustDelegation());
@@ -234,4 +234,6 @@ public class UnicoreBroker {
     }
 
     private Log log = LogFactory.getLog(UnicoreBroker.class);
+
+    public static final String BROKER_NOT_FOUND_MESSAGE = "Broker Service not found in Registry!";
 }
