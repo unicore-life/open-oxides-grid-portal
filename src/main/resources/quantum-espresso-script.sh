@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+echo "[ INFO ] running from: $(hostname)"
 
 # Loading module for QE:
 #
