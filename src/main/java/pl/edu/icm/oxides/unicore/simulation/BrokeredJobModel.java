@@ -9,6 +9,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationType;
+import org.ggf.schemas.jsdl.x2005.x11.jsdl.CandidateHostsDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.CreationFlagEnumeration;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.DataStagingDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.DataStagingType;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class BrokeredJobModel {
+    private static final String icmHydraCandidateHost = "https://hyx.grid.icm.edu.pl:8080/ICM-HYDRA/services/TargetSystemFactoryService?res=default_target_system_factory";
+
     private BrokeredJobModel() {
     }
 
@@ -105,6 +108,8 @@ public final class BrokeredJobModel {
         ResourcesDocument resourcesDocument = ResourcesDocument.Factory.newInstance();
         ResourcesType resourcesType = resourcesDocument.addNewResources();
 
+        insertCandidateHosts(resourcesDocument);
+
         if (!isNullOrBlank(description.getProject())) {
             insertResourceRequest("Project", description.getProject(), resourcesDocument);
         }
@@ -139,6 +144,14 @@ public final class BrokeredJobModel {
         resourceRequestDocument.addNewResourceRequest().setName(name);
         resourceRequestDocument.getResourceRequest().setValue(value);
         WSUtilities.append(resourceRequestDocument, resourcesDocument);
+    }
+
+    private static void insertCandidateHosts(ResourcesDocument resourcesDocument) {
+        CandidateHostsDocument candidateHostsDocument = CandidateHostsDocument.Factory.newInstance();
+        candidateHostsDocument
+                .addNewCandidateHosts()
+                .addHostName(icmHydraCandidateHost);
+        WSUtilities.append(candidateHostsDocument, resourcesDocument);
     }
 
     private static void insertReservation(String id, ResourcesDocument resourcesDocument) throws XmlException {
